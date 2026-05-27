@@ -1,0 +1,71 @@
+.reveal .slides section {
+	text-align: left;
+}
+
+.reveal .controls .controls-arrow {
+	color: #b15a2b;
+}
+
+.reveal .progress span {
+	background: #b15a2b;
+}
+
+.reveal .text-light {
+	color: #666 !important;
+}
+
+.reveal a {
+	color: #b15a2b;
+}
+
+.reveal ul,
+.reveal ol {
+	padding-left: 1rem;
+	line-height: 1.4em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+}
+
+.reveal ul ul,
+.reveal ol ol,
+.reveal ul ol,
+.reveal ol ul {
+	font-size: 0.9em;
+}
+
+.reveal .footer {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	text-align: left;
+	font-size: 1rem;
+	color: #888;
+}
+
+/* Hide footer when the first slide is showing */
+.reveal section:first-of-type.present ~ .footer {
+	display: none;
+}
+
+.reveal .keyword {
+	color: #2f3e7a;
+	font-weight: 700;
+}
+
+.reveal .inline-code {
+	font-family: "Courier New", Courier, monospace;
+	background-color: #f4f4f4;
+	padding: 2px 4px;
+	border-radius: 4px;
+	text-transform: none !important;
+}
+
+.reveal .question-box {
+	border: 3px solid #b15a2b;
+	border-radius: 16px;
+	padding: 0.75em;
+	margin: auto;
+	background: #f7efe6;
+	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}

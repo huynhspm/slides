@@ -1,0 +1,1681 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/png" href="../../favicon.png">
+    <!-- <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png"> -->
+
+    <title>Master's Thesis</title>
+    <link rel="stylesheet" href="revealjs/dist/reset.css" />
+    <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+    <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+    <link rel="stylesheet" href="slide-style.css" />
+</head>
+
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <section>
+                <!-- Title Slide -->
+                <section style="text-align: center;">
+                    <!-- Header: university text (left) + logos (right) -->
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; width: 100%;">
+
+                        <!-- Left -->
+                        <div style="flex: 1; display: flex; justify-content: center; text-align: center;">
+                            <div>
+                                <p
+                                    style="font-size: 0.5em; text-transform: uppercase; letter-spacing: 2px; font-weight: 600; opacity: 0.7; margin: 0;">
+                                    Vietnam National University, Hanoi
+                                </p>
+
+                                <p
+                                    style="font-size: 0.4em; text-transform: uppercase; letter-spacing: 1.5px; opacity: 0.6; margin: 2px 0 0 0;">
+                                    University of Engineering and Technology
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Right -->
+                        <div style="flex: 1; display: flex; justify-content: center;">
+                            <div style="display: flex; align-items: center; gap: 5px; height: 60px;">
+                                <img src="img/thesis/iai.png" />
+                                <img src="img/thesis/avitech.png" />
+                                <img src="img/thesis/uet.png" />
+                                <img src="img/thesis/vub.png" />
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <hr style="width: 100%; border-color: rgba(150, 150, 150, 0.3); margin: 10px auto;" />
+
+                    <h4 style="font-size: 0.85em; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 1px;">
+                        Interpretable Prediction from 3D MRI Brain Scans in Multiple Sclerosis via Latent
+                        Representation Learning with Variational Autoencoders
+                    </h4>
+
+                    <hr style="width: 80%; border-color: rgba(150, 150, 150, 0.3); margin: 20px auto;" />
+
+                    <div style="font-size: 0.9em; line-height: 1.2;">
+                        <p style="margin-bottom: 5px"><strong>Trinh Ngoc Huynh</strong></p>
+                        <p style="margin-top: 0; opacity: 0.7; font-size: 0.8em;">Major: Computer Science (8480101)</p>
+
+                        <p style="margin-top: 30px; margin-bottom: 5px; font-size: 0.9em;"><strong>Supervisors:</strong>
+                        </p>
+                        <p style="margin-top: 0; font-size: 0.8em;">Dr. Tran Quoc Long & Prof. Dr. Ir. Guy Nagels</p>
+                    </div>
+
+                    <p style="font-size: 0.5em; letter-spacing: 2px; opacity: 0.8; margin-top: 30px;">
+                        Master's Thesis Defence — May, 2026
+                    </p>
+                </section>
+
+                <section>
+                    <h2 style="text-transform: uppercase; letter-spacing: 2px; margin-bottom: 50px;">
+                        Contents</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 30px; width: 70%; margin: 0 auto;"
+                        class="fragment">
+
+                        <div
+                            style="display: flex; align-items: center; padding: 15px 30px; background: linear-gradient(to right, rgba(47, 62, 122, 0.12), transparent); border-radius: 8px; border-left: 4px solid #2F3E7A;">
+                            <div
+                                style="font-weight: 700; color: #2F3E7A; width: 60px; text-align: left; border-right: 2px solid rgba(150, 150, 150, 0.2); margin-right: 25px;">
+                                01
+                            </div>
+                            <div
+                                style="font-size: 1.15em; font-weight: 500; text-align: left; flex-grow: 1; letter-spacing: 0.5px;">
+                                Introduction
+                            </div>
+                        </div>
+
+                        <div
+                            style="display: flex; align-items: center; padding: 15px 30px; background: linear-gradient(to right, rgba(47, 62, 122, 0.12), transparent); border-radius: 8px; border-left: 4px solid #2F3E7A;">
+                            <div
+                                style="font-weight: 700; color: #2F3E7A; width: 60px; text-align: left; border-right: 2px solid rgba(150, 150, 150, 0.2); margin-right: 25px;">
+                                02
+                            </div>
+                            <div
+                                style="font-size: 1.15em; font-weight: 500; text-align: left; flex-grow: 1; letter-spacing: 0.5px;">
+                                Methodology
+                            </div>
+                        </div>
+
+                        <div
+                            style="display: flex; align-items: center; padding: 15px 30px; background: linear-gradient(to right, rgba(47, 62, 122, 0.12), transparent); border-radius: 8px; border-left: 4px solid #2F3E7A;">
+                            <div
+                                style="font-weight: 700; color: #2F3E7A; width: 60px; text-align: left; border-right: 2px solid rgba(150, 150, 150, 0.2); margin-right: 25px;">
+                                03
+                            </div>
+                            <div
+                                style="font-size: 1.15em; font-weight: 500; text-align: left; flex-grow: 1; letter-spacing: 0.5px;">
+                                Experiments
+                            </div>
+                        </div>
+
+                        <div
+                            style="display: flex; align-items: center; padding: 15px 30px; background: linear-gradient(to right, rgba(47, 62, 122, 0.12), transparent); border-radius: 8px; border-left: 4px solid #2F3E7A;">
+                            <div
+                                style="font-weight: 700; color: #2F3E7A; width: 60px; text-align: left; border-right: 2px solid rgba(150, 150, 150, 0.2); margin-right: 25px;">
+                                04
+                            </div>
+                            <div
+                                style="font-size: 1.15em; font-weight: 500; text-align: left; flex-grow: 1; letter-spacing: 0.5px;">
+                                Conclusion
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span style="color: #2F3E7A; font-size: 1.5em;">01</span><br />
+                        <span>Introduction</span>
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Motivation</h2>
+
+                    <!-- Definitions: 2 cards -->
+                    <div style="display: flex; gap: 20px; font-size: 0.6em; margin-bottom: 20px;" class="fragment">
+                        <div
+                            style="flex: 1.1; padding: 10px 10px; border-radius: 10px; background: rgba(47, 62, 122, 0.06); border-left: 4px solid #2F3E7A;">
+                            <strong class="keyword">Multiple Sclerosis (MS)</strong><br />
+                            Chronic inflammatory and neurodegenerative disease of the central nervous system.
+                        </div>
+                        <div
+                            style="flex: 0.9; padding: 10px 10px; border-radius: 10px; background: rgba(47, 62, 122, 0.06); border-left: 4px solid #2F3E7A;">
+                            <strong class="keyword">Cognitive Impairment (CI)</strong><br />
+                            Affects memory, attention, processing speed, and executive function.
+                        </div>
+                    </div>
+
+                    <!-- Brain MRI biomarker -->
+                    <div class="fragment"
+                        style="font-size: 0.65em; margin-bottom: 20px; display: flex; align-items: center; justify-content: center;">
+                        <div
+                            style="padding: 12px 20px; border-radius: 10px; background: rgba(59, 130, 246, 0.08); border: 2px solid rgba(47, 62, 122, 0.2); display: flex; align-items: center; gap: 6px; box-shadow: 0 3px 10px rgba(47, 62, 122, 0.08);">
+                            <span style="font-size: 1.5em; line-height: 1;">🧠</span> Brain MRI
+                        </div>
+                        <div style="display: flex; align-items: center; padding: 0 12px;">
+                            <span
+                                style="display: block; width: 40px; height: 3px; background: linear-gradient(to right, #2F3E7A, #3b82f6); border-radius: 2px;"></span>
+                            <span
+                                style="display: block; width: 0; height: 0; border-top: 8px solid transparent; border-bottom: 8px solid transparent; border-left: 12px solid #3b82f6;"></span>
+                        </div>
+                        <div
+                            style="padding: 12px 20px; border-radius: 10px; background: rgba(59, 130, 246, 0.08); border: 2px solid rgba(47, 62, 122, 0.2); display: flex; align-items: center; gap: 6px; box-shadow: 0 3px 10px rgba(47, 62, 122, 0.08);">
+                            <span style="font-size: 1.5em; line-height: 1;">🔑</span>
+                            Key biomarkers for neurodegeneration and cognitive decline in MS
+                        </div>
+                    </div>
+
+                    <!-- Existing approaches -->
+                    <div style="display: flex; gap: 20px; font-size: 0.65em; text-align: center;" class="fragment">
+                        <div
+                            style="flex: 1; padding: 12px; border-radius: 10px; background: rgba(1, 239, 247, 0.205); border: 1px solid rgba(34, 197, 94, 0.2);">
+                            <div style="font-weight: 700; color: #4d03fa;">Traditional Machine Learning</div>
+                            <div style="color: #16a34a;">✓ simple & interpretable</div>
+                            <div style="color: #ef4444;">✗ handcrafted features</div>
+                            <div style="color: #ef4444;">✗ miss complex patterns</div>
+                        </div>
+                        <div
+                            style="flex: 1; padding: 12px; border-radius: 10px; background: rgba(1, 239, 247, 0.205); border: 1px solid rgba(59, 130, 246, 0.2);">
+                            <div style="font-weight: 700; color: #4d03fa;">Deep Learning</div>
+                            <div style="color: #16a34a;">✓ high predictive accuracy</div>
+                            <div style="color: #ef4444;">✗ lack of interpretability</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Research Problem</h2>
+
+                    <div class="question-box fragment"
+                        style="font-size: 0.7em; margin-bottom: 15px; padding: 12px 18px;">
+                        How to perform <span class="keyword">effective</span> and <span
+                            class="keyword">interpretable</span> prediction of CI-related biomarkers in MS patients from
+                        3D brain MRI scans
+                    </div>
+
+                    <div class="fragment">
+                        <div style="font-size: 0.6em; margin: 20px 0;">
+                            \[
+                            f: X \rightarrow y
+                            \]
+                        </div>
+
+                        <!-- Input / Output cards -->
+                        <div style="display: flex; gap: 40px; font-size: 0.6em; margin-bottom: 20px;">
+                            <div
+                                style="flex: 1; padding: 10px 15px; border-radius: 10px; background: rgba(47, 62, 122, 0.06); border-left: 4px solid #2F3E7A;">
+                                <div style="font-weight: 700; color: #2F3E7A; margin-bottom: 4px;">📥 Input</div>
+                                3D brain MRI scan <span class="inline-code">\(X \in \mathbb{R}^{H \times W \times
+                                    D}\)</span>
+                            </div>
+                            <div
+                                style="flex: 1; padding: 10px 15px; border-radius: 10px; background: rgba(47, 62, 122, 0.06); border-left: 4px solid #3b82f6;">
+                                <div style="font-weight: 700; color: #3b82f6; margin-bottom: 4px;">📤 Output</div>
+                                CI-related biomarker <span class="inline-code">\(y \in \mathbb{R}\)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Challenge -->
+                    <div class="fragment question-box"
+                        style="font-size: 0.6em; padding: 15px 15px; border-left: 5px solid #ef4444; background: rgba(239, 68, 68, 0.04);">
+                        <strong style="color: #ef4444;">⚠️ Challenge</strong>
+                        <div style="display: flex; gap: 15px; margin-top: 8px;">
+                            <div
+                                style="flex: 1; padding: 8px 10px; background: rgba(239, 68, 68, 0.05); border-radius: 6px;">
+                                High-dimensional data <span class="inline-code">\(H \times W \times D\)</span>
+                            </div>
+                            <div
+                                style="flex: 1; padding: 8px 10px; background: rgba(239, 68, 68, 0.05); border-radius: 6px;">
+                                Need interpretability in learned features
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Research Questions</h2>
+
+                    <!-- Hypothesis -->
+                    <div class="fragment question-box"
+                        style="font-size: 0.6em; padding: 10px 15px; margin-bottom: 15px; background: rgba(59, 130, 246, 0.05); border-left: 4px solid #3b82f6;">
+                        <strong style="color: #3b82f6;">💡 Hypothesis</strong>
+                        <div style="margin-top: 5px;">
+                            Latent representations from 3D brain MRI encode meaningful <span
+                                class="keyword">structural</span> & <span class="keyword">demographic</span>
+                            information, enabling <span class="keyword">effective</span> & <span
+                                class="keyword">interpretable</span> CI-related biomarker predictions.
+                        </div>
+                    </div>
+
+                    <!-- RQ Cards -->
+                    <div class="fragment">
+                        <div style="display: flex; flex-direction: column; gap: 10px; font-size: 0.6em;">
+                            <div
+                                style="display: flex; align-items: stretch; gap: 0; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                                <div
+                                    style="background: linear-gradient(135deg, #2F3E7A, #3b82f6); color: #fff; font-weight: 700; padding: 12px 15px; display: flex; align-items: center; min-width: 50px; justify-content: center;">
+                                    RQ1
+                                </div>
+                                <div style="padding: 12px 15px; background: #fff; flex: 1;">
+                                    Do the learned latent representations capture fundamental brain structural
+                                    information?
+                                </div>
+                            </div>
+
+                            <div
+                                style="display: flex; align-items: stretch; gap: 0; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                                <div
+                                    style="background: linear-gradient(135deg, #2F3E7A, #3b82f6); color: #fff; font-weight: 700; padding: 12px 15px; display: flex; align-items: center; min-width: 50px; justify-content: center;">
+                                    RQ2
+                                </div>
+                                <div style="padding: 12px 15px; background: #fff; flex: 1;">
+                                    Do these representations encode meaningful features for
+                                    downstream biomarker predictions?
+                                </div>
+                            </div>
+
+                            <div
+                                style="display: flex; align-items: stretch; gap: 0; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                                <div
+                                    style="background: linear-gradient(135deg, #2F3E7A, #3b82f6); color: #fff; font-weight: 700; padding: 12px 15px; display: flex; align-items: center; min-width: 50px; justify-content: center;">
+                                    RQ3
+                                </div>
+                                <div style="padding: 12px 15px; background: #fff; flex: 1;">
+                                    Can the learned latent representation effectively predict CI-related biomarkers
+                                    while providing interpretability?
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Overview Model</h2>
+
+                    <!-- Model Image -->
+                    <div class="fragment" style="text-align: center">
+                        <img src="img/thesis/model-overview.png"
+                            style="width: 100%; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.15);" />
+                    </div>
+
+                    <!-- 3 Key Components -->
+                    <div style="display: flex; gap: 15px; font-size: 0.6em; text-align: center;" class="fragment">
+                        <div
+                            style="flex: 1; padding: 12px 12px; border-radius: 10px; background: #aae0a7; border-left: 5px solid #2e7d32;">
+                            <div style="font-weight: 700; margin-bottom: 5px;">🧠
+                                Generative Model</div>
+                            <div style="opacity: 0.85;">Latent representation learning from 3D brain
+                                MRI</div>
+                        </div>
+                        <div
+                            style="flex: 1; padding: 12px 12px; border-radius: 10px; background: #DAE8FC; border-left: 5px solid #3b6fac;">
+                            <div style="font-weight: 700; margin-bottom: 5px;">📊 ML
+                                Model</div>
+                            <div style="opacity: 0.85">CI-related biomarker predictions </div>
+                        </div>
+                        <div
+                            style="flex: 1; padding: 12px 12px; border-radius: 10px; background: #B0E3E6; border-left: 5px solid #00897b;">
+                            <div style="font-weight: 700; margin-bottom: 5px;">🔍
+                                Statistical Analysis</div>
+                            <div style="opacity: 0.85">Interpretability and clinical insights</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Generative Models</h2>
+
+                    <div style="display: flex;">
+                        <!-- Left: Text content -->
+                        <div style="flex: 0.75; display: flex; flex-direction: column; gap: 20px; font-size: 0.5em;"
+                            class="fragment">
+                            <!-- GAN -->
+                            <div
+                                style="padding: 10px 12px; border-radius: 10px; background: rgba(239, 68, 68, 0.06); border-left: 4px solid #ef4444;">
+                                <div style="font-weight: 700; color: #ef4444; margin-bottom: 3px;">⛔ GAN</div>
+                                <div>• Produce unstructured latent space</div>
+                                <div>• Training instability</div>
+                                <div>• Require inversion for encoding</div>
+                            </div>
+                            <!-- Diffusion / Flow -->
+                            <div
+                                style="padding: 10px 12px; border-radius: 10px; background: rgba(234, 179, 8, 0.06); border-left: 4px solid #eab308;">
+                                <div style="font-weight: 700; color: #ef4444; margin-bottom: 3px;">⛔ Diffusion /
+                                    Flow-based</div>
+                                <div>• High-dimensional representations</div>
+                                <div>• High computational cost</div>
+                                <div>• Slow iterative sampling</div>
+                            </div>
+                            <!-- VAE -->
+                            <div class="fragment"
+                                style="padding: 10px 12px; border-radius: 10px; background: rgba(34, 197, 94, 0.06); border-left: 4px solid #22c55e;">
+                                <div style="font-weight: 700; color: #22c55e; margin-bottom: 3px;">✅ VAE</div>
+                                <div>• Compact representations</div>
+                                <div>• Informative latent space</div>
+                                <div>• Downstream task suitability</div>
+                            </div>
+                        </div>
+
+                        <!-- Right: Image -->
+                        <div style="flex: 1.25; display: flex; align-items: center; justify-content: right;">
+                            <img src="img/thesis/generative_models.png"
+                                style="width: 100%; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.15);" />
+                        </div>
+                    </div>
+                </section>
+
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span style="color: #2F3E7A; font-size: 1.5em;">02</span><br />
+                        <span>Methodology</span>
+                    </h1>
+                </section>
+
+                <!-- Slide 1: Proposed Pipeline -->
+                <section>
+                    <h2>Proposed Pipeline</h2>
+
+                    <div class="fragment" style="text-align: center; text-align: center;">
+                        <img src="img/thesis/pipeline.png" alt="Methodology Pipeline"
+                            style="width: 100%; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.15);" />
+                    </div>
+
+                    <div style="display: flex; gap: 30px; font-size: 0.8em; margin-top: -10px;" class="fragment">
+                        <div
+                            style="flex: 1; padding: 10px 10px; border-radius: 10px; background: #B1DDF0; border-left: 5px solid #7BB8D4; text-align: center;">
+                            <strong>Latent Representation Learning for 3D Images</strong>
+                        </div>
+                        <div
+                            style="flex: 1; padding: 10px 10px; border-radius: 10px; background: #BAC8D3; border-left: 5px solid #95B0C0; text-align: center;">
+                            <strong>Latent Representations for Interpretable Prediction</strong>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Latent Representation Learning</h3>
+
+                    <!-- Problem setup -->
+                    <div class="fragment"
+                        style="font-size: 0.7em; margin-bottom: 30px; padding: 10px 20px; background: linear-gradient(135deg, rgba(47, 62, 122, 0.06), rgba(59, 130, 246, 0.04)); border-radius: 10px; border: 1px solid rgba(47, 62, 122, 0.12); text-align: center;">
+                        Given: &nbsp;
+                        <span class="inline-code">\(\mathcal{D} = \{(X^{(i)}, y^{(i)})\}_{i=1}^{N}\)</span>
+                        &nbsp; where &nbsp;
+                        <span class="inline-code">\(X \in \mathbb{R}^{H \times W \times D}\)</span>,
+                        &nbsp;
+                        <span class="inline-code">\(y \in \mathbb{R}\)</span>
+                    </div>
+
+                    <!-- VAE diagram: Encoder → Z → Decoder with distinct colors -->
+                    <div class="fragment"
+                        style="display: flex; align-items: center; justify-content: center; gap: 0; font-size: 0.7em; margin-bottom: 30px;">
+                        <!-- Encoder -->
+                        <div
+                            style="padding: 12px 20px; border-radius: 10px; background: #DAE8FC; border: 2px solid #a3c4f3; font-weight: 700; text-align: center; color: #2F3E7A;">
+                            Encoder<br /><span style="font-size: 0.85em; opacity: 0.75;">\(q_{\phi}(Z \mid X)\)</span>
+                        </div>
+                        <!-- Arrow -->
+                        <div style="display: flex; align-items: center; padding: 0 20px;">
+                            <span
+                                style="display: block; width: 30px; height: 2.5px; background: #3b82f6; border-radius: 2px;"></span>
+                            <span
+                                style="display: block; border-top: 7px solid transparent; border-bottom: 7px solid transparent; border-left: 10px solid #3b82f6;"></span>
+                        </div>
+                        <!-- Latent Z -->
+                        <div
+                            style="padding: 12px 20px; border-radius: 10px; background: rgba(47, 62, 122, 0.08); border: 2px dashed #94a3b8; font-weight: 700; text-align: center; color: #2F3E7A;">
+                            Latent \(Z\)<br /><span style="font-size: 0.85em; opacity: 0.6;">\(\mathcal{N}(0,
+                                I)\)</span>
+                        </div>
+                        <!-- Arrow -->
+                        <div style="display: flex; align-items: center; padding: 0 20px;">
+                            <span
+                                style="display: block; width: 30px; height: 2.5px; background: #16a34a; border-radius: 2px;"></span>
+                            <span
+                                style="display: block;border-top: 7px solid transparent; border-bottom: 7px solid transparent; border-left: 10px solid #16a34a;"></span>
+                        </div>
+                        <!-- Decoder -->
+                        <div
+                            style="padding: 12px 20px; border-radius: 10px; background: #D5F5E3; border: 2px solid #86efac; font-weight: 700; text-align: center; color: #166534;">
+                            Decoder<br /><span style="font-size: 0.85em; opacity: 0.75;">\(p_{\theta}(X \mid Z)\)</span>
+                        </div>
+                    </div>
+
+                    <!-- ELBO equation -->
+                    <div class="equation fragment" style="font-size: 0.6em; margin-bottom: 30px;">
+                        \[
+                        \mathcal{L}_{\text{ELBO}}(X)
+                        =
+                        \underbrace{
+                        \mathbb{E}_{q_{\phi}(Z \mid X)}
+                        \big[\log p_{\theta}(X \mid Z)\big]
+                        }_{\mathcal{L}_{\text{rec}} \text{: Reconstruction}}
+                        -
+                        \underbrace{
+                        D_{\text{KL}}
+                        \big(
+                        q_{\phi}(Z \mid X)
+                        \parallel
+                        p(Z)
+                        \big)
+                        }_{\mathcal{L}_{\text{reg}} \text{: KL Regularization}}
+                        \]
+                    </div>
+
+                    <div style="display: flex; gap: 30px; font-size: 0.55em;" class="fragment">
+                        <div
+                            style="flex: 1; padding: 10px 12px; border-radius: 8px; background: rgba(34, 197, 94, 0.06); border-left: 3px solid #22c55e;">
+                            <strong style="color: #22c55e;">\(\mathcal{L}_{\text{rec}}\):</strong><br />
+                            • Keeps meaningful information in latent \(Z\)<br />
+                            • Enables accurate reconstruction
+                        </div>
+                        <div
+                            style="flex: 1; padding: 10px 12px; border-radius: 8px; background: rgba(59, 130, 246, 0.06); border-left: 3px solid #3b82f6;">
+                            <strong style="color: #3b82f6;">\(\mathcal{L}_{\text{reg}}\)</strong><br />
+                            • Penalizes memorizing input-specific details<br />
+                            • Encourages generalizable latent structure
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Mutual Information</h2>
+
+                    <!-- Step 1: Original regularization rewrite -->
+                    <div class="fragment">
+                        <div
+                            style="font-size: 0.6em; margin-bottom: 20px; padding: 8px 15px; background: rgba(34, 197, 94, 0.05); border-radius: 8px; border-left: 3px solid #16a34a;">
+                            Rewrite the regularization term over the full dataset
+                        </div>
+                        <div
+                            style="font-size: 0.6em; margin-bottom: 20px; padding: 8px 15px; background: rgba(34, 197, 94, 0.05); border-radius: 8px; border-left: 3px solid #16a34a;">
+                            Decompose into <strong>Mutual Information</strong> + <strong>Posterior Matching</strong>
+                        </div>
+                        <div style="font-size: 0.5em; margin-bottom: 15px;">
+                            \[
+                            \mathbb{E}_{p(X)}[\mathcal{L}_{\text{reg}}(X)] =
+                            \underbrace{
+                            \mathbb{E}_{q_{\phi}(Z, X)}
+                            \left[
+                            \log
+                            \frac{q_{\phi}(Z \mid X)}
+                            {q_{\phi}(Z)}
+                            \right]
+                            }_{{\text{I}_{q_{\phi}}(X;Z)}}
+                            +
+                            \underbrace{
+                            D_{\text{KL}}
+                            \big(q_{\phi}(Z)\parallel p(Z)\big)
+                            }_{\text{posterior matching}}
+                            \]
+                        </div>
+                    </div>
+
+                    <div class="fragment">
+                        <div
+                            style="font-size: 0.6em; margin-bottom: 10px; padding: 8px 15px; background: rgba(47, 62, 122, 0.05); border-radius: 8px; border-left: 3px solid #2F3E7A;">
+                            <strong>InfoVAE-Med3D</strong> loss: reweight <strong>mutual information</strong> and
+                            <strong>posterior matching</strong>
+                        </div>
+                        <div style="font-size: 0.5em; margin-bottom: 10px;">
+                            \[
+                            \mathcal{L}_{\text{InfoVAE-Med3D}}
+                            =
+                            \mathbb{E}_{p(X)}
+                            \big[\mathcal{L}_{\text{rec}}(X)\big]
+                            -
+                            \alpha\,\text{I}_{q_{\phi}}(X;Z)
+                            -
+                            \beta\,
+                            D_{\text{KL}}
+                            \big(q_{\phi}(Z)\parallel p(Z)\big)
+                            \]
+                        </div>
+
+                        <!-- Two hyperparameters -->
+                        <div style="display: flex; gap: 30px; font-size: 0.6em;">
+                            <div
+                                style="flex: 1; padding: 10px 12px; border-radius: 8px; background: rgba(59, 130, 246, 0.06); border-left: 3px solid #3b82f6;">
+                                <strong style="color: #3b82f6;">Mutual information</strong>: retained information from
+                                \(X\) in latent \(Z\)
+                            </div>
+                            <div
+                                style="flex: 1; padding: 10px 12px; border-radius: 8px; background: rgba(47, 62, 122, 0.06); border-left: 3px solid #2F3E7A;">
+                                <strong style="color: #2F3E7A;">Posterior matching</strong>: aligns aggregate posterior
+                                \(q_{\phi}(Z)\) with prior \(p(Z)\)
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Downstream Prediction</h2>
+
+                    <!-- Extract latent representations -->
+                    <div class="fragment"
+                        style="font-size: 0.6em; margin-bottom: 30px; padding: 6px 12px; background: rgba(59, 130, 246, 0.05); border-radius: 6px; border-left: 3px solid #3b82f6;">
+                        <strong style="color: #3b82f6;">Extract latent representations:</strong>
+                        <div>
+                            \[
+                            z = \mathcal{E}(X) \in \mathbb{R}^{d}, \quad d \ll H \times W \times D
+                            \]
+                        </div>
+                    </div>
+
+
+                    <!-- Prediction -->
+                    <div class="fragment"
+                        style="font-size: 0.55em; margin-bottom: 30px; padding: 6px 12px; background: rgba(34, 197, 94, 0.05); border-radius: 6px; border-left: 3px solid #16a34a;">
+                        <strong style="color: #16a34a;">Prediction</strong>: SVR maps latent representations to
+                        biomarker outcomes (brain age, SDMT score):
+                        <div>
+                            \[
+                            f(z) = \langle w, z \rangle + b \approx y
+                            \]
+                        </div>
+                    </div>
+
+                    <div class="fragment question-box"
+                        style="font-size: 0.6em; padding: 10px 15px; margin-top: 5px; background: rgba(59, 130, 246, 0.05); border-left: 4px solid #3b82f6;">
+                        <strong style="color: #3b82f6;">💡 Key Insight</strong>
+                        <div style="margin-top: 5px;">
+                            The model predicts CI-related biomarkers from meaningful information encoded in the
+                            latent representations.
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Slide 5: Latent Space Analysis - PCA / PLSR side by side -->
+                <section>
+                    <h2>Latent Space Analysis</h2>
+
+                    <!-- Intro -->
+                    <div class="fragment margin-bottom: 15px;">
+                        <div style="font-size: 0.6em">
+                            Project latent representations <span class="inline-code">\(Z \in \mathbb{R}^{N \times
+                                d}\)</span>
+                            by <span class="inline-code">\(W \in \mathbb{R}^{d \times k}\)</span>.
+                        </div>
+                        <div style="font-size: 0.6em;">
+                            Choose <span class="inline-code">\(k = 2\)</span> to project into 2D space:
+                        </div>
+                        <div style="font-size: 0.6em;">
+                            \[
+                            Z_2 = ZW \in \mathbb{R}^{N \times 2}
+                            \]
+                        </div>
+                    </div>
+
+                    <!-- PCA & PLSR side by side -->
+                    <div style="display: flex; gap: 30px; font-size: 0.55em;" class="fragment">
+                        <!-- PCA -->
+                        <div
+                            style="flex: 1; padding: 15px; border-radius: 10px; background: rgba(59, 130, 246, 0.05); border: 2px solid rgba(59, 130, 246, 0.2);">
+                            <div style="font-weight: 700; color: #3b82f6; font-size: 1.2em; margin-bottom: 8px;">PCA
+                            </div>
+                            <div style="opacity: 0.7; margin-bottom: 10px;">Unsupervised · Variance analysis</div>
+                            <div class="equation" style="font-size: 1.1em; margin-bottom: 10px;">
+                                \[
+                                \max_{W}\ \mathrm{Tr}(W^\top \Sigma W)
+                                \]
+                            </div>
+                            <div>Captures <strong>dominant variance</strong> directions in the latent space</div>
+                        </div>
+
+                        <!-- PLSR -->
+                        <div
+                            style="flex: 1; padding: 15px; border-radius: 10px; background: rgba(34, 197, 94, 0.05); border: 2px solid rgba(34, 197, 94, 0.2);">
+                            <div style="font-weight: 700; color: #16a34a; font-size: 1.2em; margin-bottom: 8px;">
+                                PLSRgression
+                            </div>
+                            <div style="opacity: 0.7; margin-bottom: 10px;">Supervised · Target-aware analysis</div>
+                            <div class="equation" style="font-size: 1.1em; margin-bottom: 10px;">
+                                \[
+                                \max_{W}\ \mathrm{Cov}(Z_cW, Y_c)
+                                \]
+                            </div>
+                            <div>Preserves <strong>task-relevant</strong> latent structures for CI-related biomarkers
+                                prediction</div>
+                        </div>
+                    </div>
+
+                    <!-- Key takeaway -->
+                    <div class="fragment question-box"
+                        style="font-size: 0.6em; text-align: center; padding: 10px 15px; margin-top: 20px; background: rgba(47, 62, 122, 0.04); border-left: 4px solid #2F3E7A;">
+                        <strong>🔍 Visualization:</strong> Each point colored by target value to reveal latent
+                        structures.
+                    </div>
+                </section>
+
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span style="color: #2F3E7A; font-size: 1.5em;">03</span><br />
+                        <span>Experiments</span>
+                    </h1>
+
+                </section>
+
+                <section>
+                    <h2>Datasets</h2>
+
+                    <!-- MRI type note -->
+                    <div class="fragment"
+                        style="font-size: 0.7em; margin-bottom: 12px; text-align: center; padding: 8px; background: linear-gradient(135deg, rgba(47, 62, 122, 0.06), rgba(59, 130, 246, 0.06)); border-radius: 8px; border: 1px solid rgba(47, 62, 122, 0.1);">
+                        🧠 3D T1-weighted MRI scans · All scans are skull-stripped
+                    </div>
+
+                    <!-- Two dataset cards -->
+                    <div style="display: flex; gap: 15px; width: 100%; align-items: stretch;">
+
+                        <!-- BrainAge -->
+                        <div class="fragment"
+                            style="flex: 1; border-radius: 12px; overflow: hidden; box-shadow: 0 3px 12px rgba(0,0,0,0.08); border: 1px solid #e2e8f0;">
+                            <div
+                                style="background: linear-gradient(135deg, #0284c7, #38bdf8); padding: 10px 15px; text-align: center;">
+                                <div style="font-weight: 700; color: #fff; font-size: 0.7em;">📁 Healthy Control Dataset
+                                </div>
+                                <div style="color: rgba(255,255,255,0.85); font-size: 0.5em; margin-top: 2px;">Healthy
+                                    Public Repositories</div>
+                            </div>
+                            <div style="padding: 10px 15px; font-size: 0.6em; background: #fff;">
+                                <div
+                                    style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 2px solid #f1f5f9;">
+                                    <span style="opacity: 0.6;">Cohort</span>
+                                    <span class="keyword">6,503 subjects</span>
+                                </div>
+                                <div
+                                    style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 2px solid #f1f5f9;">
+                                    <span style="opacity: 0.6;">Gender</span>
+                                    <span>2,971 M / 3,532 F</span>
+                                </div>
+                                <div
+                                    style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 2px solid #f1f5f9;">
+                                    <span style="opacity: 0.6;">Age</span>
+                                    <span>18–97 (43.70 ± 21.41)</span>
+                                </div>
+                                <div style="padding: 15px 0;">
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <span style="opacity: 0.6;">Split (8:1:1) · Subject-level</span>
+                                    </div>
+                                    <div style="display: flex; gap: 6px; margin-top: 4px;">
+                                        <div
+                                            style="flex: 1; text-align: center; padding: 4px; background: rgba(2, 132, 199, 0.08); border-radius: 4px;">
+                                            <div style="font-weight: 600; color: #0284c7;">Train</div>
+                                            <div>5,202</div>
+                                        </div>
+                                        <div
+                                            style="flex: 1; text-align: center; padding: 4px; background: rgba(2, 132, 199, 0.08); border-radius: 4px;">
+                                            <div style="font-weight: 600; color: #0284c7;">Val</div>
+                                            <div>650</div>
+                                        </div>
+                                        <div
+                                            style="flex: 1; text-align: center; padding: 4px; background: rgba(2, 132, 199, 0.08); border-radius: 4px;">
+                                            <div style="font-weight: 600; color: #0284c7;">Test</div>
+                                            <div>651</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Prague -->
+                        <div class="fragment"
+                            style="flex: 1; border-radius: 12px; overflow: hidden; box-shadow: 0 3px 12px rgba(0,0,0,0.08); border: 1px solid #e2e8f0;">
+                            <div
+                                style="background: linear-gradient(135deg, #0d9488, #2dd4bf); padding: 10px 15px; text-align: center;">
+                                <div style="font-weight: 700; color: #fff; font-size: 0.7em;">🏥 Multiple Sclerosis
+                                    Dataset</div>
+                                <div style="color: rgba(255,255,255,0.85); font-size: 0.45em; margin-top: 2px;">
+                                    1st Faculty of Medicine, Charles University</div>
+                            </div>
+                            <div style="padding: 10px 15px; font-size: 0.6em; background: #fff;">
+                                <div
+                                    style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 2px solid #f1f5f9;">
+                                    <span style="opacity: 0.6;">Cohort</span>
+                                    <span class="keyword">916 patients / 2,408 sessions</span>
+                                </div>
+                                <div
+                                    style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 2px solid #f1f5f9;">
+                                    <span style="opacity: 0.6;">Gender</span>
+                                    <span>731 M / 1,677 F</span>
+                                </div>
+                                <div
+                                    style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 2px solid #f1f5f9;">
+                                    <span style="opacity: 0.6;">Age</span>
+                                    <span>19–74 (42.19 ± 9.52)</span>
+                                </div>
+                                <div
+                                    style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 2px solid #f1f5f9;">
+                                    <span style="opacity: 0.6;">SDMT</span>
+                                    <span>16–97 (58.94 ± 12.02)</span>
+                                </div>
+                                <div style="padding: 15px 0;">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                        <span style="opacity: 0.6;">Split (8:1:1) · Patient-level</span>
+                                    </div>
+                                    <div style="display: flex; gap: 6px; margin-top: 4px;">
+                                        <div
+                                            style="flex: 1; text-align: center; padding: 4px; background: rgba(13, 148, 136, 0.08); border-radius: 4px;">
+                                            <div style="font-weight: 600; color: #0d9488;">Train</div>
+                                            <div>733</div>
+                                            <div style="opacity: 0.6; font-size: 0.9em;">1,929 sess</div>
+                                        </div>
+                                        <div
+                                            style="flex: 1; text-align: center; padding: 4px; background: rgba(13, 148, 136, 0.08); border-radius: 4px;">
+                                            <div style="font-weight: 600; color: #0d9488;">Val</div>
+                                            <div>95</div>
+                                            <div style="opacity: 0.6; font-size: 0.9em;">241 sess</div>
+                                        </div>
+                                        <div
+                                            style="flex: 1; text-align: center; padding: 4px; background: rgba(13, 148, 136, 0.08); border-radius: 4px;">
+                                            <div style="font-weight: 600; color: #0d9488;">Test</div>
+                                            <div>88</div>
+                                            <div style="opacity: 0.6; font-size: 0.9em;">238 sess</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Structural Information</h2>
+
+                    <div class="fragment">
+                        <div style="font-size: 0.5em; margin: 10px auto">
+                            <table
+                                style="width: 100%; border-collapse: separate; border-spacing: 0; border-radius: 10px; overflow: hidden; box-shadow: 0 3px 12px rgba(0,0,0,0.08); border: 1px solid #e2e8f0;">
+                                <thead>
+                                    <tr>
+                                        <th rowspan="2"
+                                            style="font-size: 1.5em; text-align: center; background: #acaa35; color: #fff; font-weight: 600; vertical-align: middle; border-right: 1px solid rgba(255,255,255,0.2);">
+                                            Model
+                                        </th>
+                                        <th colspan="3"
+                                            style=" font-size: 1.2em; text-align: center; background: #e0f2fe; color: #0284c7; font-weight: 600; border-bottom: 2px solid #bae6fd; border-right: 1px solid #e2e8f0;">
+                                            📁 Healthy Control
+                                        </th>
+                                        <th colspan="3"
+                                            style="font-size: 1.2em; text-align: center; background: #ccfbf1; color: #0d9488; font-weight: 600; border-bottom: 2px solid #99f6e4;">
+                                            🏥 Multiple Sclerosis
+                                        </th>
+                                    </tr>
+                                    <tr style="background: #f8fafc;">
+                                        <th
+                                            style="padding: 6px 8px; text-align: center; color: #475569; border-right: 1px dotted #e2e8f0;">
+                                            SSIM ↑</th>
+                                        <th
+                                            style="padding: 6px 8px; text-align: center; color: #475569; border-right: 1px dotted #e2e8f0;">
+                                            PSNR ↑</th>
+                                        <th
+                                            style="padding: 6px 8px; text-align: center; color: #475569; border-right: 1px solid #e2e8f0;">
+                                            LPIPS ↓</th>
+                                        <th
+                                            style="padding: 6px 8px; text-align: center; color: #475569; border-right: 1px dotted #e2e8f0;">
+                                            SSIM ↑</th>
+                                        <th
+                                            style="padding: 6px 8px; text-align: center; color: #475569; border-right: 1px dotted #e2e8f0;">
+                                            PSNR ↑</th>
+                                        <th style="padding: 6px 8px; text-align: center; color: #475569;">LPIPS ↓</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr style="border-bottom: 1px solid #f1f5f9;">
+                                        <td
+                                            style="padding: 5px 5px; font-weight: 600; text-align: center; background: #fff; border-right: 1px solid #e2e8f0;">
+                                            AE</td>
+                                        <td
+                                            style="padding: 5px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                            0.8065</td>
+                                        <td
+                                            style="padding: 5px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                            24.99</td>
+                                        <td
+                                            style="padding: 5px; text-align: center; background: #fff; border-right: 1px solid #e2e8f0; font-weight: 700;">
+                                            0.1395</td>
+                                        <td
+                                            style="padding: 5px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                            0.7370</td>
+                                        <td
+                                            style="padding: 5px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9; font-weight: 700;">
+                                            24.73</td>
+                                        <td style="padding: 5px; text-align: center; background: #fff;">0.1609</td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid #f1f5f9; background: #fafafa;">
+                                        <td
+                                            style="padding: 8px 12px; font-weight: 600; text-align: center; border-right: 1px solid #e2e8f0;">
+                                            VAE</td>
+                                        <td style="padding: 5px; text-align: center; border-right: 1px dotted #f1f5f9;">
+                                            0.6269</td>
+                                        <td style="padding: 5px; text-align: center; border-right: 1px dotted #f1f5f9;">
+                                            20.38</td>
+                                        <td style="padding: 5px; text-align: center; border-right: 1px solid #e2e8f0;">
+                                            0.2329</td>
+                                        <td style="padding: 5px; text-align: center; border-right: 1px dotted #f1f5f9;">
+                                            0.5825</td>
+                                        <td style="padding: 5px; text-align: center; border-right: 1px dotted #f1f5f9;">
+                                            20.45</td>
+                                        <td style="padding: 5px; text-align: center;">0.2500</td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid #f1f5f9;">
+                                        <td
+                                            style="padding: 5px 5px; font-weight: 600; text-align: center; background: #fff; border-right: 1px solid #e2e8f0;">
+                                            \(\beta\)-VAE</td>
+                                        <td
+                                            style="padding: 5px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                            0.6642</td>
+                                        <td
+                                            style="padding: 5px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                            21.39</td>
+                                        <td
+                                            style="padding: 5px; text-align: center; background: #fff; border-right: 1px solid #e2e8f0;">
+                                            0.2156</td>
+                                        <td
+                                            style="padding: 5px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                            0.6097</td>
+                                        <td
+                                            style="padding: 5px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                            21.75</td>
+                                        <td style="padding: 5px; text-align: center; background: #fff;">0.2362</td>
+                                    </tr>
+                                    <tr
+                                        style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(47, 62, 122, 0.08)); border-top: 3px solid #3b82f6;">
+                                        <td
+                                            style="padding: 5px 5px; font-weight: 700; text-align: center; color: #1d4ed8; border-right: 1px solid #bae6fd;">
+                                            Ours (\(\alpha=0, \beta=1\))</td>
+                                        <td
+                                            style="padding: 5px; text-align: center; color: #1d4ed8; font-weight: 700; border-right: 1px dotted #bae6fd;">
+                                            0.8224</td>
+                                        <td
+                                            style="padding: 5px; text-align: center; color: #1d4ed8; font-weight: 700; border-right: 1px dotted #bae6fd;">
+                                            25.22</td>
+                                        <td
+                                            style="padding: 5px; text-align: center; font-weight: 500; border-right: 1px solid #bae6fd;">
+                                            0.1428</td>
+                                        <td
+                                            style="padding: 5px; text-align: center; color: #1d4ed8; font-weight: 700; border-right: 1px dotted #bae6fd;">
+                                            0.7762</td>
+                                        <td
+                                            style="padding: 5px; text-align: center; font-weight: 500; border-right: 1px dotted #bae6fd;">
+                                            24.54</td>
+                                        <td style="padding: 5px; text-align: center; color: #1d4ed8; font-weight: 700;">
+                                            0.1305</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div
+                            style="font-size: 0.55em; text-align: center; opacity: 0.65; margin-top: 6px; font-style: italic;">
+                            Reconstruction results comparing VAE baselines and our model
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 20px; font-size: 0.55em; margin-top: 30px;" class="fragment">
+                        <div
+                            style="flex: 1; padding: 10px 12px; background: rgba(34, 197, 94, 0.06); border-radius: 8px; border-left: 4px solid #16a34a;">
+                            <strong style="color: #16a34a;">✓ Outperform</strong><br />
+                            Best results across most metrics on both datasets, a minor gaps vs AE on some metrics.
+                        </div>
+                        <div
+                            style="flex: 1; padding: 10px 12px; background: rgba(59, 130, 246, 0.06); border-radius: 8px; border-left: 4px solid #3b82f6;">
+                            <strong style="color: #3b82f6;">💡 Insight</strong><br />
+                            Best at (\(\alpha=0, \beta=1\)) → relaxing MI constraint improves
+                            structural preservation
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Structural Information</h2>
+
+                    <div style="display: flex; gap: 20px; align-items: center;">
+
+                        <!-- LEFT: findings -->
+                        <div style="flex: 0.6; display: flex; flex-direction: column; gap: 40px; font-size: 0.4em;"
+                            class="fragment">
+                            <div
+                                style="padding: 10px; background: rgba(34, 197, 94, 0.06); border-radius: 8px; border-left: 3px solid #16a34a;">
+                                <strong style="color: #16a34a;">✓ Best Reconstruction</strong><br />
+                                Our model preserves the most structural details among all VAE variants
+                            </div>
+                            <div
+                                style="padding: 10px; background: rgba(245, 158, 11, 0.06); border-radius: 8px; border-left: 3px solid #f59e0b;">
+                                <strong style="color: #f59e0b;">⚠️ Limitation</strong><br />
+                                Some blurriness remains, a common issue across the VAE family.
+                            </div>
+                            <div
+                                style="padding: 10px; background: linear-gradient(135deg, rgba(47, 62, 122, 0.04), rgba(59, 130, 246, 0.06)); border-radius: 8px; border-left: 3px solid #2F3E7A;">
+                                <strong>🎯 RQ1 Answered:</strong> InfoVAE-Med3D learns more
+                                <span class="keyword">structural information</span> in the latent representations.
+                            </div>
+                        </div>
+
+                        <!-- RIGHT: image -->
+                        <div style="flex: 1.4;">
+                            <img src="img/thesis/reconstruction.png" alt="Reconstruction Comparison"
+                                style="width: 100%; border-radius: 8px; box-shadow: 0 3px 10px rgba(0,0,0,0.1);">
+                            <div
+                                style="font-size: 0.4em; font-style: italic; text-align: center; opacity: 0.6; margin-top: -20px;">
+                                Qualitative reconstruction on Healthy Control & Multiple Sclerosis datasets
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Latent Informativeness</h2>
+                    <div class="fragment">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div style="text-align: center;">
+                                <img src="img/thesis/BrainAge_gm.png"
+                                    style="width: 100%; border-radius: 6px; display: block;">
+                            </div>
+                            <div style="text-align: center;">
+                                <img src="img/thesis/BrainAge_wm.png"
+                                    style="width: 100%; border-radius: 6px; display: block;">
+                            </div>
+                        </div>
+                        <div style="font-size: 0.45em; text-align: center; margin-top: -15px;">2D latent projections
+                            colored by GM and WM
+                            volume in the Healthy Control dataset</div>
+                    </div>
+
+                    <div class="fragment">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div style="text-align: center;">
+                                <img src="img/thesis/Prague_gm.png"
+                                    style="width: 100%; border-radius: 6px; display: block;">
+                            </div>
+                            <div style="text-align: center;">
+                                <img src="img/thesis/Prague_wm.png"
+                                    style="width: 100%; border-radius: 6px; display: block;">
+                            </div>
+                        </div>
+                        <div style="font-size: 0.45em; text-align: center; margin-top: -15px;">2D latent projections
+                            colored by GM and WM
+                            volume in the Multiple Sclerosis dataset</div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Latent Informativeness</h2>
+
+                    <!-- Gender images -->
+                    <div class="fragment" style="margin-bottom: 30px;">
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <div style="flex: 1; text-align: center;">
+                                <img src="img/thesis/BrainAge_gender.png" style="width: 100%; border-radius: 6px;">
+                            </div>
+                            <div style="flex: 1; text-align: center;">
+                                <img src="img/thesis/Prague_gender.png" style="width: 100%; border-radius: 6px;">
+                            </div>
+                        </div>
+                        <div style="font-size: 0.45em; text-align: center; margin-top: -20px;">Healthy Control (left) &
+                            Multiple Sclerosis (right): 2D latent projections colored by gender
+                        </div>
+                    </div>
+
+                    <!-- Two conclusion blocks -->
+                    <div style="display: flex; gap: 20px; font-size: 0.5em;" class="fragment">
+                        <div
+                            style="flex: 1; padding: 8px 10px; background: rgba(34, 197, 94, 0.06); border-radius: 6px; border-left: 3px solid #16a34a;">
+                            <strong style="color: #16a34a;">✓ Gender</strong><br />
+                            Clear separation in 2D latent space, especially with PLSRgression
+                        </div>
+                        <div
+                            style="flex: 1; padding: 8px 10px; background: rgba(59, 130, 246, 0.06); border-radius: 6px; border-left: 3px solid #3b82f6;">
+                            <strong style="color: #3b82f6;">✓ Volumetrics</strong><br />
+                            Smooth transitions in the 2D latent space with GM/WM volume (previous slide)
+                        </div>
+                    </div>
+
+                    <!-- RQ2 -->
+                    <div class="fragment"
+                        style="font-size: 0.7em; margin-top: 20px; padding: 8px 10px; background: linear-gradient(135deg, rgba(47, 62, 122, 0.04), rgba(59, 130, 246, 0.06)); border-radius: 8px; border-left: 4px solid #2F3E7A;">
+                        <strong>🎯 RQ2 Answered:</strong> Latent representations encode <span class="keyword">meaningful
+                            information</span> for downstream biomarker predictions
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Biomarker Prediction</h2>
+
+                    <!-- TABLE -->
+                    <div class="fragment" style="margin: 10px auto; width: 100%; overflow-x: auto; font-size: 0.5em;">
+                        <table
+                            style="width: 100%; border-collapse: separate; border-spacing: 0; border-radius: 10px; overflow: hidden; box-shadow: 0 3px 12px rgba(0,0,0,0.08); border: 1px solid #e2e8f0;">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2"
+                                        style="font-size: 1.2em; text-align: center; background: #acaa35; color: #fff; font-weight: 600; vertical-align: middle; border-right: 1px solid rgba(255,255,255,0.2); padding: 8px 12px;">
+                                        Model
+                                    </th>
+                                    <th colspan="3"
+                                        style="font-size: 1.1em; text-align: center; background: #f1f5f9; color: #334155; font-weight: 600; padding: 6px; border-bottom: 2px solid #cbd5e1;">
+                                        CI-related Biomarkers (MAE ↓)
+                                    </th>
+                                </tr>
+                                <tr style="background: #f8fafc;">
+                                    <th
+                                        style="padding: 5px 8px; text-align: center; color: #475569; border-right: 1px dotted #e2e8f0;">
+                                        Healthy Control</th>
+                                    <th
+                                        style="padding: 5px 8px; text-align: center; color: #475569; border-right: 1px dotted #e2e8f0;">
+                                        Multiple Sclerosis (brain age)</th>
+                                    <th style="padding: 5px 8px; text-align: center; color: #475569;">Multiple Sclerosis
+                                        (SDMT)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border-bottom: 1px solid #f1f5f9;">
+                                    <td
+                                        style="padding: 4px 8px; font-weight: 600; text-align: center; background: #fff; border-right: 1px solid #e2e8f0;">
+                                        RF</td>
+                                    <td
+                                        style="padding: 4px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                        8.192 ± 0.304</td>
+                                    <td
+                                        style="padding: 4px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                        6.145 ± 0.368</td>
+                                    <td style="padding: 4px; text-align: center; background: #fff;">8.821 ± 0.384</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #f1f5f9; background: #fafafa;">
+                                    <td
+                                        style="padding: 4px 8px; font-weight: 600; text-align: center; border-right: 1px solid #e2e8f0;">
+                                        LR</td>
+                                    <td style="padding: 4px; text-align: center; border-right: 1px dotted #f1f5f9;">
+                                        6.715 ± 0.351</td>
+                                    <td style="padding: 4px; text-align: center; border-right: 1px dotted #f1f5f9;">
+                                        6.314 ± 0.386</td>
+                                    <td style="padding: 4px; text-align: center;">10.648 ± 0.486</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #f1f5f9;">
+                                    <td
+                                        style="padding: 4px 8px; font-weight: 600; text-align: center; background: #fff; border-right: 1px solid #e2e8f0;">
+                                        KNN</td>
+                                    <td
+                                        style="padding: 4px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                        8.829 ± 0.336</td>
+                                    <td
+                                        style="padding: 4px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                        7.313 ± 0.535</td>
+                                    <td style="padding: 4px; text-align: center; background: #fff;">9.713 ± 0.491</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #f1f5f9; background: #fafafa;">
+                                    <td
+                                        style="padding: 4px 8px; font-weight: 600; text-align: center; border-right: 1px solid #e2e8f0;">
+                                        XGB</td>
+                                    <td style="padding: 4px; text-align: center; border-right: 1px dotted #f1f5f9;">
+                                        7.234 ± 0.345</td>
+                                    <td style="padding: 4px; text-align: center; border-right: 1px dotted #f1f5f9;">
+                                        5.929 ± 0.420</td>
+                                    <td style="padding: 4px; text-align: center;">8.853 ± 0.441</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #f1f5f9;">
+                                    <td
+                                        style="padding: 4px 8px; font-weight: 600; text-align: center; background: #fff; border-right: 1px solid #e2e8f0;">
+                                        AdaBoost</td>
+                                    <td
+                                        style="padding: 4px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                        7.707 ± 0.261</td>
+                                    <td
+                                        style="padding: 4px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                        6.055 ± 0.439</td>
+                                    <td style="padding: 4px; text-align: center; background: #fff;">8.877 ± 0.459</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #f1f5f9; background: #fafafa;">
+                                    <td
+                                        style="padding: 4px 8px; font-weight: 600; text-align: center; border-right: 1px solid #e2e8f0;">
+                                        Bagging</td>
+                                    <td style="padding: 4px; text-align: center; border-right: 1px dotted #f1f5f9;">
+                                        8.195 ± 0.292</td>
+                                    <td style="padding: 4px; text-align: center; border-right: 1px dotted #f1f5f9;">
+                                        6.123 ± 0.372</td>
+                                    <td style="padding: 4px; text-align: center;">8.787 ± 0.428</td>
+                                </tr>
+                                <tr
+                                    style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(47, 62, 122, 0.08)); border-top: 3px solid #3b82f6;">
+                                    <td
+                                        style="padding: 5px 8px; font-weight: 700; text-align: center; color: #1d4ed8; border-right: 1px solid #bae6fd;">
+                                        SVR</td>
+                                    <td
+                                        style="padding: 5px; text-align: center; color: #1d4ed8; font-weight: 700; border-right: 1px dotted #bae6fd;">
+                                        6.553 ± 0.199</td>
+                                    <td
+                                        style="padding: 5px; text-align: center; color: #1d4ed8; font-weight: 700; border-right: 1px dotted #bae6fd;">
+                                        5.788 ± 0.341</td>
+                                    <td style="padding: 5px; text-align: center; color: #1d4ed8; font-weight: 700;">
+                                        8.670 ± 0.453</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div style="text-align: center; opacity: 0.65; font-style: italic; margin-top: 10px;">
+                            Results of CI-related biomarker prediction across different ML models.
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 20px; font-size: 0.6em; margin-top: 20px;" class="fragment">
+                        <div
+                            style="flex: 1; padding: 6px 10px; background: rgba(47, 62, 122, 0.04); border-radius: 6px; border-left: 3px solid #2F3E7A;">
+                            Mean ± std over <strong>5-fold cross-validation</strong> on the training set
+                        </div>
+                        <div
+                            style="flex: 1; padding: 6px 10px; background: rgba(34, 197, 94, 0.06); border-radius: 6px; border-left: 3px solid #16a34a;">
+                            <strong style="color: #16a34a;">✓</strong> <strong>SVR</strong> achieves best MAE and lowest
+                            STD across all
+                            biomarkers
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Biomarker Prediction</h2>
+
+                    <div class="fragment" style="margin: 0px auto; width: 100%; overflow-x: auto; font-size: 0.45em;">
+                        <table
+                            style="width: 100%; border-collapse: separate; border-spacing: 0; border-radius: 10px; overflow: hidden; box-shadow: 0 3px 12px rgba(0,0,0,0.08); border: 1px solid #e2e8f0;">
+                            <thead>
+                                <tr>
+                                    <th rowspan="3"
+                                        style="font-size: 1.3em; text-align: center; background: #acaa35; color: #fff; font-weight: 600; vertical-align: middle; border-right: 1px solid rgba(255,255,255,0.2); padding: 6px 10px;">
+                                        Model</th>
+                                    <th colspan="3"
+                                        style="text-align: center; background: #e0f2fe; color: #0284c7; font-weight: 600; border-bottom: 1px solid #bae6fd; border-right: 1px solid #e2e8f0; padding: 4px;">
+                                        📁 Healthy Control</th>
+                                    <th colspan="6"
+                                        style="text-align: center; background: #ccfbf1; color: #0d9488; font-weight: 600; border-bottom: 1px solid #99f6e4; padding: 4px;">
+                                        🏥 Multiple Sclerosis</th>
+                                </tr>
+                                <tr>
+                                    <th colspan="3"
+                                        style="text-align: center; background: #e0f2fe; color: #0284c7; font-weight: 500; font-size: 0.9em; border-bottom: 1px solid #bae6fd; border-right: 1px solid #e2e8f0; padding: 3px;">
+                                        brain age</th>
+                                    <th colspan="3"
+                                        style="text-align: center; background: #ccfbf1; color: #0d9488; font-weight: 500; font-size: 0.9em; border-bottom: 1px solid #99f6e4; border-right: 1px solid #e2e8f0; padding: 3px;">
+                                        brain age</th>
+                                    <th colspan="3"
+                                        style="text-align: center; background: #ccfbf1; color: #0d9488; font-weight: 500; font-size: 0.9em; border-bottom: 1px solid #99f6e4; padding: 3px;">
+                                        SDMT</th>
+                                </tr>
+                                <tr style="background: #f8fafc;">
+                                    <th
+                                        style="padding: 3px 4px; text-align: center; color: #475569; border-right: 1px dotted #e2e8f0;">
+                                        MAE ↓</th>
+                                    <th
+                                        style="padding: 3px 4px; text-align: center; color: #475569; border-right: 1px dotted #e2e8f0;">
+                                        R² ↑</th>
+                                    <th
+                                        style="padding: 3px 4px; text-align: center; color: #475569; border-right: 1px solid #e2e8f0;">
+                                        RMSE ↓</th>
+                                    <th
+                                        style="padding: 3px 4px; text-align: center; color: #475569; border-right: 1px dotted #e2e8f0;">
+                                        MAE ↓</th>
+                                    <th
+                                        style="padding: 3px 4px; text-align: center; color: #475569; border-right: 1px dotted #e2e8f0;">
+                                        R² ↑</th>
+                                    <th
+                                        style="padding: 3px 4px; text-align: center; color: #475569; border-right: 1px solid #e2e8f0;">
+                                        RMSE ↓</th>
+                                    <th
+                                        style="padding: 3px 4px; text-align: center; color: #475569; border-right: 1px dotted #e2e8f0;">
+                                        MAE ↓</th>
+                                    <th
+                                        style="padding: 3px 4px; text-align: center; color: #475569; border-right: 1px dotted #e2e8f0;">
+                                        R² ↑</th>
+                                    <th style="padding: 3px 4px; text-align: center; color: #475569;">RMSE ↓</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Average baseline -->
+                                <tr style="border-bottom: 1px solid #f1f5f9;">
+                                    <td
+                                        style="padding: 4px 6px; font-weight: 600; text-align: center; background: #fff; border-right: 1px solid #e2e8f0; font-size: 0.9em;">
+                                        Average</td>
+                                    <td
+                                        style="padding: 3px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                        10.39</td>
+                                    <td
+                                        style="padding: 3px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                        -0.000</td>
+                                    <td
+                                        style="padding: 3px; text-align: center; background: #fff; border-right: 1px solid #e2e8f0;">
+                                        11.98</td>
+                                    <td
+                                        style="padding: 3px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                        7.153</td>
+                                    <td
+                                        style="padding: 3px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                        -0.000</td>
+                                    <td
+                                        style="padding: 3px; text-align: center; background: #fff; border-right: 1px solid #e2e8f0;">
+                                        9.129</td>
+                                    <td
+                                        style="padding: 3px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                        9.650</td>
+                                    <td
+                                        style="padding: 3px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                        -2.274</td>
+                                    <td style="padding: 3px; text-align: center; background: #fff;">11.96</td>
+                                </tr>
+                                <!-- DL models header -->
+                                <tr style="border-bottom: 1px solid #e2e8f0;">
+                                    <td colspan="10"
+                                        style="padding: 3px 8px; font-weight: 700; text-align: left; background: #eef2ff; color: #2F3E7A; font-size: 0.9em;">
+                                        Deep Learning Models</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #f1f5f9;">
+                                    <td
+                                        style="padding: 4px 6px; font-weight: 600; text-align: center; background: #fff; border-right: 1px solid #e2e8f0; font-size: 0.9em;">
+                                        ResNet</td>
+                                    <td
+                                        style="padding: 3px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                        6.484</td>
+                                    <td
+                                        style="padding: 3px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                        0.541</td>
+                                    <td
+                                        style="padding: 3px; text-align: center; background: #fff; border-right: 1px solid #e2e8f0;">
+                                        8.221</td>
+                                    <td
+                                        style="padding: 3px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                        5.691</td>
+                                    <td
+                                        style="padding: 3px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                        0.406</td>
+                                    <td
+                                        style="padding: 3px; text-align: center; background: #fff; border-right: 1px solid #e2e8f0;">
+                                        7.112</td>
+                                    <td
+                                        style="padding: 3px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                        9.132</td>
+                                    <td
+                                        style="padding: 3px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                        0.095</td>
+                                    <td style="padding: 3px; text-align: center; background: #fff;">11.42</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #f1f5f9; background: #fafafa;">
+                                    <td
+                                        style="padding: 4px 6px; font-weight: 600; text-align: center; border-right: 1px solid #e2e8f0; font-size: 0.9em;">
+                                        DenseNet</td>
+                                    <td
+                                        style="padding: 3px; text-align: center; font-weight: 700; color: #1d4ed8; border-right: 1px dotted #f1f5f9;">
+                                        6.063</td>
+                                    <td
+                                        style="padding: 3px; text-align: center; font-weight: 700; color: #1d4ed8; border-right: 1px dotted #f1f5f9;">
+                                        0.574</td>
+                                    <td
+                                        style="padding: 3px; text-align: center; font-weight: 700; color: #1d4ed8; border-right: 1px solid #e2e8f0;">
+                                        7.901</td>
+                                    <td style="padding: 3px; text-align: center; border-right: 1px dotted #f1f5f9;">
+                                        5.544</td>
+                                    <td style="padding: 3px; text-align: center; border-right: 1px dotted #f1f5f9;">
+                                        0.413</td>
+                                    <td style="padding: 3px; text-align: center; border-right: 1px solid #e2e8f0;">6.978
+                                    </td>
+                                    <td style="padding: 3px; text-align: center; border-right: 1px dotted #f1f5f9;">
+                                        9.023</td>
+                                    <td style="padding: 3px; text-align: center; border-right: 1px dotted #f1f5f9;">
+                                        0.108</td>
+                                    <td style="padding: 3px; text-align: center;">11.35</td>
+                                </tr>
+                                <!-- VAE variants header -->
+                                <tr style="border-bottom: 1px solid #e2e8f0;">
+                                    <td colspan="10"
+                                        style="padding: 3px 8px; font-weight: 700; text-align: left; background: #eef2ff; color: #2F3E7A; font-size: 0.9em;">
+                                        VAE Variants</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #f1f5f9;">
+                                    <td
+                                        style="padding: 4px 6px; font-weight: 600; text-align: center; background: #fff; border-right: 1px solid #e2e8f0; font-size: 0.9em;">
+                                        AE</td>
+                                    <td
+                                        style="padding: 3px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                        7.346</td>
+                                    <td
+                                        style="padding: 3px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                        0.422</td>
+                                    <td
+                                        style="padding: 3px; text-align: center; background: #fff; border-right: 1px solid #e2e8f0;">
+                                        9.112</td>
+                                    <td
+                                        style="padding: 3px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                        5.704</td>
+                                    <td
+                                        style="padding: 3px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                        0.399</td>
+                                    <td
+                                        style="padding: 3px; text-align: center; background: #fff; border-right: 1px solid #e2e8f0;">
+                                        7.078</td>
+                                    <td
+                                        style="padding: 3px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                        9.220</td>
+                                    <td
+                                        style="padding: 3px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                        0.056</td>
+                                    <td style="padding: 3px; text-align: center; background: #fff;">11.62</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #f1f5f9; background: #fafafa;">
+                                    <td
+                                        style="padding: 4px 6px; font-weight: 600; text-align: center; border-right: 1px solid #e2e8f0; font-size: 0.9em;">
+                                        VAE</td>
+                                    <td style="padding: 3px; text-align: center; border-right: 1px dotted #f1f5f9;">
+                                        7.862</td>
+                                    <td style="padding: 3px; text-align: center; border-right: 1px dotted #f1f5f9;">
+                                        0.201</td>
+                                    <td style="padding: 3px; text-align: center; border-right: 1px solid #e2e8f0;">10.71
+                                    </td>
+                                    <td style="padding: 3px; text-align: center; border-right: 1px dotted #f1f5f9;">
+                                        7.094</td>
+                                    <td style="padding: 3px; text-align: center; border-right: 1px dotted #f1f5f9;">
+                                        0.010</td>
+                                    <td style="padding: 3px; text-align: center; border-right: 1px solid #e2e8f0;">9.081
+                                    </td>
+                                    <td style="padding: 3px; text-align: center; border-right: 1px dotted #f1f5f9;">
+                                        9.622</td>
+                                    <td style="padding: 3px; text-align: center; border-right: 1px dotted #f1f5f9;">
+                                        0.020</td>
+                                    <td style="padding: 3px; text-align: center;">11.84</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #f1f5f9;">
+                                    <td
+                                        style="padding: 4px 6px; font-weight: 600; text-align: center; background: #fff; border-right: 1px solid #e2e8f0; font-size: 0.9em;">
+                                        \(\beta\)-VAE</td>
+                                    <td
+                                        style="padding: 3px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                        7.520</td>
+                                    <td
+                                        style="padding: 3px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                        0.305</td>
+                                    <td
+                                        style="padding: 3px; text-align: center; background: #fff; border-right: 1px solid #e2e8f0;">
+                                        9.782</td>
+                                    <td
+                                        style="padding: 3px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                        6.309</td>
+                                    <td
+                                        style="padding: 3px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                        0.251</td>
+                                    <td
+                                        style="padding: 3px; text-align: center; background: #fff; border-right: 1px solid #e2e8f0;">
+                                        7.901</td>
+                                    <td
+                                        style="padding: 3px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                        9.252</td>
+                                    <td
+                                        style="padding: 3px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                        0.051</td>
+                                    <td style="padding: 3px; text-align: center; background: #fff;">11.65</td>
+                                </tr>
+                                <!-- Our model -->
+                                <tr
+                                    style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(47, 62, 122, 0.08)); border-top: 3px solid #3b82f6;">
+                                    <td
+                                        style="padding: 5px 6px; font-weight: 700; text-align: center; color: #1d4ed8; border-right: 1px solid #bae6fd; font-size: 0.9em;">
+                                        InfoVAE-Med3D</td>
+                                    <td
+                                        style="padding: 4px; text-align: center; color: #1d4ed8; font-weight: 500; border-right: 1px dotted #bae6fd;">
+                                        6.673</td>
+                                    <td
+                                        style="padding: 4px; text-align: center; color: #1d4ed8; font-weight: 500; border-right: 1px dotted #bae6fd;">
+                                        0.525</td>
+                                    <td
+                                        style="padding: 4px; text-align: center; color: #1d4ed8; font-weight: 500; border-right: 1px solid #bae6fd;">
+                                        8.439</td>
+                                    <td
+                                        style="padding: 4px; text-align: center; color: #1d4ed8; font-weight: 700; border-right: 1px dotted #bae6fd;">
+                                        5.520</td>
+                                    <td
+                                        style="padding: 4px; text-align: center; color: #1d4ed8; font-weight: 700; border-right: 1px dotted #bae6fd;">
+                                        0.422</td>
+                                    <td
+                                        style="padding: 4px; text-align: center; color: #1d4ed8; font-weight: 700; border-right: 1px solid #bae6fd;">
+                                        6.936</td>
+                                    <td
+                                        style="padding: 4px; text-align: center; color: #1d4ed8; font-weight: 700; border-right: 1px dotted #bae6fd;">
+                                        8.923</td>
+                                    <td
+                                        style="padding: 4px; text-align: center; color: #1d4ed8; font-weight: 700; border-right: 1px dotted #bae6fd;">
+                                        0.111</td>
+                                    <td style="padding: 4px; text-align: center; color: #1d4ed8; font-weight: 700;">
+                                        11.28</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div style="text-align: center; opacity: 0.65; margin-top: 10px; font-style: italic;">
+                            CI-related biomarker predictions using latent representations from our model vs. VAE
+                            variants and DL models.
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 20px; font-size: 0.55em; margin-top: 15px;" class="fragment">
+                        <div
+                            style="flex: 1; padding: 6px 10px; background: rgba(34, 197, 94, 0.06); border-radius: 6px; border-left: 3px solid #16a34a;">
+                            <strong style="color: #16a34a;">✓</strong>
+                            InfoVAE-Med3D outperforms all VAE variants, competitive
+                            with DL models
+                        </div>
+                        <div
+                            style="flex: 1; padding: 10px 10px; background: rgba(47, 62, 122, 0.04); border-radius: 6px; border-left: 3px solid #2F3E7A;">
+                            <strong>🎯 RQ3 Answered </strong>: <span class="keyword">Effective</span> CI-related
+                            biomarker predictions
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Interpretability</h2>
+
+                    <div class="fragment">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <!-- Top-left: BrainAge Age -->
+                            <div style="text-align: center;">
+                                <img src="img/thesis/BrainAge_age.png"
+                                    style="width: 100%; border-radius: 6px; display: block;">
+                            </div>
+                            <!-- Top-right: Prague Age -->
+                            <div style="text-align: center;">
+                                <img src="img/thesis/Prague_age.png"
+                                    style="width: 100%; border-radius: 6px; display: block;">
+                            </div>
+                        </div>
+                        <div style="font-size: 0.45em; text-align: center; margin-top: -15px;"> Healthy Control (left) &
+                            Multiple Sclerosis (right): 2D latent projections colored by age</div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <!-- Bottom-left: Prague SDMT -->
+                        <div style="text-align: center;" class="fragment">
+                            <img src="img/thesis/Prague_sdmt.png"
+                                style="width: 100%; border-radius: 6px; display: block;">
+                            <div style="font-size: 0.4em; margin-top: -15px;"> 2D latent projections colored by SDMT
+                                scores in Multiple Sclerosis
+                            </div>
+                        </div>
+                        <!-- Bottom-right: text findings -->
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; justify-content: center; gap: 20px; padding: 20px;">
+                            <div
+                                style="font-size: 0.5em; padding: 10px 10px; background: linear-gradient(135deg, rgba(34, 197, 94, 0.04), rgba(59, 130, 246, 0.06)); border-radius: 6px; border-left: 3px solid #16a34a;">
+                                Smooth transitions in 2D latent space, age shows clearer patterns than SDMT
+                            </div>
+                            <div
+                                style="font-size: 0.6em; padding: 10px 10px; background: rgba(47, 62, 122, 0.04); border-radius: 6px; border-left: 3px solid #2F3E7A;">
+                                <strong>🎯 RQ3 Answered:</strong> <span class="keyword">Interpretability</span>
+                            </div>
+
+                        </div>
+                    </div>
+                </section>
+
+
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span style="color: #2F3E7A; font-size: 1.5em;">04</span><br />
+                        Conclusion
+                    </h1>
+                </section>
+
+                <!-- Main Findings -->
+                <section>
+                    <h2>Main Findings</h2>
+                    <div style="display: flex; flex-direction: column; gap: 10px; font-size: 0.6em;" class="fragment">
+                        <div
+                            style="display: flex; align-items: stretch; gap: 0; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                            <div
+                                style="background: linear-gradient(135deg, #1a6b3c, #22c55e); color: #fff; font-weight: 700; padding: 12px 15px; display: flex; align-items: center; min-width: 50px; justify-content: center;">
+                                RQ1</div>
+                            <div style="padding: 12px 15px; background: #fff; flex: 1;">
+                                InfoVAE-Med3D captures more brain structural information, outperforming baseline
+                                reconstruction.
+                            </div>
+                        </div>
+                        <div
+                            style="display: flex; align-items: stretch; gap: 0; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                            <div
+                                style="background: linear-gradient(135deg, #1a6b3c, #22c55e); color: #fff; font-weight: 700; padding: 12px 15px; display: flex; align-items: center; min-width: 50px; justify-content: center;">
+                                RQ2</div>
+                            <div style="padding: 12px 15px; background: #fff; flex: 1;">
+                                Latent space encodes clinically meaningful features (gender, GM/WM volume).
+                            </div>
+                        </div>
+                        <div
+                            style="display: flex; align-items: stretch; gap: 0; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                            <div
+                                style="background: linear-gradient(135deg, #1a6b3c, #22c55e); color: #fff; font-weight: 700; padding: 12px 15px; display: flex; align-items: center; min-width: 50px; justify-content: center;">
+                                RQ3</div>
+                            <div style="padding: 12px 15px; background: #fff; flex: 1;">
+                                Effective CI-related biomarker prediction (SDMT, brain age) with interpretability.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="fragment question-box"
+                        style="margin-top: 40px; font-size: 0.6em; background: rgba(34, 197, 94, 0.05); border-left: 4px solid #16a34a;">
+                        <strong style="color: #16a34a;">✅ Hypothesis Validated</strong>
+                        <div style="margin-top: 10px;">
+                            Latent representation learning successfully encodes meaningful <span
+                                class="keyword">structural</span> and <span class="keyword">demographic</span>
+                            information from 3D brain MRI, enabling <span class="keyword">effective</span> and <span
+                                class="keyword">interpretable</span> CI-related biomarker predictions.
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Limitations & Future Work -->
+                <section>
+                    <h2>Limitations & Future Work</h2>
+
+                    <!-- Limitations -->
+                    <div class="fragment"
+                        style="padding: 10px 20px; border-radius: 10px; background: rgba(239, 68, 68, 0.04); border-left: 4px solid #ef4444;">
+                        <strong style="color: #ef4444;">⚠️ Limitations</strong>
+                        <div
+                            style="margin-top: 10px; font-size: 0.5em; display: flex; flex-direction: column; gap: 6px;">
+                            <div style="padding: 6px 10px; background: rgba(239, 68, 68, 0.08); border-radius: 5px;">
+                                <strong>VAE-inherent</strong>: blurred reconstructions, limiting visual image-latent
+                                interpretation.
+                            </div>
+                            <div style="padding: 6px 10px; background: rgba(239, 68, 68, 0.08); border-radius: 5px;">
+                                <strong>Limited scope</strong>: focused on CI biomarker predictions, without disease
+                                severity and progression prediction.
+                            </div>
+                            <div style="padding: 6px 10px; background: rgba(239, 68, 68, 0.08); border-radius: 5px;">
+                                <strong>Single modality</strong>: only T1-weighted MRI is used, while other modalities
+                                (e.g., T2, FLAIR) may provide complementary information.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Future Work -->
+                    <div class="fragment"
+                        style="padding: 10px 20px; border-radius: 10px; background: rgba(34, 197, 94, 0.04); border-left: 4px solid #16a34a; margin-top: 30px;">
+                        <strong style="color: #16a34a;">🌱 Future Work</strong>
+                        <div
+                            style="margin-top: 10px; font-size: 0.5em; display: flex; flex-direction: column; gap: 6px;">
+                            <div style="padding: 6px 10px; background: rgba(34, 197, 94, 0.08); border-radius: 5px;">
+                                <strong>Advanced GenAI</strong>: Explore stronger generative models for improved latent
+                                representations with controllable latent manipulation.
+                            </div>
+
+                            <div style="padding: 6px 10px; background: rgba(34, 197, 94, 0.08); border-radius: 5px;">
+                                <strong>Multi-modal MRI</strong>: Incorporate additional MRI modalities (T2, FLAIR) for
+                                richer and more robust representations.
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <section
+                style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                <h1
+                    style="color: #2F3E7A; font-size: 1.5em; margin-bottom: 8px; letter-spacing: 1px; font-weight: 600;">
+                    Thank You for Listening
+                </h1>
+
+                <div style="font-size: 0.5em; opacity: 0.5; margin-bottom: 50px;">
+                    This work is currently under peer review at the journal Neuroinformatics Journal under the title:
+                    <div style="font-style: italic;"> Latent Representation Learning from 3D Brain MRI for
+                        Interpretable Prediction in Multiple
+                        Sclerosis.
+                    </div>
+                </div>
+
+                <!-- Q&A badge -->
+                <div style="width: 70%; margin: 0 auto;">
+                    <div
+                        style="padding: 14px 0; border-radius: 8px; background: linear-gradient(135deg, #2F3E7A, #3b82f6); font-size: 0.9em; font-weight: 600; color: #fff; letter-spacing: 2px; box-shadow: 0 4px 15px rgba(47, 62, 122, 0.3); text-align: center;">
+                        Q & A
+                    </div>
+                </div>
+            </section>
+
+            <div class="footer">
+                Master's Thesis Defence — May, 2026
+            </div>
+        </div>
+    </div>
+    <script src="revealjs/dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            controlsLayout: "edges",
+            slideNumber: true,
+            hashOneBasedIndex: true,
+            hash: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX],
+        });
+    </script>
+</body>
+
+</html>

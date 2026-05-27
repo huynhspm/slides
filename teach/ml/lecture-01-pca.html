@@ -1,0 +1,1493 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/png" href="../../favicon.png">
+
+    <title>PCA</title>
+    <link rel="stylesheet" href="revealjs/dist/reset.css" />
+    <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+    <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+    <link rel="stylesheet" href="slide-style.css" />
+</head>
+
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <section>
+                    <h1>Machine Learning</h1>
+                    <h3>Dimensionality Reduction (Principal Component Analysis)</h3>
+                    <p>UAI · UET · VNU</p>
+                    <p>Teacher: Trinh Ngoc Huynh </p>
+                    <p>Email: <a href="mailto:huynhtn@vnu.edu.vn">huynhtn@vnu.edu.vn</a></p>
+                </section>
+
+                <section>
+                    <h2>Content</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; font-size: 0.7em;">
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #b15a2b;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #b15a2b; min-width: 40px; text-align: center;">1</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Intuition</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Why do we need PCA? Visual
+                                    motivation</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #2a7ae2; min-width: 40px; text-align: center;">2</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Problem</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Mathematical formulation &
+                                    optimization</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #27ae60; min-width: 40px; text-align: center;">3</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Algorithm</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Step-by-step
+                                    implementation</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #e67e22; min-width: 40px; text-align: center;">4</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Applications</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Real-world use cases &
+                                    examples</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #e74c3c;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #e74c3c; min-width: 40px; text-align: center;">5</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Limitations</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">When PCA falls short</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">1.</span><br />
+                        Intuition
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Analyzing the Data</h2>
+
+                    <div style="display: flex; gap: 40px; align-items: center; margin-top: 30px;">
+                        <div style="flex: 1.5; text-align: left; font-size: 0.9em;">
+                            <ul>
+                                <li>Consider a standard data cloud in a 2D space.</li>
+                                <li class="fragment" style="margin-top: 15px;">What can be observed about the current
+                                    coordinate axes?</li>
+                                <li class="fragment" style="margin-top: 15px;">How is the data spread out?</li>
+                            </ul>
+                        </div>
+
+                        <div style="flex: 1.0; text-align: center;">
+                            <img src="img/lec-01/normal_data.png" alt="Normal data in 2D space"
+                                style="width: 100%; max-height: 300px; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); margin: 0;" />
+                        </div>
+                    </div>
+
+                    <div class="question-box fragment"
+                        style="margin-top: 40px; font-size: 0.8em; padding: 10px 20px; width: 80%; margin-left: auto; margin-right: auto;">
+
+                        <p style="margin: 0;"><strong>Question:</strong> What happens if we view this data through
+
+                            different orthogonal coordinate systems?</p>
+
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Different Perspectives</h2>
+
+                    <div style="display: flex; gap: 40px; align-items: center; margin-top: 30px;">
+                        <div style="flex: 1.5; text-align: left; font-size: 0.9em;">
+                            <ul>
+                                <li class="fragment">We can project the exact same data onto different spatial
+                                    dimensions.</li>
+                                <li class="fragment" style="margin-top: 15px;">Depending on the chosen axis, the
+                                    projected data will have different levels of spread.</li>
+                            </ul>
+                        </div>
+
+                        <div style="flex: 1.0; text-align: center;">
+                            <img src="img/lec-01/rotated_data.png" alt="Rotated data in 2D space"
+                                style="width: 100%; max-height: 450px; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); margin: 0;" />
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>The Problem PCA Solves</h2>
+
+                    <div class="question-box"
+                        style="margin-bottom: 40px; font-size: 0.8em; padding: 15px 25px; width: 85%; margin-left: auto; margin-right: auto;">
+                        <p style="margin: 0;">How do we automatically find the specific coordinate system where the data
+                            is <strong>most spread out</strong>?</p>
+                    </div>
+
+                    <div style="display: flex; gap: 40px; align-items: center;">
+
+                        <div style="flex: 1.3; text-align: left; font-size: 0.7em;">
+                            <ul>
+                                <li class="fragment" style="margin-bottom: 20px;">
+                                    <strong>PCA</strong> seeks to discover these optimal
+                                    orthogonal axes.
+                                </li>
+                                <li class="fragment">
+                                    <strong>Core Goal:</strong> Maximize the <span class="keyword">variance</span> of
+                                    the data when projected onto the new dimensions.
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div style="flex: 1.2; text-align: center;">
+                            <img src="img/lec-01/axes_3d.png" alt="PCA Ellipse and Rotation"
+                                style="width: 100%; max-height: 300px; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); margin: 0;" />
+                        </div>
+
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">2.</span><br />
+                        Problem
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Definition</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; font-size: 0.7em;">
+
+                        <div class="fragment"
+                            style="display: flex; gap: 20px; align-items: flex-start; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #b15a2b;">
+                            <div
+                                style="min-width: 48px; height: 48px; background: #b15a2b; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1.2em;">
+                                1</div>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Objective</strong>
+                                <p style="margin: 6px 0 0 0; color: #555; line-height: 1.5;">
+                                    Find a new coordinate system where axes are ranked
+                                    by the amount of <span class="keyword">variance</span> they capture.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; gap: 20px; align-items: flex-start; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <div
+                                style="min-width: 48px; height: 48px; background: #2a7ae2; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1.2em;">
+                                2</div>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Projection</strong>
+                                <p style="margin: 6px 0 0 0; color: #555; line-height: 1.5;">
+                                    How do we project data onto a candidate axis?
+                                    <br>How do we measure the variance of the projected data?
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; gap: 20px; align-items: flex-start; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <div
+                                style="min-width: 48px; height: 48px; background: #27ae60; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1.2em;">
+                                3</div>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Iterative</strong>
+                                <p style="margin: 6px 0 0 0; color: #555; line-height: 1.5;">
+                                    If finding the first direction (PC1), how do we find the next one (PC2)
+                                    that captures the second-largest variance?
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Projection</h2>
+
+                    <div
+                        style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px; font-size: 0.65em; text-align: left;">
+
+                        <!-- Step 1 & 2 side by side -->
+                        <div class="fragment" style="display: flex; gap: 30px; align-items: stretch;">
+
+                            <!-- Step 1 -->
+                            <div
+                                style="flex: 1; background: #f8f9fa; padding: 10px; border-radius: 10px; border-top: 3px solid #b15a2b; display: flex; flex-direction: column; align-items: center; text-align: center;">
+                                <div
+                                    style="width: 40px; height: 40px; background: #b15a2b; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1.1em; margin-bottom: 10px;">
+                                    1</div>
+                                <strong style="color: #2c3e50; font-size: 1.05em;">Choose a direction</strong>
+                                <p style="margin: 8px 0 0 0; color: #666; font-size: 0.9em;">
+                                    Let $w$ be a candidate axis (unit vector).
+                                </p>
+                            </div>
+
+                            <!-- Arrow -->
+                            <div
+                                style="display: flex; align-items: center; font-size: 1.5em; color: #2a7ae2; flex: 0 0 auto;">
+                                →</div>
+
+                            <!-- Step 2 -->
+                            <div
+                                style="flex: 1; background: #eef5fc; padding: 10px; border-radius: 10px; border-top: 3px solid #2a7ae2; display: flex; flex-direction: column; align-items: center; text-align: center;">
+                                <div
+                                    style="width: 40px; height: 40px; background: #2a7ae2; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1.1em; margin-bottom: 10px;">
+                                    2</div>
+                                <strong style="color: #2c3e50; font-size: 1.05em;">Project each sample</strong>
+                                <p
+                                    style="margin: 10px 0; text-align: center; font-size: 1.3em; font-weight: 600; color: #2a7ae2;">
+                                    $x_{\text{proj}} = Xw$
+                                </p>
+                                <p style="margin: 0; color: #666; font-size: 0.8em;">
+                                    Data becomes scalar values on the new axis.
+                                </p>
+                            </div>
+
+                        </div>
+
+                        <!-- Image -->
+                        <div class="fragment" style="text-align: center; margin-top: 5px;">
+                            <img src="img/lec-01/projection.png" alt="Projection of data onto a candidate PCA axis"
+                                style="width: 100%; max-height: 280px; object-fit: contain; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.15);" />
+                        </div>
+
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Finding the First Component</h2>
+
+                    <div style="margin-top: 40px; font-size: 0.9em;">
+                        <div style="display: flex; gap: 60px; align-items: flex-start;">
+
+                            <div style="flex: 1;" class="fragment">
+                                <strong>1. Projection</strong>
+                                <p style="text-align: center; margin: 15px 0; font-size: 0.7em;">
+                                    $x_1 = X w_1$
+                                </p>
+                                <p style="font-size: 0.7em; color: #666; text-align: center;">
+                                    $X \in \mathbb{R}^{N \times d}, \; w_1 \in \mathbb{R}^{d}$
+                                </p>
+                            </div>
+
+                            <div style="flex: 1;" class="fragment">
+                                <strong>2. Objective</strong>
+                                <p style="text-align: center; margin: 15px 0; font-size: 0.7em;">
+                                    $\max_{w_1} \mathrm{Var}(x_1)
+                                    = \max_{w_1} w_1^T C w_1$
+                                </p>
+                                <p style="font-size: 0.7em; color: #666; text-align: center;">
+                                    $C \in \mathbb{R}^{d \times d}$ : covariance matrix
+                                </p>
+                            </div>
+
+                        </div>
+
+                        <div style="display: flex; gap: 60px; align-items: flex-start; margin-top: 40px;">
+                            <div style="flex: 1;" class="fragment">
+                                <strong>3. Constraint</strong>
+                                <p style="text-align: center; margin: 15px 0; font-size: 0.7em;">
+                                    $\parallel w_1 \parallel =1 \to w_1^T w_1 = 1$
+                                </p>
+                                <p style="font-size: 0.7em; color: #666; text-align: center;">
+                                    Prevents arbitrary scaling
+                                </p>
+                            </div>
+
+                            <div style="flex: 1;" class=" fragment">
+                                <strong>4. Formula</strong>
+                                <p style="text-align: center; margin: 15px 0; font-size: 0.7em;">
+                                    $\max_{w_1} \; w_1^T C w_1$
+                                    <br><br>
+                                    $\text{s.t. } w_1^T w_1 = 1$
+                                </p>
+                                <p style="font-size: 0.7em; color: #f86605; text-align: center;" class=" fragment">
+                                    Solve via Lagrange multipliers
+                                </p>
+                            </div>
+
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Optimization Problem</h2>
+
+                    <div style="margin-top: 30px; font-size: 0.6em; text-align: left;">
+                        <div class="fragment" style="margin-bottom: 15px;">
+                            <p><strong>1. Construct the Lagrangian Function:</strong></p>
+                            <p style="text-align: center; margin: 5px 0;">
+                                $$\mathcal{L}(w, \lambda) = w^T C w - \lambda (w^T w - 1)$$
+                            </p>
+                            <p style="color: #666; text-align: center;">
+                                Where $\lambda$ is the Lagrange multiplier for the unit length constraint.
+                            </p>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; gap: 40px; align-items: center; margin-bottom: 30px;">
+                            <div style="flex: 1;">
+                                <p><strong>2. Solution:</strong></p>
+                                <ul style="margin-top: 10px; margin-bottom: 0;">
+                                    <li>Set the derivative to $0$.</li>
+                                    <li><strong>Result:</strong> The Eigenvalue Problem.</li>
+                                </ul>
+                            </div>
+                            <div style="flex: 1;">
+                                <div
+                                    style="background: #f8f9fa; padding: 5px; border-radius: 8px; border-left: 4px solid #2a7ae2;">
+                                    <p style="text-align: center; color: #2a7ae2; font-weight: bold; margin: 0;">
+                                        $$Cw = \lambda w$$
+                                        $$\to w^TCw = \lambda$$
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="question-box fragment"
+                            style="padding: 5px; border-left: 5px solid #e67e22; background-color: #fffaf0;">
+                            <p style="margin: 0">
+                                <strong>Conclusion:</strong> We obtain multiple solution pairs $(\lambda_1, w_1),
+                                (\lambda_2, w_2), \dots$
+                                <br>&#8226; The variance along each $w_i$ is given by its corresponding <span
+                                    class="keyword">eigenvalue</span> $\lambda_i$.
+                                <br>&#8226; <strong>Action:</strong> Choose the eigenvector with the <strong>largest
+                                    $\lambda$</strong> as principal component ($w_1$).
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2> The Second Component</h2>
+
+                    <div style="margin-top: 40px; font-size: 0.6em; text-align: left;">
+
+                        <div style="display: flex; gap: 40px; margin-bottom: 40px;" class="fragment">
+
+                            <div style="flex: 0.9;">
+                                <strong>1. Objective</strong>
+                                <p style="margin-top: 5px; color: #666">Maximize remaining variance.
+                                </p>
+                                <div
+                                    style="background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #2a7ae2; margin-top: 10px;">
+                                    <p style="text-align: center; margin: 0">
+                                        $$\max_{w_2} w_2^T C w_2$$
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div style="flex: 1.1;">
+                                <strong>2. Constraints</strong>
+                                <p style="margin-top: 5px; color: #666">$w_2$ captures new,
+                                    independent information.</p>
+                                <div
+                                    style="background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #2a7ae2; margin-top: 10px;">
+                                    <p style="text-align: center; margin: 0">
+                                        $$w_2^T w_2 = 1 \quad \text{and} \quad w_2^T w_1 = 0$$
+                                    </p>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div style="display: flex; gap: 40px; align-items: flex-start;" class="fragment">
+
+                            <div style="flex: 1;">
+                                <strong>3. Solution</strong>
+                                <p style="margin-top: 5px; color: #666">From the Lagrangian
+                                    derivative $= 0$:</p>
+                                <div
+                                    style="background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #2a7ae2; margin-top: 10px;">
+                                    <p style="text-align: center; color: #2a7ae2; font-weight: bold; margin: 0;">
+                                        $$C w_2 = \lambda w_2 + \mu w_1$$
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div style="flex: 1; border-left:#ccc; padding-left: 30px;">
+                                <strong>4. Property:</strong>
+                                <p style="margin-top: 5px; color: #666;">$C = C^T$ and $w_2 \perp w_1 \rightarrow
+                                    \mu = 0$</p>
+                                <div
+                                    style="background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #2a7ae2; margin-top: 10px;">
+                                    <p style="text-align: center; color: #2a7ae2; font-weight: bold; margin: 0;">
+                                        $$C w_2 = \lambda w_2$$
+                                    </p>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Geometric Interpretation</h2>
+
+                    <div style="margin-top: 30px; font-size: 0.6em; text-align: left;">
+
+                        <div style="display: flex; gap: 20px; align-items: center; margin-bottom: 15px;">
+
+                            <div style="flex: 1; display: flex; flex-direction: column; gap: 12px;">
+                                <div class="fragment"
+                                    style="display: flex; gap: 14px; align-items: flex-start; background: #eef5fc; padding: 14px 18px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                                    <div
+                                        style="min-width: 36px; height: 36px; background: #2a7ae2; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 0.75em;">
+                                        1</div>
+                                    <div>
+                                        <strong style="color: #2a7ae2; font-size: 1.05em;">PC1 ($w_1$)</strong>
+                                        <p style="margin: 4px 0 0 0; color: #555; font-size: 0.9em; line-height: 1.4;">
+                                            Direction of <strong>maximum variance</strong>.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="fragment"
+                                    style="display: flex; gap: 14px; align-items: flex-start; background: #fffaf0; padding: 14px 18px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                                    <div
+                                        style="min-width: 36px; height: 36px; background: #e67e22; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 0.75em;">
+                                        2</div>
+                                    <div>
+                                        <strong style="color: #e67e22; font-size: 1.05em;">PC2 ($w_2$)</strong>
+                                        <p style="margin: 4px 0 0 0; color: #555; font-size: 0.9em; line-height: 1.4;">
+                                            Maximum remaining variance,
+                                            <br><strong>orthogonal</strong> to PC1 ($w_2 \perp w_1$).
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="flex: 1.2; text-align: center;">
+                                <img src="img/lec-01/pca_geometry.png" alt="PCA Geometric Interpretation"
+                                    style="width: 100%; max-height: 400px; object-fit: contain; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.15);" />
+                            </div>
+
+                        </div>
+
+                        <div class="fragment question-box"
+                            style="padding: 20px; border-left: 5px solid #2c3e50; background: #f4f6f8; text-align: center;">
+                            <p style="margin: 0; font-size: 1.1em;">
+                                <strong style="color: #2c3e50;">Key Idea:</strong> Rotate the coordinate system to align
+                                with the data!
+                            </p>
+                        </div>
+
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Final Insight</h2>
+
+                    <div style="margin-top: 20px; text-align: center;">
+
+                        <div class="fragment"
+                            style="display: flex; align-items: stretch; gap: 10px; margin-bottom: 30px;">
+
+                            <div
+                                style="flex: 1; background: #f8f9fa; padding: 10px; border-radius: 8px; border-left: 4px solid #ccc; display: flex; flex-direction: column; justify-content: center;">
+                                <strong style="color: #666; font-size: 0.8em; margin-bottom: 10px;">Optimization
+                                    View</strong>
+                                <p style="margin: 0; font-size: 0.6em;">PC1 $\rightarrow$ PC2 $\rightarrow \dots
+                                    \rightarrow$ PCn</p>
+                                <p style="color: #888; font-size: 0.6em; margin-top: 10px; margin-bottom: 0;">
+                                    Sequential maximization with orthogonality constraints.
+                                </p>
+                            </div>
+
+                            <div style="display: flex; align-items: center; color: #2a7ae2; font-size: 0.7em;">
+                                <strong>$\implies$</strong>
+                            </div>
+
+                            <div
+                                style="flex: 1.2; background: #eef5fc; padding: 10px; border-radius: 8px; border-left: 4px solid #2a7ae2; display: flex; flex-direction: column; justify-content: center;">
+                                <strong style="color: #2a7ae2; font-size: 0.8em; margin-bottom: 10px;">Linear Algebra
+                                    View</strong>
+                                <p style="margin: 0; font-size: 0.6em;"><strong>Eigendecomposition</strong> solves all
+                                    at once!</p>
+                                <p style="color: #666; font-size: 0.6em; margin-top: 10px; margin-bottom: 0;">
+                                    Diagonalizing the covariance matrix.
+                                </p>
+                            </div>
+
+                        </div>
+
+                        <div class="fragment"
+                            style="background: #fff; padding: 10px; border-radius: 8px; border: 2px dashed #ccc; margin-bottom: 30px;">
+                            <p style="margin: 0; font-size: 0.8em;">
+                                <strong style="color: #2a7ae2;">Eigenvectors</strong> = Orthogonal Axes
+                                <span style="margin: 0 25px; color: #ccc;">|</span>
+                                <strong style="color: #e67e22;">Eigenvalues</strong> = Variance
+                            </p>
+                        </div>
+
+                        <div class="fragment"
+                            style="padding: 10px; border-left: 5px solid #e67e22; background-color: #fffaf0; border-radius: 4px; text-align: left;">
+                            <strong style="color: #d35400; font-size: 0.8em; display: block; margin-bottom: 8px;">Key
+                                Insight:</strong>
+                            <p style="margin: 0; color: #333; line-height: 1.5; font-size: 0.6em;">
+                                PCA is a <strong>rotation</strong> of the coordinate system that perfectly aligns the
+                                axes with the directions of maximum variance.
+                            </p>
+                        </div>
+
+                    </div>
+                </section>
+
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light" style="color: #888;">3.</span><br />
+                        Algorithm
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Input & Output</h2>
+
+                    <div style="margin-top: 20px; text-align: left; font-size: 0.6em">
+
+                        <!-- Input card -->
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 20px 24px; border-radius: 10px; border-left: 4px solid #2a7ae2; margin-bottom: 20px;">
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                                <div
+                                    style="width: 36px; height: 36px; background: #2a7ae2; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 0.85em;">
+                                    1</div>
+                                <strong style="font-size: 1.1em; color: #2a7ae2;">Input: The Data</strong>
+                            </div>
+                            <p style="margin: 6px 0 0 0; color: #333; line-height: 1.5;">
+                                A dataset matrix $X$ of size $N \times d$:
+                            </p>
+                            <div style="display: flex; gap: 16px; margin-top: 10px;">
+                                <div
+                                    style="flex: 1; background: #eef5fc; padding: 10px 14px; border-radius: 8px; text-align: center;">
+                                    <strong style="color: #2a7ae2;">$N$</strong>
+                                    <p style="margin: 2px 0 0 0; color: #666; font-size: 0.85em;">samples</p>
+                                </div>
+                                <div
+                                    style="flex: 1; background: #eef5fc; padding: 10px 14px; border-radius: 8px; text-align: center;">
+                                    <strong style="color: #2a7ae2;">$d$</strong>
+                                    <p style="margin: 2px 0 0 0; color: #666; font-size: 0.85em;">features</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Arrow -->
+                        <div class="fragment"
+                            style="text-align: center; font-size: 1.5em; color: #b15a2b; margin: 10px 0;">
+                            ↓</div>
+
+                        <!-- Output card -->
+                        <div class="fragment"
+                            style="background: #fffaf0; padding: 20px 24px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                                <div
+                                    style="width: 36px; height: 36px; background: #e67e22; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 0.85em;">
+                                    2</div>
+                                <strong style="font-size: 1.1em; color: #d35400;">Output: Principal Components</strong>
+                            </div>
+                            <div style="display: flex; gap: 16px; margin-top: 10px;">
+                                <div
+                                    style="flex: 1; background: #f8f9fa; padding: 10px 14px; border-radius: 8px; text-align: center;">
+                                    <strong style="color: #2c3e50;">New Axes $(W)$</strong>
+                                    <p style="margin: 2px 0 0 0; color: #666; font-size: 0.85em;">orthogonal directions
+                                        maximizing variance</p>
+                                </div>
+                                <div
+                                    style="flex: 1; background: #f8f9fa; padding: 10px 14px; border-radius: 8px; text-align: center;">
+                                    <strong style="color: #2c3e50;">Variances $(\Lambda)$</strong>
+                                    <p style="margin: 2px 0 0 0; color: #666; font-size: 0.85em;">decreasing
+                                        progressively</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- Algorithm Overview Pipeline -->
+                <section>
+                    <h2>Algorithm Overview</h2>
+
+                    <div style="margin-top: 15px; font-size: 0.62em; text-align: left;">
+
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+
+                            <div class="fragment"
+                                style="display: flex; align-items: center; gap: 14px; background: #f8f9fa; padding: 10px 20px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                                <div
+                                    style="min-width: 36px; height: 36px; background: #27ae60; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1em;">
+                                    1</div>
+                                <div style="flex: 1;">
+                                    <strong style="font-size: 1.05em; color: #2c3e50;">Center</strong>
+                                    <p style="margin: 2px 0 0 0; color: #888; font-size: 0.85em;">$X_c = X - \mu$</p>
+                                </div>
+                                <span style="color: #888; font-size: 0.8em;">Subtract mean</span>
+                            </div>
+
+                            <div class="fragment"
+                                style="display: flex; align-items: center; gap: 14px; background: #f8f9fa; padding: 10px 20px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                                <div
+                                    style="min-width: 36px; height: 36px; background: #27ae60; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1em;">
+                                    2</div>
+                                <div style="flex: 1;">
+                                    <strong style="font-size: 1.05em; color: #2c3e50;">Covariance</strong>
+                                    <p style="margin: 2px 0 0 0; color: #888; font-size: 0.85em;">$C =
+                                        \frac{1}{N}X_c^TX_c$</p>
+                                </div>
+                                <span style="color: #888; font-size: 0.8em;">Measure spread</span>
+                            </div>
+
+                            <div class="fragment"
+                                style="display: flex; align-items: center; gap: 14px; background: #f8f9fa; padding: 10px 20px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                                <div
+                                    style="min-width: 36px; height: 36px; background: #27ae60; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1em;">
+                                    3</div>
+                                <div style="flex: 1;">
+                                    <strong style="font-size: 1.05em; color: #2c3e50;">Eigendecomposition</strong>
+                                    <p style="margin: 2px 0 0 0; color: #888; font-size: 0.85em;">$C = W\Lambda W^T$</p>
+                                </div>
+                                <span style="color: #888; font-size: 0.8em;">Find axes</span>
+                            </div>
+
+                            <div class="fragment"
+                                style="display: flex; align-items: center; gap: 14px; background: #f8f9fa; padding: 10px 20px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                                <div
+                                    style="min-width: 36px; height: 36px; background: #27ae60; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1em;">
+                                    4</div>
+                                <div style="flex: 1;">
+                                    <strong style="font-size: 1.05em; color: #2c3e50;">Project</strong>
+                                    <p style="margin: 2px 0 0 0; color: #888; font-size: 0.85em;">$Z = X_c W$</p>
+                                </div>
+                                <span style="color: #888; font-size: 0.8em;">Transform data</span>
+                            </div>
+
+                        </div>
+
+                        <div class="fragment"
+                            style="margin-top: 14px; padding: 14px 20px; border-left: 5px solid #b15a2b; background: #f7efe6; border-radius: 4px;">
+                            <p style="margin: 0; font-size: 1em;">
+                                <strong style="color: #b15a2b;">Summary:</strong>
+                                Center → Measure → Decompose → Transform
+                            </p>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- Step 1 -->
+                <section>
+                    <h2>Step 1: Center the Data</h2>
+
+                    <div style="margin-top: 10px; font-size: 0.62em; text-align: left;">
+
+                        <!-- Progress bar -->
+                        <div class="fragment" style="display: flex; gap: 6px; margin-bottom: 15px;">
+                            <div style="flex: 1; height: 6px; background: #27ae60; border-radius: 3px;"></div>
+                            <div style="flex: 1; height: 6px; background: #ddd; border-radius: 3px;"></div>
+                            <div style="flex: 1; height: 6px; background: #ddd; border-radius: 3px;"></div>
+                            <div style="flex: 1; height: 6px; background: #ddd; border-radius: 3px;"></div>
+                        </div>
+
+                        <!-- Formula card -->
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 20px 24px; border-radius: 10px; border-left: 4px solid #27ae60; margin-bottom: 14px;">
+                            <p style="text-align:center; font-size: 1.5em; margin: 0;">
+                                $$X_c = X - \mu$$
+                            </p>
+                        </div>
+
+                        <!-- Explanation -->
+                        <div class="fragment" style="display: flex; gap: 14px; margin-bottom: 14px;">
+                            <div style="flex: 1; background: #eef5fc; padding: 14px 18px; border-radius: 10px;">
+                                <strong style="color: #2c3e50;">What?</strong>
+                                <p style="margin: 4px 0 0 0; color: #555; font-size: 0.9em;">
+                                    Subtract the mean from every data point
+                                </p>
+                            </div>
+                            <div style="flex: 1; background: #fffaf0; padding: 14px 18px; border-radius: 10px;">
+                                <strong style="color: #d35400;">Why?</strong>
+                                <p style="margin: 4px 0 0 0; color: #555; font-size: 0.9em;">
+                                    Move data center to origin → only care about <strong>spread</strong>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Key Idea -->
+                        <div class="fragment"
+                            style="padding: 14px 20px; border-left: 5px solid #b15a2b; background: #f7efe6; border-radius: 4px;">
+                            <p style="margin: 0;">
+                                <strong style="color: #b15a2b;">Key Idea:</strong>
+                                Mean = 0 → variance becomes easy to compute
+                            </p>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- Step 2 -->
+                <section>
+                    <h2>Step 2: Compute Covariance</h2>
+
+                    <div style="margin-top: 10px; font-size: 0.62em; text-align: left;">
+
+                        <!-- Progress bar -->
+                        <div class="fragment" style="display: flex; gap: 6px; margin-bottom: 15px;">
+                            <div style="flex: 1; height: 6px; background: #27ae60; border-radius: 3px;"></div>
+                            <div style="flex: 1; height: 6px; background: #27ae60; border-radius: 3px;"></div>
+                            <div style="flex: 1; height: 6px; background: #ddd; border-radius: 3px;"></div>
+                            <div style="flex: 1; height: 6px; background: #ddd; border-radius: 3px;"></div>
+                        </div>
+
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 20px 24px; border-radius: 10px; border-left: 4px solid #27ae60; margin-bottom: 14px;">
+                            <p style="text-align:center; font-size: 1.5em; margin: 0;">
+                                $$C = \frac{1}{N} X_c^T X_c$$
+                            </p>
+                        </div>
+
+                        <div class="fragment" style="display: flex; gap: 14px; margin-bottom: 14px;">
+                            <div style="flex: 1; background: #eef5fc; padding: 10px 20px; border-radius: 10px;">
+                                <strong style="color: #2c3e50;">What?</strong>
+                                <p style="margin: 4px 0 0 0; color: #555; font-size: 0.85em;">
+                                    Measure how all pairs of features vary together
+                                </p>
+                            </div>
+                            <div style="flex: 1; background: #fffaf0; padding: 10px 20px; border-radius: 10px;">
+                                <strong style="color: #d35400;">Why?</strong>
+                                <p style="margin: 4px 0 0 0; color: #555; font-size: 0.85em;">
+                                    $C$ is symmetric ($C = C^T$), encodes <strong>shape and spread</strong>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="padding: 14px 20px; border-left: 5px solid #b15a2b; background: #f7efe6; border-radius: 4px;">
+                            <p style="margin: 0;">
+                                <strong style="color: #b15a2b;">Key Takeaway:</strong>
+                                $C \in \mathbb{R}^{d \times d}$ encodes all pairwise feature relationships
+                            </p>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- Step 3 -->
+                <section>
+                    <h2>Step 3: Eigendecomposition</h2>
+
+                    <div style="margin-top: 10px; font-size: 0.62em; text-align: left;">
+
+                        <!-- Progress bar -->
+                        <div class="fragment" style="display: flex; gap: 6px; margin-bottom: 15px;">
+                            <div style="flex: 1; height: 6px; background: #27ae60; border-radius: 3px;"></div>
+                            <div style="flex: 1; height: 6px; background: #27ae60; border-radius: 3px;"></div>
+                            <div style="flex: 1; height: 6px; background: #27ae60; border-radius: 3px;"></div>
+                            <div style="flex: 1; height: 6px; background: #ddd; border-radius: 3px;"></div>
+                        </div>
+
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 20px 24px; border-radius: 10px; border-left: 4px solid #27ae60; margin-bottom: 14px;">
+                            <p style="text-align:center; font-size: 1.5em; margin: 0;">
+                                $$C = W \Lambda W^T$$
+                            </p>
+                        </div>
+
+                        <div class="fragment" style="display: flex; gap: 14px; margin-bottom: 14px;">
+                            <div style="flex: 1; background: #eef5fc; padding: 15px 20px; border-radius: 10px;">
+                                <strong style="color: #2c3e50;">What?</strong>
+                                <p style="margin: 4px 0 0 0; color: #555; font-size: 0.85em;">
+                                    Factorize $C$ into eigenvectors and eigenvalues
+                                </p>
+                            </div>
+                            <div style="flex: 1; background: #fffaf0; padding: 15px 20px; border-radius: 10px;">
+                                <strong style="color: #d35400;">Why?</strong>
+                                <p style="margin: 4px 0 0 0; color: #555; font-size: 0.85em;">
+                                    <strong>$W$</strong> = axis directions,
+                                    <strong>$\Lambda$</strong> = variance per axis
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="padding: 14px 20px; border-left: 5px solid #b15a2b; background: #f7efe6; border-radius: 4px;">
+                            <p style="margin: 0;">
+                                <strong style="color: #b15a2b;">Key Takeaway:</strong>
+                                Reveals the hidden orthogonal structure of the data!
+                            </p>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- Step 4 -->
+                <section>
+                    <h2>Step 4: Project Data</h2>
+
+                    <div style="margin-top: 10px; font-size: 0.62em; text-align: left;">
+
+                        <!-- Progress bar -->
+                        <div class="fragment" style="display: flex; gap: 6px; margin-bottom: 15px;">
+                            <div style="flex: 1; height: 6px; background: #27ae60; border-radius: 3px;"></div>
+                            <div style="flex: 1; height: 6px; background: #27ae60; border-radius: 3px;"></div>
+                            <div style="flex: 1; height: 6px; background: #27ae60; border-radius: 3px;"></div>
+                            <div style="flex: 1; height: 6px; background: #27ae60; border-radius: 3px;"></div>
+                        </div>
+
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 20px 24px; border-radius: 10px; border-left: 4px solid #27ae60; margin-bottom: 14px;">
+                            <p style="text-align:center; font-size: 1.5em; margin: 0;">
+                                $$Z = X_c W$$
+                            </p>
+                        </div>
+
+                        <div class="fragment" style="display: flex; gap: 14px; margin-bottom: 14px;">
+                            <div style="flex: 1; background: #eef5fc; padding: 14px 18px; border-radius: 10px;">
+                                <strong style="color: #2c3e50;">What?</strong>
+                                <p style="margin: 4px 0 0 0; color: #555; font-size: 0.9em;">
+                                    Map centered data onto principal axes
+                                </p>
+                            </div>
+                            <div style="flex: 1; background: #fffaf0; padding: 14px 18px; border-radius: 10px;">
+                                <strong style="color: #d35400;">Why?</strong>
+                                <p style="margin: 4px 0 0 0; color: #555; font-size: 0.9em;">
+                                    $X_c \in \mathbb{R}^{N \times d}$ → $Z \in \mathbb{R}^{N \times k}$ with $k \leq d$
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="padding: 14px 20px; border-left: 5px solid #b15a2b; background: #f7efe6; border-radius: 4px;">
+                            <p style="margin: 0;">
+                                <strong style="color: #b15a2b;">Key Takeaway:</strong>
+                                Features in $Z$ are <strong>uncorrelated</strong>, sorted from most to least variance
+                            </p>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- Algorithm Summary -->
+                <section>
+                    <h2>Algorithm Summary</h2>
+                    <div style="text-align: center;">
+                        <img src="img/lec-01/step-by-step.png" alt="PCA Step by Step"
+                            style="max-width: 100%; max-height: 520px; object-fit: contain; border-radius: 8px;" />
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">4.</span><br />
+                        Applications
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Dimensionality Reduction</h2>
+
+                    <div style="margin-top: 20px; font-size: 0.5em; text-align: left;">
+
+                        <div style="display: flex; gap: 20px;">
+                            <!-- Explained variance -->
+                            <div class="fragment"
+                                style="flex:1; background: #f8f9fa; padding: 10px; border-radius: 8px; border-left: 4px solid #2a7ae2;">
+                                <strong style="color:#2a7ae2;">1. Explained Variance</strong>
+                                <p style="text-align:center;">
+                                    $$\frac{\lambda_i}{\sum_{j=1}^{d} \lambda_j}$$
+                                </p>
+                                <p style="color:#666;">
+                                    Variance captured by each component
+                                </p>
+                            </div>
+                            <!-- Cumulative -->
+                            <div class="fragment"
+                                style="flex:1; background: #f8f9fa; padding: 10px; border-radius: 8px; border-left: 4px solid #2a7ae2;">
+                                <strong style="color:#2a7ae2;">2. Cumulative Variance</strong>
+                                <p style="text-align:center;">
+                                    $$\frac{\sum_{i=1}^{k} \lambda_i}{\sum_{j=1}^{d} \lambda_j}$$
+                                </p>
+                                <p style="color:#666;">
+                                    Total information kept using k components
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="margin-top: 25px; padding: 15px; border-left: 5px solid #e67e22; background-color: #fffaf0; border-radius: 4px;">
+                            <strong style="color:#d35400;">3. Practical Rule</strong>
+                            <p style="text-align:center; margin: 10px 0;">
+                                Keep k such that 90% – 95% variance is retained
+                            </p>
+                            <!-- Benefits -->
+                            <div style="display: flex; justify-content: space-around; margin-top: 10px; color:#555;">
+                                <span>Reduce features</span>
+                                <span>Less computation</span>
+                                <span>Similar performance</span>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="margin-top: 20px; background: #fff; padding: 15px; border-radius: 8px; border: 2px dashed #ccc;">
+                            <strong style="display:block; margin-bottom:10px;">4. Example</strong>
+                            <div style="display: flex; justify-content: space-around; align-items: center">
+                                <span>λ = 50, 30, 10, 5, 5</span>
+                                <span>Total = 100%</span>
+                                <span>k = 1 → 50%</span>
+                                <span>k = 2 → 80%</span>
+                                <span style="color:#e67e22;">k = 3 → 90% ✔</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Data Visualization</h2>
+
+                    <div style="margin-top: 30px; font-size: 0.6em; text-align: center;">
+
+                        <div style="display: flex; gap: 30px; align-items: stretch;">
+
+                            <!-- 2D visualization -->
+                            <div class="fragment" style="flex: 1; text-align: center;">
+                                <p style="margin-bottom: 5px;">
+                                    <strong style="color:#e67e22;">k = 2</strong> → visualize in 2D
+                                </p>
+                                <img src="img/lec-01/visualization_2d.png" alt="PCA 2D visualization"
+                                    style="width: 100%; max-height: 350px; object-fit: contain; border-radius: 10px; box-shadow: 0 8px 18px rgba(0,0,0,0.12);" />
+                            </div>
+
+                            <div class="fragment" style="flex: 1; text-align: center;">
+                                <p style="margin-bottom: 5px;">
+                                    <strong style="color:#e67e22;">k = 3</strong> → visualize in 3D
+                                </p>
+                                <img src="img/lec-01/visualization_3d.png" alt="PCA 3D visualization"
+                                    style="width: 100%; max-height: 350px; object-fit: contain; border-radius: 10px; box-shadow: 0 8px 18px rgba(0,0,0,0.12);" />
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="padding: 5px; border-left: 5px solid #2c3e50; background:#f4f6f8; border-radius: 4px;">
+                            <strong style="color:#2c3e50;">Goal:</strong>
+                            <span style="margin-left: 10px;">
+                                reveal clusters, groups, and hidden patterns
+                            </span>
+                        </div>
+
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Noise Reduction</h2>
+
+                    <div style="margin-top: 30px; font-size: 0.6em;">
+
+                        <div class="fragment"
+                            style="display: flex; justify-content: space-between; align-items: center; background: #f8f9fa; padding: 15px; border-radius: 50px; margin-bottom: 5px; border: 1px solid #eee;">
+                            <div style="flex:1; text-align:center;">Original $X$</div>
+                            <div style="color:#2a7ae2;">$\xrightarrow{\text{Project}}$</div>
+                            <div style="flex:1; text-align:center; color:#2a7ae2; font-weight:bold;">Latent $Z$ ($k$
+                                dims)</div>
+                            <div style="color:#e67e22;">$\xrightarrow{\text{Reconstruct}}$</div>
+                            <div style="flex:1; text-align:center; color:#e67e22; font-weight:bold;">Clean $\hat{X}$
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 30px; align-items: center; margin-bottom: 5px;">
+
+                            <div style="flex: 1; text-align: left;" class="fragment">
+                                <div style="margin-bottom: 25px;">
+                                    <strong style="color: #2a7ae2;">1. Dimensionality Reduction</strong>
+                                    <p style="margin: 10px 0;">$$Z = (X - \mu) W_k$$</p>
+                                    <p style="font-size: 0.5em; color: #666; margin: 0;">Discard low-variance (noise)
+                                        components.</p>
+                                </div>
+                                <div>
+                                    <strong style="color: #e67e22;">2. Inverse Transformation</strong>
+                                    <p style="margin: 10px 0;">$$\hat{X} = Z W_k^T + \mu$$</p>
+                                    <p style="font-size: 0.5em; color: #666; margin: 0;">Map back to original space
+                                        using only $k$ PCs.</p>
+                                </div>
+                            </div>
+
+                            <div style="flex: 1.5; text-align: center;" class="fragment">
+                                <img src="img/lec-01/noise_reduction.png"
+                                    style="width: 100%; max-height: 300px; object-fit: contain; border-radius: 10px; box-shadow: 0 8px 18px rgba(0,0,0,0.12);" />
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="padding: 5px; background: #f4f6f8; border-left: 5px solid #2c3e50; border-radius: 4px; text-align: left;">
+
+                            <p style="margin: 0; line-height: 1.5;">
+                                <strong style="color: #2c3e50;">Key Insight:</strong>
+                                Noise tends to lie in low-variance components.
+                                Keeping the top $k$ eigenvalues removes noise while preserving the main structure.
+                            </p>
+
+                        </div>
+
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Data Compression</h2>
+
+                    <div style="margin-top: 10px; font-size: 0.6em; text-align: left;">
+
+                        <!-- Core idea -->
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 10px 20px; border-radius: 10px; border-left: 4px solid #2a7ae2; margin-bottom: 10px;">
+                            <p style="margin: 0; color: #333;">
+                                Instead of storing $N \times d$ values, store only:
+                            </p>
+                            <div style="display: flex; gap: 16px; margin-top: 10px;">
+                                <div
+                                    style="flex: 1; background: #eef5fc; padding: 12px; border-radius: 8px; text-align: center;">
+                                    <strong style="color: #2a7ae2;">$Z: N \times k$</strong>
+                                    <p style="margin: 2px 0 0 0; font-size: 0.8em; color: #666;">
+                                        Compressed Data</p>
+                                </div>
+                                <div
+                                    style="flex: 1; background: #eef5fc; padding: 12px; border-radius: 8px; text-align: center;">
+                                    <strong style="color: #2a7ae2;">$W_k: d \times k$</strong>
+                                    <p style="margin: 2px 0 0 0; font-size: 0.8em; color: #666;">
+                                        Basis / Codebook</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Compression ratio -->
+                        <div class="fragment"
+                            style="background: #fffaf0; padding: 10px 20px; border-radius: 10px; border-left: 4px solid #e67e22; margin-bottom: 10px;">
+                            <strong style="color: #d35400;">Compression Ratio</strong>
+                            <p style="text-align:center; margin: 8px 0;">
+                                $$\text{Size} \approx \frac{N \times k}{N \times d} = \frac{k}{d}$$
+                            </p>
+                            <p style="color:#666; margin: 0; font-size: 0.8em; text-align: center;">
+                                If $k \ll d$, the savings are massive
+                            </p>
+                        </div>
+
+                        <!-- Example: Eigenfaces -->
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 16px 20px; border-radius: 10px; border-left: 4px solid #9727ae;">
+                            <strong style="color: #9727ae;">Eigenfaces:</strong> Image ($100 \times 100$) →
+                            $d=10{,}000$
+                            <div style="display: flex; gap: 10px; font-size: 0.8em">
+                                <div
+                                    style="flex: 1; background: #eef5fc; padding: 10px; border-radius: 8px; text-align: center;">
+                                    <strong style="color: #2c3e50;">$k=10$</strong>
+                                    <p style="margin: 2px 0 0 0; color: #e74c3c;">1000:1 →
+                                        <strong>Blurry</strong>
+                                    </p>
+                                </div>
+                                <div
+                                    style="flex: 1; background: #eef5fc; padding: 10px; border-radius: 8px; text-align: center;">
+                                    <strong style="color: #2c3e50;">$k=100$</strong>
+                                    <p style="margin: 2px 0 0 0; color: #d6d322;">100:1 →
+                                        <strong>Recognizable</strong>
+                                    </p>
+                                </div>
+                                <div
+                                    style="flex: 1; background: #eef5fc; padding: 10px; border-radius: 8px; text-align: center;">
+                                    <strong style="color: #2c3e50;">$k=500$</strong>
+                                    <p style="margin: 2px 0 0 0; color: #27ae60;">20:1 →
+                                        <strong>Near Perfect ✔</strong>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Feature Extraction</h2>
+
+                    <div style="margin-top: 10px; font-size: 0.6em; text-align: left;">
+
+                        <!-- Core idea -->
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 16px 20px; border-radius: 10px; border-left: 4px solid #2a7ae2; margin-bottom: 14px;">
+                            <strong style="color: #2a7ae2;">Core Idea</strong>
+                            <p style="margin: 6px 0 0 0; color: #333; line-height: 1.5;">
+                                Replace original features with <strong>Principal Components</strong> (PC1, PC2, ...).
+                                Each PC is a linear combination of all original features, capturing maximum variance.
+                            </p>
+                        </div>
+
+                        <!-- Old vs New -->
+                        <div class="fragment" style="display: flex; gap: 14px; margin-bottom: 10px;">
+
+                            <div
+                                style="flex: 0.92; background: #fffaf0; padding: 14px 18px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                                <strong style="color: #d35400;">Original Features</strong>
+                                <div style="display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap;">
+                                    <span
+                                        style="background: #f0e0cc; padding: 4px 10px; border-radius: 6px; font-size: 0.8em;">$x_1$</span>
+                                    <span
+                                        style="background: #f0e0cc; padding: 4px 10px; border-radius: 6px; font-size: 0.8em;">$x_2$</span>
+                                    <span
+                                        style="background: #f0e0cc; padding: 4px 10px; border-radius: 6px; font-size: 0.8em;">$x_3$</span>
+                                    <span
+                                        style="background: #f0e0cc; padding: 4px 10px; border-radius: 6px; font-size: 0.8em;">$\dots$</span>
+                                    <span
+                                        style="background: #f0e0cc; padding: 4px 10px; border-radius: 6px; font-size: 0.8em;">$x_d$</span>
+                                </div>
+                                <p style="margin: 8px 0 0 0; color: #888; font-size: 0.8em;">Correlated, redundant,
+                                    high-dimensional</p>
+                            </div>
+
+                            <div style="display: flex; align-items: center; color: #b15a2b; font-size: 1.3em;">→</div>
+
+                            <div
+                                style="flex: 1.08; background: #eef5fc; padding: 14px 18px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                                <strong style="color: #2a7ae2;">PCA Features</strong>
+                                <div style="display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap;">
+                                    <span
+                                        style="background: #c8ddf0; padding: 4px 10px; border-radius: 6px; font-size: 0.8em; font-weight: 600;">PC1</span>
+                                    <span
+                                        style="background: #c8ddf0; padding: 4px 10px; border-radius: 6px; font-size: 0.8em; font-weight: 600;">PC2</span>
+                                    <span
+                                        style="background: #c8ddf0; padding: 4px 10px; border-radius: 6px; font-size: 0.8em;">$\dots$</span>
+                                    <span
+                                        style="background: #c8ddf0; padding: 4px 10px; border-radius: 6px; font-size: 0.8em; font-weight: 600;">PC$_k$</span>
+                                </div>
+                                <p style="margin: 8px 0 0 0; color: #888; font-size: 0.8em;">Uncorrelated, compact,
+                                    ordered by importance</p>
+                            </div>
+
+                        </div>
+
+                        <!-- Benefits -->
+                        <div class="fragment" style="display: flex; gap: 14px; margin-bottom: 14px;">
+                            <div
+                                style="flex: 1; background: #f8f9fa; padding: 10px 18px; border-radius: 10px; text-align: center;">
+                                <strong style="color: #27ae60;">Uncorrelated</strong>
+                                <p style="margin: 4px 0 0 0; color: #555; font-size: 0.85em;">No redundancy between
+                                    features</p>
+                            </div>
+                            <div
+                                style="flex: 1; background: #f8f9fa; padding: 10px 18px; border-radius: 10px; text-align: center;">
+                                <strong style="color: #27ae60;">Compact</strong>
+                                <p style="margin: 4px 0 0 0; color: #555; font-size: 0.8em;">$k \ll d$ dimensions</p>
+                            </div>
+                            <div
+                                style="flex: 1; background: #f8f9fa; padding: 10px 18px; border-radius: 10px; text-align: center;">
+                                <strong style="color: #27ae60;">Ordered</strong>
+                                <p style="margin: 4px 0 0 0; color: #555; font-size: 0.8em;">PC1 most important first
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Use cases -->
+                        <div class="fragment"
+                            style="padding: 10px 10px; border-left: 5px solid #b15a2b; background: #f7efe6; border-radius: 4px">
+                            <p style="margin: 0;">
+                                <strong style="color: #b15a2b;">Use Cases:</strong>
+                                Preprocessing for classification, clustering, regression — use PC features instead of
+                                raw features for better generalization
+                            </p>
+                        </div>
+
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">5.</span><br />
+                        Limitations
+                    </h1>
+                </section>
+
+                <!-- Limitation 1 -->
+                <section>
+                    <h2>Linear Method</h2>
+
+                    <div style="margin-top: 15px; font-size: 0.62em; text-align: left;">
+
+                        <!-- Problem -->
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 16px 20px; border-radius: 10px; border-left: 4px solid #e74c3c; margin-bottom: 14px;">
+                            <strong style="color: #e74c3c;">Problem</strong>
+                            <p style="margin: 6px 0 0 0; color: #333; line-height: 1.5;">
+                                PCA can only capture <strong>linear relationships</strong>. If data lies on a curved
+                                manifold, PCA will fail to find the true structure.
+                            </p>
+                        </div>
+
+                        <!-- Example -->
+                        <div class="fragment" style="display: flex; gap: 14px; margin-bottom: 14px;">
+                            <div
+                                style="flex: 1; background: #fffaf0; padding: 14px 18px; border-radius: 10px; text-align: center;">
+                                <strong style="color: #d35400;">Swiss Roll Data</strong>
+                                <p style="margin: 4px 0 0 0; color: #555; font-size: 0.9em;">
+                                    PCA unfolds linearly — loses the 2D sheet structure
+                                </p>
+                            </div>
+                            <div
+                                style="flex: 1; background: #fffaf0; padding: 14px 18px; border-radius: 10px; text-align: center;">
+                                <strong style="color: #d35400;">Nonlinear Clusters</strong>
+                                <p style="margin: 4px 0 0 0; color: #555; font-size: 0.9em;">
+                                    PCA may merge clusters that are separate in the true manifold
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Solution -->
+                        <div class="fragment"
+                            style="padding: 14px 20px; border-left: 5px solid #27ae60; background: #d4edda; border-radius: 4px;">
+                            <p style="margin: 0;">
+                                <strong style="color: #27ae60;">Alternatives:</strong>
+                                Kernel PCA, t-SNE, UMAP, Autoencoders
+                            </p>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- Limitation 2 -->
+                <section>
+                    <h2>Variance ≠ Importance</h2>
+
+                    <div style="margin-top: 15px; font-size: 0.62em; text-align: left;">
+
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 16px 20px; border-radius: 10px; border-left: 4px solid #e67e22; margin-bottom: 14px;">
+                            <strong style="color: #e67e22;">Problem</strong>
+                            <p style="margin: 6px 0 0 0; color: #333; line-height: 1.5;">
+                                PCA ranks components by <strong>variance</strong>, but the direction with highest
+                                variance may not be the most <strong>discriminative</strong> for your task.
+                            </p>
+                        </div>
+
+                        <div class="fragment" style="display: flex; gap: 14px; margin-bottom: 14px;">
+                            <div
+                                style="flex: 1; background: #fffaf0; padding: 14px 18px; border-radius: 10px; text-align: center;">
+                                <strong style="color: #d35400;">Example</strong>
+                                <p style="margin: 4px 0 0 0; color: #555; font-size: 0.9em;">
+                                    Classifying handwritten digits — background brightness has high variance but is
+                                    useless for distinguishing 3 vs 8
+                                </p>
+                            </div>
+                            <div
+                                style="flex: 1; background: #fffaf0; padding: 14px 18px; border-radius: 10px; text-align: center;">
+                                <strong style="color: #d35400;">Consequence</strong>
+                                <p style="margin: 4px 0 0 0; color: #555; font-size: 0.9em;">
+                                    PCA may discard the discriminative low-variance features
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="padding: 14px 20px; border-left: 5px solid #27ae60; background: #d4edda; border-radius: 4px;">
+                            <p style="margin: 0;">
+                                <strong style="color: #27ae60;">Alternative:</strong>
+                                LDA (supervised), or use PCA as preprocessing + task-specific feature selection
+                            </p>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- Limitation 3 -->
+                <section>
+                    <h2>Not Interpretable</h2>
+
+                    <div style="margin-top: 15px; font-size: 0.62em; text-align: left;">
+
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 16px 20px; border-radius: 10px; border-left: 4px solid #f39c12; margin-bottom: 14px;">
+                            <strong style="color: #f39c12;">Problem</strong>
+                            <p style="margin: 6px 0 0 0; color: #333; line-height: 1.5;">
+                                Each PC is a <strong>linear combination of ALL original features</strong>. You cannot
+                                easily say "PC1 represents height" — it's a mixture of everything.
+                            </p>
+                        </div>
+
+                        <div class="fragment" style="display: flex; gap: 14px; margin-bottom: 14px;">
+                            <div style="flex: 1; background: #eef5fc; padding: 14px 18px; border-radius: 10px;">
+                                <strong style="color: #2a7ae2;">PC1 example:</strong>
+                                <p style="margin: 4px 0 0 0; color: #555; font-size: 0.85em;">
+                                    $0.3x_1 + 0.5x_2 - 0.1x_3 + 0.4x_4 + \dots$
+                                </p>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">
+                                    What does this mean? Hard to explain!
+                                </p>
+                            </div>
+                            <div style="flex: 1; background: #eef5fc; padding: 14px 18px; border-radius: 10px;">
+                                <strong style="color: #2a7ae2;">Why it matters</strong>
+                                <p style="margin: 4px 0 0 0; color: #555; font-size: 0.85em;">
+                                    In medicine, finance, etc. — stakeholders need explainable features, not abstract
+                                    projections
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="padding: 14px 20px; border-left: 5px solid #27ae60; background: #d4edda; border-radius: 4px;">
+                            <p style="margin: 0;">
+                                <strong style="color: #27ae60;">Tip:</strong>
+                                Inspect PC loadings (weights) to understand which original features contribute most to
+                                each component
+                            </p>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- Limitation 4 -->
+                <section>
+                    <h2>Scaling & Preprocessing</h2>
+
+                    <div style="margin-top: 15px; font-size: 0.62em; text-align: left;">
+
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 16px 20px; border-radius: 10px; border-left: 4px solid #e74c3c; margin-bottom: 14px;">
+                            <strong style="color: #e74c3c;">Problem</strong>
+                            <p style="margin: 6px 0 0 0; color: #333; line-height: 1.5;">
+                                PCA is <strong>sensitive to feature scales</strong>. Features with larger ranges
+                                dominate the variance and the principal components.
+                            </p>
+                        </div>
+
+                        <div class="fragment" style="display: flex; gap: 14px; margin-bottom: 14px;">
+                            <div
+                                style="flex: 1; background: #f8d7da; padding: 14px 18px; border-radius: 10px; text-align: center;">
+                                <strong style="color: #e74c3c;">Without Scaling</strong>
+                                <p style="margin: 4px 0 0 0; color: #555; font-size: 0.85em;">
+                                    Income (0–100,000) dominates Age (0–100)
+                                </p>
+                            </div>
+                            <div
+                                style="flex: 1; background: #d4edda; padding: 14px 18px; border-radius: 10px; text-align: center;">
+                                <strong style="color: #27ae60;">With Scaling</strong>
+                                <p style="margin: 4px 0 0 0; color: #555; font-size: 0.85em;">
+                                    Both features contribute equally to PCA
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="padding: 14px 20px; border-left: 5px solid #b15a2b; background: #f7efe6; border-radius: 4px;">
+                            <p style="margin: 0;">
+                                <strong style="color: #b15a2b;">Rule:</strong>
+                                Always standardize (z-score) before PCA: $x \leftarrow \frac{x - \mu}{\sigma}$
+                            </p>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- Summary Slide -->
+                <section>
+                    <h2>Summary</h2>
+
+                    <div
+                        style="display: flex; flex-direction: column; gap: 8px; margin-top: 20px; font-size: 0.62em; text-align: left;">
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 14px; background: #f8d7da; padding: 10px 18px; border-radius: 10px; border-left: 4px solid #e74c3c;">
+                            <strong style="color: #e74c3c; min-width: 120px;">Linear only</strong>
+                            <span style="color: #555;">→ Kernel PCA, t-SNE, UMAP</span>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 14px; background: #fff3cd; padding: 10px 18px; border-radius: 10px; border-left: 4px solid #f39c12;">
+                            <strong style="color: #f39c12; min-width: 120px;">Variance ≠ Task</strong>
+                            <span style="color: #555;">→ LDA, supervised methods</span>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 14px; background: #fff3cd; padding: 10px 18px; border-radius: 10px; border-left: 4px solid #f39c12;">
+                            <strong style="color: #f39c12; min-width: 120px;">Not interpretable</strong>
+                            <span style="color: #555;">→ Inspect PC loadings</span>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 14px; background: #f8d7da; padding: 10px 18px; border-radius: 10px; border-left: 4px solid #e74c3c;">
+                            <strong style="color: #e74c3c; min-width: 120px;">Scale sensitive</strong>
+                            <span style="color: #555;">→ Always standardize first</span>
+                        </div>
+
+                    </div>
+
+                    <div class="fragment"
+                        style="margin-top: 20px; font-size: 0.62em; padding: 14px 20px; border-left: 5px solid #27ae60; background: #d4edda; border-radius: 4px; text-align: left;">
+                        <p style="margin: 0;">
+                            <strong style="color: #27ae60;">Bottom Line:</strong>
+                            PCA is a powerful unsupervised tool for dimensionality reduction. Use it wisely with proper
+                            preprocessing, and supplement with task-specific methods when needed.
+                        </p>
+                    </div>
+                </section>
+            </section>
+
+            <div class="footer">
+                Machine Learning §01: Dimensionality Reduction (PCA)
+            </div>
+        </div>
+    </div>
+    <script src="revealjs/dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            controlsLayout: "edges",
+            slideNumber: true,
+            hashOneBasedIndex: true,
+            hash: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX],
+        });
+    </script>
+</body>
+
+</html>

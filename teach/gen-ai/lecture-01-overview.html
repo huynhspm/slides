@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/png" href="../../favicon.png">
+    <title>Bài 1a: Giới thiệu học phần</title>
+
+    <link rel="stylesheet" href="revealjs/dist/reset.css" />
+    <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+    <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+    <link rel="stylesheet" href="lecture-style.css" />
+</head>
+
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <section>
+                    <h1>Generative Models Overview</h1>
+                    <h3>A Comprehensive Introduction</h3>
+                    <p>Artificial Intelligence & Computer Science</p>
+                </section>
+
+                <section>
+                    <h2>Content</h2>
+                    <ol>
+                        <li>Introduction to Generative Models</li>
+                        <li>Probabilistic Foundations</li>
+                        <li>Classical Generative Models</li>
+                        <li>Deep Generative Models</li>
+                        <li>Evaluation, Applications, and System Perspective</li>
+                    </ol>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">1.</span><br />
+                        Introduction to Generative Models
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>1.1 What are Generative Models?</h2>
+                    <div class="question-box">
+                        <strong>Definition:</strong> Models that learn the underlying distribution of data \( p(x) \)
+                        and can generate new samples similar to training data.
+                    </div>
+                    <ul>
+                        <li class="fragment">Contrast with <span class="keyword">discriminative models</span>:
+                            <ul>
+                                <li>Discriminative: learn \( p(y|x) \)</li>
+                                <li>Generative: learn \( p(x) \) or \( p(x, y) \)</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>1.2 Why Generative Models Matter</h2>
+                    <ul>
+                        <li class="fragment"><strong>Applications:</strong>
+                            <ul>
+                                <li>Image generation (faces, art, medical images)</li>
+                                <li>Text generation (<span class="keyword">LLMs</span>)</li>
+                                <li>Speech synthesis & Data augmentation</li>
+                                <li>Simulation and scientific discovery</li>
+                            </ul>
+                        </li>
+                        <li class="fragment"><strong>Role in modern AI systems:</strong>
+                            <ul>
+                                <li>Foundation models</li>
+                                <li>Multimodal learning</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>1.3 Types of Generative Tasks</h2>
+                    <ul>
+                        <li class="fragment">Unconditional generation</li>
+                        <li class="fragment">Conditional generation</li>
+                        <li class="fragment">Representation learning (latent space)</li>
+                        <li class="fragment">Density estimation</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>1.4 Core Challenges</h2>
+                    <ul>
+                        <li class="fragment">High-dimensional distributions</li>
+                        <li class="fragment"><span class="keyword">Mode collapse</span></li>
+                        <li class="fragment">Training instability</li>
+                        <li class="fragment">Evaluation difficulty</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">2.</span><br />
+                        Probabilistic Foundations
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>2.1 Probability Review</h2>
+                    <ul>
+                        <li class="fragment">Random variables and distributions</li>
+                        <li class="fragment">Joint, marginal, and conditional probability</li>
+                        <li class="fragment">Expectation and likelihood</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>2.2 Maximum Likelihood Estimation (MLE)</h2>
+                    <ul>
+                        <li class="fragment"><strong>Objective:</strong> Maximize \( \log p_\theta(x) \)</li>
+                        <li class="fragment"><strong>Intuition:</strong> Fit model to observed data</li>
+                        <li class="fragment"><strong>Limitations:</strong> Intractable likelihood for complex models
+                        </li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>2.3 Latent Variable Models</h2>
+                    <ul>
+                        <li class="fragment">Introduce hidden variables \( z \)</li>
+                        <li class="fragment"><strong>Model:</strong> \( p(x) = \int p(x|z)p(z)dz \)</li>
+                        <li class="fragment"><strong>Benefits:</strong>
+                            <ul>
+                                <li>Structured representation</li>
+                                <li>Dimensionality reduction</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>2.4 Variational Inference</h2>
+                    <ul>
+                        <li class="fragment">Approximate posterior \( q(z|x) \)</li>
+                        <li class="fragment"><strong>Evidence Lower Bound (ELBO):</strong><br> Trade-off between
+                            reconstruction and regularization</li>
+                        <li class="fragment"><strong>Key idea:</strong> Turn inference into optimization</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">3.</span><br />
+                        Classical Generative Models
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>3.1 Gaussian Mixture Models (GMM)</h2>
+                    <ul>
+                        <li class="fragment">Mixture of Gaussians</li>
+                        <li class="fragment">Trained via <span class="keyword">Expectation-Maximization (EM)</span>
+                            algorithm</li>
+                        <li class="fragment"><strong>Strengths:</strong> Simple, interpretable</li>
+                        <li class="fragment"><strong>Limitations:</strong> Poor scalability for complex data</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>3.2 Autoregressive Models</h2>
+                    <ul>
+                        <li class="fragment"><strong>Factorization:</strong> \( p(x) = \prod p(x_i | x_{<i}) \)</li>
+                        <li class="fragment"><strong>Examples:</strong> PixelRNN, PixelCNN</li>
+                        <li class="fragment"><strong>Pros:</strong> Exact likelihood</li>
+                        <li class="fragment"><strong>Cons:</strong> Slow sampling</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>3.3 Energy-Based Models (EBM)</h2>
+                    <ul>
+                        <li class="fragment">Define energy function instead of probability</li>
+                        <li class="fragment">Sampling via <span class="keyword">MCMC</span></li>
+                        <li class="fragment"><strong>Challenges:</strong>
+                            <ul>
+                                <li>Training difficulty</li>
+                                <li>Sampling inefficiency</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>3.4 Flow-Based Models</h2>
+                    <ul>
+                        <li class="fragment">Invertible transformations</li>
+                        <li class="fragment">Exact likelihood computation</li>
+                        <li class="fragment"><strong>Examples:</strong> RealNVP, Glow</li>
+                        <li class="fragment"><strong>Trade-offs:</strong>
+                            <ul>
+                                <li>Memory cost</li>
+                                <li>Architectural constraints</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">4.</span><br />
+                        Deep Generative Models
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>4.1 Variational Autoencoders (VAE)</h2>
+                    <ul>
+                        <li class="fragment"><strong>Architecture:</strong>
+                            <ul>
+                                <li>Encoder: \( q(z|x) \)</li>
+                                <li>Decoder: \( p(x|z) \)</li>
+                            </ul>
+                        </li>
+                        <li class="fragment"><strong>Loss:</strong> Reconstruction + KL divergence</li>
+                        <li class="fragment"><strong>Strengths:</strong> Stable training, Latent space structure</li>
+                        <li class="fragment"><strong>Weakness:</strong> Blurry outputs</li>
+                    </ul>
+                    <div class="placeholder" style="border:1px dashed #999;padding:18px;border-radius:8px;">
+                        <em>[Figure placeholder]</em><br />
+                        <strong>Description:</strong> Block diagram of VAE showing Encoder, Latent Space (mean and
+                        variance), and Decoder.<br />
+                        <strong>Image prompt:</strong> Diagram of a Variational Autoencoder (VAE) architecture.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>4.2 Generative Adversarial Networks (GAN)</h2>
+                    <ul>
+                        <li class="fragment"><strong>Two-player game:</strong> Generator vs Discriminator</li>
+                        <li class="fragment"><strong>Objective:</strong> Minimax optimization</li>
+                        <li class="fragment"><strong>Variants:</strong> DCGAN, WGAN, StyleGAN</li>
+                        <li class="fragment"><strong>Issues:</strong> <span class="keyword">Mode collapse</span>,
+                            Training instability</li>
+                    </ul>
+                    <div class="placeholder" style="border:1px dashed #999;padding:18px;border-radius:8px;">
+                        <em>[Figure placeholder]</em><br />
+                        <strong>Description:</strong> GAN architecture with Generator taking noise and Discriminator
+                        predicting real vs fake.<br />
+                        <strong>Image prompt:</strong> Generative Adversarial Network (GAN) architecture diagram.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>4.3 Diffusion Models</h2>
+                    <ul>
+                        <li class="fragment"><strong>Forward process:</strong> Add noise gradually</li>
+                        <li class="fragment"><strong>Reverse process:</strong> Learn to denoise</li>
+                        <li class="fragment"><strong>Advantages:</strong> High-quality samples, Stable training</li>
+                        <li class="fragment"><strong>Cost:</strong> Slow inference</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>4.4 Flow Matching & Modern Trends</h2>
+                    <ul>
+                        <li class="fragment">Learn continuous transformations</li>
+                        <li class="fragment">Bridge between diffusion and flow models</li>
+                        <li class="fragment"><strong>Key ideas:</strong> Optimal transport, Straight-line flows</li>
+                        <li class="fragment"><strong>Relevance:</strong> Efficient generative modeling</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">5.</span><br />
+                        Evaluation, Applications, and System Perspective
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>5.1 Evaluation Metrics</h2>
+                    <ul>
+                        <li class="fragment"><strong>Likelihood-based:</strong> Log-likelihood</li>
+                        <li class="fragment"><strong>Sample quality:</strong>
+                            <ul>
+                                <li>FID (<span class="keyword">Fréchet Inception Distance</span>)</li>
+                                <li>IS (Inception Score)</li>
+                            </ul>
+                        </li>
+                        <li class="fragment"><strong>Diversity:</strong> Mode coverage</li>
+                        <li class="fragment">Human evaluation</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>5.2 Practical Considerations</h2>
+                    <ul>
+                        <li class="fragment">Compute requirements</li>
+                        <li class="fragment">Training data scale</li>
+                        <li class="fragment">Memory and GPU usage</li>
+                        <li class="fragment">Inference latency</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>5.3 Applications Across Domains</h2>
+                    <ul>
+                        <li class="fragment"><strong>Computer vision:</strong> Image synthesis, super-resolution</li>
+                        <li class="fragment"><strong>NLP:</strong> Text generation, translation</li>
+                        <li class="fragment"><strong>Healthcare:</strong> Medical image generation</li>
+                        <li class="fragment"><strong>Robotics:</strong> Simulation and planning</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>5.4 System-Level View</h2>
+                    <div class="question-box">
+                        Crucial considerations for AI Engineering deployments.
+                    </div>
+                    <ul>
+                        <li class="fragment"><strong>Workload characteristics:</strong> Generative vs predictive,
+                            Latency vs offline, Stateless vs stateful</li>
+                        <li class="fragment"><strong>Deployment challenges:</strong>
+                            <ul>
+                                <li>Serving large models</li>
+                                <li>Scaling inference</li>
+                                <li>Monitoring quality</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>5.5 Open Problems & Research Directions</h2>
+                    <ul>
+                        <li class="fragment">Controllability & Interpretability</li>
+                        <li class="fragment">Efficiency (faster sampling)</li>
+                        <li class="fragment">Data efficiency</li>
+                        <li class="fragment">Alignment and safety</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Summary</h2>
+                    <ul>
+                        <li class="fragment">Generative models learn \( p(x) \) to generate new, realistic data
+                            distributions.</li>
+                        <li class="fragment">Approaches range from classical models (GMM, Autoregressive) to advanced
+                            deep architectures (VAE, GAN, Diffusion).</li>
+                        <li class="fragment">Real-world AI engineering requires balancing quality, performance, and
+                            computational costs.</li>
+                        <li class="fragment">Active research continues in efficiency, safety, and alignment.</li>
+                    </ul>
+                </section>
+            </section>
+            <div class="footer">
+                Phương pháp luận lập trình (Học kỳ 2 2025-2026) §1a: Giới thiệu học phần
+            </div>
+        </div>
+    </div>
+    <script src="revealjs/dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            controlsLayout: "edges",
+            slideNumber: true,
+            hashOneBasedIndex: true,
+            hash: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX],
+        });
+    </script>
+</body>
+
+</html>
