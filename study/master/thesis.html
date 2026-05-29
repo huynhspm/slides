@@ -73,7 +73,7 @@
                     </div>
 
                     <p style="font-size: 0.5em; letter-spacing: 2px; opacity: 0.8; margin-top: 30px;">
-                        Master's Thesis Defence — May, 2026
+                        Master's Thesis Defence — May 30, 2026
                     </p>
                 </section>
 
@@ -151,12 +151,14 @@
                     <div style="display: flex; gap: 20px; font-size: 0.6em; margin-bottom: 20px;" class="fragment">
                         <div
                             style="flex: 1.1; padding: 10px 10px; border-radius: 10px; background: rgba(47, 62, 122, 0.06); border-left: 4px solid #2F3E7A;">
-                            <strong class="keyword">Multiple Sclerosis (MS)</strong><br />
+                            <strong class="keyword">Multiple Sclerosis (MS)</strong><sup
+                                style="color: #3b82f6; font-weight: 700;">[1]</sup><br />
                             Chronic inflammatory and neurodegenerative disease of the central nervous system.
                         </div>
                         <div
                             style="flex: 0.9; padding: 10px 10px; border-radius: 10px; background: rgba(47, 62, 122, 0.06); border-left: 4px solid #2F3E7A;">
-                            <strong class="keyword">Cognitive Impairment (CI)</strong><br />
+                            <strong class="keyword">Cognitive Impairment (CI)</strong><sup
+                                style="color: #3b82f6; font-weight: 700;">[2]</sup><br />
                             Affects memory, attention, processing speed, and executive function.
                         </div>
                     </div>
@@ -485,7 +487,7 @@
                     <div style="display: flex; gap: 30px; font-size: 0.55em;" class="fragment">
                         <div
                             style="flex: 1; padding: 10px 12px; border-radius: 8px; background: rgba(34, 197, 94, 0.06); border-left: 3px solid #22c55e;">
-                            <strong style="color: #22c55e;">\(\mathcal{L}_{\text{rec}}\):</strong><br />
+                            <strong style="color: #22c55e;">\(\mathcal{L}_{\text{rec}}\)</strong><br />
                             • Keeps meaningful information in latent \(Z\)<br />
                             • Enables accurate reconstruction
                         </div>
@@ -805,148 +807,165 @@
                 <section>
                     <h2>Structural Information</h2>
 
-                    <div class="fragment">
-                        <div style="font-size: 0.5em; margin: 10px auto">
-                            <table
-                                style="width: 100%; border-collapse: separate; border-spacing: 0; border-radius: 10px; overflow: hidden; box-shadow: 0 3px 12px rgba(0,0,0,0.08); border: 1px solid #e2e8f0;">
-                                <thead>
-                                    <tr>
-                                        <th rowspan="2"
-                                            style="font-size: 1.5em; text-align: center; background: #acaa35; color: #fff; font-weight: 600; vertical-align: middle; border-right: 1px solid rgba(255,255,255,0.2);">
-                                            Model
-                                        </th>
-                                        <th colspan="3"
-                                            style=" font-size: 1.2em; text-align: center; background: #e0f2fe; color: #0284c7; font-weight: 600; border-bottom: 2px solid #bae6fd; border-right: 1px solid #e2e8f0;">
-                                            📁 Healthy Control
-                                        </th>
-                                        <th colspan="3"
-                                            style="font-size: 1.2em; text-align: center; background: #ccfbf1; color: #0d9488; font-weight: 600; border-bottom: 2px solid #99f6e4;">
-                                            🏥 Multiple Sclerosis
-                                        </th>
-                                    </tr>
-                                    <tr style="background: #f8fafc;">
-                                        <th
-                                            style="padding: 6px 8px; text-align: center; color: #475569; border-right: 1px dotted #e2e8f0;">
-                                            SSIM ↑</th>
-                                        <th
-                                            style="padding: 6px 8px; text-align: center; color: #475569; border-right: 1px dotted #e2e8f0;">
-                                            PSNR ↑</th>
-                                        <th
-                                            style="padding: 6px 8px; text-align: center; color: #475569; border-right: 1px solid #e2e8f0;">
-                                            LPIPS ↓</th>
-                                        <th
-                                            style="padding: 6px 8px; text-align: center; color: #475569; border-right: 1px dotted #e2e8f0;">
-                                            SSIM ↑</th>
-                                        <th
-                                            style="padding: 6px 8px; text-align: center; color: #475569; border-right: 1px dotted #e2e8f0;">
-                                            PSNR ↑</th>
-                                        <th style="padding: 6px 8px; text-align: center; color: #475569;">LPIPS ↓</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr style="border-bottom: 1px solid #f1f5f9;">
-                                        <td
-                                            style="padding: 5px 5px; font-weight: 600; text-align: center; background: #fff; border-right: 1px solid #e2e8f0;">
-                                            AE</td>
-                                        <td
-                                            style="padding: 5px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
-                                            0.8065</td>
-                                        <td
-                                            style="padding: 5px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
-                                            24.99</td>
-                                        <td
-                                            style="padding: 5px; text-align: center; background: #fff; border-right: 1px solid #e2e8f0; font-weight: 700;">
-                                            0.1395</td>
-                                        <td
-                                            style="padding: 5px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
-                                            0.7370</td>
-                                        <td
-                                            style="padding: 5px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9; font-weight: 700;">
-                                            24.73</td>
-                                        <td style="padding: 5px; text-align: center; background: #fff;">0.1609</td>
-                                    </tr>
-                                    <tr style="border-bottom: 1px solid #f1f5f9; background: #fafafa;">
-                                        <td
-                                            style="padding: 8px 12px; font-weight: 600; text-align: center; border-right: 1px solid #e2e8f0;">
-                                            VAE</td>
-                                        <td style="padding: 5px; text-align: center; border-right: 1px dotted #f1f5f9;">
-                                            0.6269</td>
-                                        <td style="padding: 5px; text-align: center; border-right: 1px dotted #f1f5f9;">
-                                            20.38</td>
-                                        <td style="padding: 5px; text-align: center; border-right: 1px solid #e2e8f0;">
-                                            0.2329</td>
-                                        <td style="padding: 5px; text-align: center; border-right: 1px dotted #f1f5f9;">
-                                            0.5825</td>
-                                        <td style="padding: 5px; text-align: center; border-right: 1px dotted #f1f5f9;">
-                                            20.45</td>
-                                        <td style="padding: 5px; text-align: center;">0.2500</td>
-                                    </tr>
-                                    <tr style="border-bottom: 1px solid #f1f5f9;">
-                                        <td
-                                            style="padding: 5px 5px; font-weight: 600; text-align: center; background: #fff; border-right: 1px solid #e2e8f0;">
-                                            \(\beta\)-VAE</td>
-                                        <td
-                                            style="padding: 5px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
-                                            0.6642</td>
-                                        <td
-                                            style="padding: 5px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
-                                            21.39</td>
-                                        <td
-                                            style="padding: 5px; text-align: center; background: #fff; border-right: 1px solid #e2e8f0;">
-                                            0.2156</td>
-                                        <td
-                                            style="padding: 5px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
-                                            0.6097</td>
-                                        <td
-                                            style="padding: 5px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
-                                            21.75</td>
-                                        <td style="padding: 5px; text-align: center; background: #fff;">0.2362</td>
-                                    </tr>
-                                    <tr
-                                        style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(47, 62, 122, 0.08)); border-top: 3px solid #3b82f6;">
-                                        <td
-                                            style="padding: 5px 5px; font-weight: 700; text-align: center; color: #1d4ed8; border-right: 1px solid #bae6fd;">
-                                            Ours (\(\alpha=0, \beta=1\))</td>
-                                        <td
-                                            style="padding: 5px; text-align: center; color: #1d4ed8; font-weight: 700; border-right: 1px dotted #bae6fd;">
-                                            0.8224</td>
-                                        <td
-                                            style="padding: 5px; text-align: center; color: #1d4ed8; font-weight: 700; border-right: 1px dotted #bae6fd;">
-                                            25.22</td>
-                                        <td
-                                            style="padding: 5px; text-align: center; font-weight: 500; border-right: 1px solid #bae6fd;">
-                                            0.1428</td>
-                                        <td
-                                            style="padding: 5px; text-align: center; color: #1d4ed8; font-weight: 700; border-right: 1px dotted #bae6fd;">
-                                            0.7762</td>
-                                        <td
-                                            style="padding: 5px; text-align: center; font-weight: 500; border-right: 1px dotted #bae6fd;">
-                                            24.54</td>
-                                        <td style="padding: 5px; text-align: center; color: #1d4ed8; font-weight: 700;">
-                                            0.1305</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                    <div style="position: relative; min-height: 50px;">
+                        <!-- RQ1: absolutely positioned, shows first then fades out -->
+                        <div class="fragment fade-out"
+                            style="font-size: 0.65em; padding: 10px 15px; background: linear-gradient(135deg, rgba(47, 62, 122, 0.06), rgba(59, 130, 246, 0.04)); border-radius: 8px; border-left: 4px solid #2F3E7A; position: absolute; top: 0; left: 0; right: 0; z-index: 2;">
+                            <strong style="color: #2F3E7A;">RQ1:</strong> Do the learned latent representations capture
+                            fundamental brain structural information?
                         </div>
-                        <div
-                            style="font-size: 0.55em; text-align: center; opacity: 0.65; margin-top: 6px; font-style: italic;">
-                            Reconstruction results comparing VAE baselines and our model
-                        </div>
-                    </div>
 
-                    <div style="display: flex; gap: 20px; font-size: 0.55em; margin-top: 30px;" class="fragment">
-                        <div
-                            style="flex: 1; padding: 10px 12px; background: rgba(34, 197, 94, 0.06); border-radius: 8px; border-left: 4px solid #16a34a;">
-                            <strong style="color: #16a34a;">✓ Outperform</strong><br />
-                            Best results across most metrics on both datasets, a minor gaps vs AE on some metrics.
+                        <!-- Table: in normal flow, appears when RQ1 fades -->
+                        <div class="fragment">
+                            <div style="font-size: 0.5em; margin: 10px auto">
+                                <table
+                                    style="width: 100%; border-collapse: separate; border-spacing: 0; border-radius: 10px; overflow: hidden; box-shadow: 0 3px 12px rgba(0,0,0,0.08); border: 1px solid #e2e8f0;">
+                                    <thead>
+                                        <tr>
+                                            <th rowspan="2"
+                                                style="font-size: 1.5em; text-align: center; background: #acaa35; color: #fff; font-weight: 600; vertical-align: middle; border-right: 1px solid rgba(255,255,255,0.2);">
+                                                Model
+                                            </th>
+                                            <th colspan="3"
+                                                style=" font-size: 1.2em; text-align: center; background: #e0f2fe; color: #0284c7; font-weight: 600; border-bottom: 2px solid #bae6fd; border-right: 1px solid #e2e8f0;">
+                                                📁 Healthy Control
+                                            </th>
+                                            <th colspan="3"
+                                                style="font-size: 1.2em; text-align: center; background: #ccfbf1; color: #0d9488; font-weight: 600; border-bottom: 2px solid #99f6e4;">
+                                                🏥 Multiple Sclerosis
+                                            </th>
+                                        </tr>
+                                        <tr style="background: #f8fafc;">
+                                            <th
+                                                style="padding: 6px 8px; text-align: center; color: #475569; border-right: 1px dotted #e2e8f0;">
+                                                SSIM ↑</th>
+                                            <th
+                                                style="padding: 6px 8px; text-align: center; color: #475569; border-right: 1px dotted #e2e8f0;">
+                                                PSNR ↑</th>
+                                            <th
+                                                style="padding: 6px 8px; text-align: center; color: #475569; border-right: 1px solid #e2e8f0;">
+                                                LPIPS ↓</th>
+                                            <th
+                                                style="padding: 6px 8px; text-align: center; color: #475569; border-right: 1px dotted #e2e8f0;">
+                                                SSIM ↑</th>
+                                            <th
+                                                style="padding: 6px 8px; text-align: center; color: #475569; border-right: 1px dotted #e2e8f0;">
+                                                PSNR ↑</th>
+                                            <th style="padding: 6px 8px; text-align: center; color: #475569;">LPIPS ↓
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr style="border-bottom: 1px solid #f1f5f9;">
+                                            <td
+                                                style="padding: 5px 5px; font-weight: 600; text-align: center; background: #fff; border-right: 1px solid #e2e8f0;">
+                                                AE<sup style="color: #3b82f6; font-weight: 700;">[3]</sup></td>
+                                            <td
+                                                style="padding: 5px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                                0.8065</td>
+                                            <td
+                                                style="padding: 5px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                                24.99</td>
+                                            <td
+                                                style="padding: 5px; text-align: center; background: #fff; border-right: 1px solid #e2e8f0; font-weight: 700;">
+                                                0.1395</td>
+                                            <td
+                                                style="padding: 5px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                                0.7370</td>
+                                            <td
+                                                style="padding: 5px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9; font-weight: 700;">
+                                                24.73</td>
+                                            <td style="padding: 5px; text-align: center; background: #fff;">0.1609</td>
+                                        </tr>
+                                        <tr style="border-bottom: 1px solid #f1f5f9; background: #fafafa;">
+                                            <td
+                                                style="padding: 8px 12px; font-weight: 600; text-align: center; border-right: 1px solid #e2e8f0;">
+                                                VAE<sup style="color: #3b82f6; font-weight: 700;">[4]</sup></td>
+                                            <td
+                                                style="padding: 5px; text-align: center; border-right: 1px dotted #f1f5f9;">
+                                                0.6269</td>
+                                            <td
+                                                style="padding: 5px; text-align: center; border-right: 1px dotted #f1f5f9;">
+                                                20.38</td>
+                                            <td
+                                                style="padding: 5px; text-align: center; border-right: 1px solid #e2e8f0;">
+                                                0.2329</td>
+                                            <td
+                                                style="padding: 5px; text-align: center; border-right: 1px dotted #f1f5f9;">
+                                                0.5825</td>
+                                            <td
+                                                style="padding: 5px; text-align: center; border-right: 1px dotted #f1f5f9;">
+                                                20.45</td>
+                                            <td style="padding: 5px; text-align: center;">0.2500</td>
+                                        </tr>
+                                        <tr style="border-bottom: 1px solid #f1f5f9;">
+                                            <td
+                                                style="padding: 5px 5px; font-weight: 600; text-align: center; background: #fff; border-right: 1px solid #e2e8f0;">
+                                                \(\beta\)-VAE<sup style="color: #3b82f6; font-weight: 700;">[5]</sup>
+                                            </td>
+                                            <td
+                                                style="padding: 5px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                                0.6642</td>
+                                            <td
+                                                style="padding: 5px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                                21.39</td>
+                                            <td
+                                                style="padding: 5px; text-align: center; background: #fff; border-right: 1px solid #e2e8f0;">
+                                                0.2156</td>
+                                            <td
+                                                style="padding: 5px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                                0.6097</td>
+                                            <td
+                                                style="padding: 5px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                                21.75</td>
+                                            <td style="padding: 5px; text-align: center; background: #fff;">0.2362</td>
+                                        </tr>
+                                        <tr
+                                            style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(47, 62, 122, 0.08)); border-top: 3px solid #3b82f6;">
+                                            <td
+                                                style="padding: 5px 5px; font-weight: 700; text-align: center; color: #1d4ed8; border-right: 1px solid #bae6fd;">
+                                                Ours (\(\alpha=0, \beta=1\))</td>
+                                            <td
+                                                style="padding: 5px; text-align: center; color: #1d4ed8; font-weight: 700; border-right: 1px dotted #bae6fd;">
+                                                0.8224</td>
+                                            <td
+                                                style="padding: 5px; text-align: center; color: #1d4ed8; font-weight: 700; border-right: 1px dotted #bae6fd;">
+                                                25.22</td>
+                                            <td
+                                                style="padding: 5px; text-align: center; font-weight: 500; border-right: 1px solid #bae6fd;">
+                                                0.1428</td>
+                                            <td
+                                                style="padding: 5px; text-align: center; color: #1d4ed8; font-weight: 700; border-right: 1px dotted #bae6fd;">
+                                                0.7762</td>
+                                            <td
+                                                style="padding: 5px; text-align: center; font-weight: 500; border-right: 1px dotted #bae6fd;">
+                                                24.54</td>
+                                            <td
+                                                style="padding: 5px; text-align: center; color: #1d4ed8; font-weight: 700;">
+                                                0.1305</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div
+                                style="font-size: 0.55em; text-align: center; opacity: 0.65; margin-top: 6px; font-style: italic;">
+                                Reconstruction results comparing VAE baselines and our model
+                            </div>
                         </div>
-                        <div
-                            style="flex: 1; padding: 10px 12px; background: rgba(59, 130, 246, 0.06); border-radius: 8px; border-left: 4px solid #3b82f6;">
-                            <strong style="color: #3b82f6;">💡 Insight</strong><br />
-                            Best at (\(\alpha=0, \beta=1\)) → relaxing MI constraint improves
-                            structural preservation
+
+                        <div style="display: flex; gap: 20px; font-size: 0.55em; margin-top: 30px;" class="fragment">
+                            <div
+                                style="flex: 1; padding: 10px 12px; background: rgba(34, 197, 94, 0.06); border-radius: 8px; border-left: 4px solid #16a34a;">
+                                <strong style="color: #16a34a;">✓ Outperform</strong><br />
+                                Best results across most metrics on both datasets, a minor gaps vs AE on some metrics.
+                            </div>
+                            <div
+                                style="flex: 1; padding: 10px 12px; background: rgba(59, 130, 246, 0.06); border-radius: 8px; border-left: 4px solid #3b82f6;">
+                                <strong style="color: #3b82f6;">💡 Insight</strong><br />
+                                Best at (\(\alpha=0, \beta=1\)) → relaxing MI constraint improves
+                                structural preservation
+                            </div>
                         </div>
-                    </div>
                 </section>
 
                 <section>
@@ -988,37 +1007,46 @@
 
                 <section>
                     <h2>Latent Informativeness</h2>
-                    <div class="fragment">
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                            <div style="text-align: center;">
-                                <img src="img/thesis/BrainAge_gm.png"
-                                    style="width: 100%; border-radius: 6px; display: block;">
-                            </div>
-                            <div style="text-align: center;">
-                                <img src="img/thesis/BrainAge_wm.png"
-                                    style="width: 100%; border-radius: 6px; display: block;">
-                            </div>
-                        </div>
-                        <div style="font-size: 0.45em; text-align: center; margin-top: -15px;">2D latent projections
-                            colored by GM and WM
-                            volume in the Healthy Control dataset</div>
-                    </div>
 
-                    <div class="fragment">
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                            <div style="text-align: center;">
-                                <img src="img/thesis/Prague_gm.png"
-                                    style="width: 100%; border-radius: 6px; display: block;">
-                            </div>
-                            <div style="text-align: center;">
-                                <img src="img/thesis/Prague_wm.png"
-                                    style="width: 100%; border-radius: 6px; display: block;">
-                            </div>
+                    <div style="position: relative; min-height: 50px;">
+                        <!-- RQ2: absolutely positioned, shows first then fades out -->
+                        <div class="fragment fade-out"
+                            style="font-size: 0.65em; padding: 10px 15px; background: linear-gradient(135deg, rgba(47, 62, 122, 0.06), rgba(59, 130, 246, 0.04)); border-radius: 8px; border-left: 4px solid #2F3E7A; position: absolute; top: 0; left: 0; right: 0; z-index: 2;">
+                            <strong style="color: #2F3E7A;">RQ2:</strong> Do these representations encode meaningful
+                            features for downstream biomarker predictions?
                         </div>
-                        <div style="font-size: 0.45em; text-align: center; margin-top: -15px;">2D latent projections
-                            colored by GM and WM
-                            volume in the Multiple Sclerosis dataset</div>
-                    </div>
+
+                        <div class="fragment">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                <div style="text-align: center;">
+                                    <img src="img/thesis/BrainAge_gm.png"
+                                        style="width: 100%; border-radius: 6px; display: block;">
+                                </div>
+                                <div style="text-align: center;">
+                                    <img src="img/thesis/BrainAge_wm.png"
+                                        style="width: 100%; border-radius: 6px; display: block;">
+                                </div>
+                            </div>
+                            <div style="font-size: 0.45em; text-align: center; margin-top: -15px;">2D latent projections
+                                colored by GM and WM
+                                volume in the Healthy Control dataset</div>
+                        </div>
+
+                        <div class="fragment">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                <div style="text-align: center;">
+                                    <img src="img/thesis/Prague_gm.png"
+                                        style="width: 100%; border-radius: 6px; display: block;">
+                                </div>
+                                <div style="text-align: center;">
+                                    <img src="img/thesis/Prague_wm.png"
+                                        style="width: 100%; border-radius: 6px; display: block;">
+                                </div>
+                            </div>
+                            <div style="font-size: 0.45em; text-align: center; margin-top: -15px;">2D latent projections
+                                colored by GM and WM
+                                volume in the Multiple Sclerosis dataset</div>
+                        </div>
                 </section>
 
                 <section>
@@ -1064,132 +1092,146 @@
                 <section>
                     <h2>Biomarker Prediction</h2>
 
-                    <!-- TABLE -->
-                    <div class="fragment" style="margin: 10px auto; width: 100%; overflow-x: auto; font-size: 0.5em;">
-                        <table
-                            style="width: 100%; border-collapse: separate; border-spacing: 0; border-radius: 10px; overflow: hidden; box-shadow: 0 3px 12px rgba(0,0,0,0.08); border: 1px solid #e2e8f0;">
-                            <thead>
-                                <tr>
-                                    <th rowspan="2"
-                                        style="font-size: 1.2em; text-align: center; background: #acaa35; color: #fff; font-weight: 600; vertical-align: middle; border-right: 1px solid rgba(255,255,255,0.2); padding: 8px 12px;">
-                                        Model
-                                    </th>
-                                    <th colspan="3"
-                                        style="font-size: 1.1em; text-align: center; background: #f1f5f9; color: #334155; font-weight: 600; padding: 6px; border-bottom: 2px solid #cbd5e1;">
-                                        CI-related Biomarkers (MAE ↓)
-                                    </th>
-                                </tr>
-                                <tr style="background: #f8fafc;">
-                                    <th
-                                        style="padding: 5px 8px; text-align: center; color: #475569; border-right: 1px dotted #e2e8f0;">
-                                        Healthy Control</th>
-                                    <th
-                                        style="padding: 5px 8px; text-align: center; color: #475569; border-right: 1px dotted #e2e8f0;">
-                                        Multiple Sclerosis (brain age)</th>
-                                    <th style="padding: 5px 8px; text-align: center; color: #475569;">Multiple Sclerosis
-                                        (SDMT)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr style="border-bottom: 1px solid #f1f5f9;">
-                                    <td
-                                        style="padding: 4px 8px; font-weight: 600; text-align: center; background: #fff; border-right: 1px solid #e2e8f0;">
-                                        RF</td>
-                                    <td
-                                        style="padding: 4px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
-                                        8.192 ± 0.304</td>
-                                    <td
-                                        style="padding: 4px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
-                                        6.145 ± 0.368</td>
-                                    <td style="padding: 4px; text-align: center; background: #fff;">8.821 ± 0.384</td>
-                                </tr>
-                                <tr style="border-bottom: 1px solid #f1f5f9; background: #fafafa;">
-                                    <td
-                                        style="padding: 4px 8px; font-weight: 600; text-align: center; border-right: 1px solid #e2e8f0;">
-                                        LR</td>
-                                    <td style="padding: 4px; text-align: center; border-right: 1px dotted #f1f5f9;">
-                                        6.715 ± 0.351</td>
-                                    <td style="padding: 4px; text-align: center; border-right: 1px dotted #f1f5f9;">
-                                        6.314 ± 0.386</td>
-                                    <td style="padding: 4px; text-align: center;">10.648 ± 0.486</td>
-                                </tr>
-                                <tr style="border-bottom: 1px solid #f1f5f9;">
-                                    <td
-                                        style="padding: 4px 8px; font-weight: 600; text-align: center; background: #fff; border-right: 1px solid #e2e8f0;">
-                                        KNN</td>
-                                    <td
-                                        style="padding: 4px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
-                                        8.829 ± 0.336</td>
-                                    <td
-                                        style="padding: 4px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
-                                        7.313 ± 0.535</td>
-                                    <td style="padding: 4px; text-align: center; background: #fff;">9.713 ± 0.491</td>
-                                </tr>
-                                <tr style="border-bottom: 1px solid #f1f5f9; background: #fafafa;">
-                                    <td
-                                        style="padding: 4px 8px; font-weight: 600; text-align: center; border-right: 1px solid #e2e8f0;">
-                                        XGB</td>
-                                    <td style="padding: 4px; text-align: center; border-right: 1px dotted #f1f5f9;">
-                                        7.234 ± 0.345</td>
-                                    <td style="padding: 4px; text-align: center; border-right: 1px dotted #f1f5f9;">
-                                        5.929 ± 0.420</td>
-                                    <td style="padding: 4px; text-align: center;">8.853 ± 0.441</td>
-                                </tr>
-                                <tr style="border-bottom: 1px solid #f1f5f9;">
-                                    <td
-                                        style="padding: 4px 8px; font-weight: 600; text-align: center; background: #fff; border-right: 1px solid #e2e8f0;">
-                                        AdaBoost</td>
-                                    <td
-                                        style="padding: 4px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
-                                        7.707 ± 0.261</td>
-                                    <td
-                                        style="padding: 4px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
-                                        6.055 ± 0.439</td>
-                                    <td style="padding: 4px; text-align: center; background: #fff;">8.877 ± 0.459</td>
-                                </tr>
-                                <tr style="border-bottom: 1px solid #f1f5f9; background: #fafafa;">
-                                    <td
-                                        style="padding: 4px 8px; font-weight: 600; text-align: center; border-right: 1px solid #e2e8f0;">
-                                        Bagging</td>
-                                    <td style="padding: 4px; text-align: center; border-right: 1px dotted #f1f5f9;">
-                                        8.195 ± 0.292</td>
-                                    <td style="padding: 4px; text-align: center; border-right: 1px dotted #f1f5f9;">
-                                        6.123 ± 0.372</td>
-                                    <td style="padding: 4px; text-align: center;">8.787 ± 0.428</td>
-                                </tr>
-                                <tr
-                                    style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(47, 62, 122, 0.08)); border-top: 3px solid #3b82f6;">
-                                    <td
-                                        style="padding: 5px 8px; font-weight: 700; text-align: center; color: #1d4ed8; border-right: 1px solid #bae6fd;">
-                                        SVR</td>
-                                    <td
-                                        style="padding: 5px; text-align: center; color: #1d4ed8; font-weight: 700; border-right: 1px dotted #bae6fd;">
-                                        6.553 ± 0.199</td>
-                                    <td
-                                        style="padding: 5px; text-align: center; color: #1d4ed8; font-weight: 700; border-right: 1px dotted #bae6fd;">
-                                        5.788 ± 0.341</td>
-                                    <td style="padding: 5px; text-align: center; color: #1d4ed8; font-weight: 700;">
-                                        8.670 ± 0.453</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <div style="text-align: center; opacity: 0.65; font-style: italic; margin-top: 10px;">
-                            Results of CI-related biomarker prediction across different ML models.
+                    <div style="position: relative; min-height: 50px;">
+                        <!-- RQ3: absolutely positioned, shows first then fades out -->
+                        <div class="fragment fade-out"
+                            style="font-size: 0.65em; padding: 10px 15px; background: linear-gradient(135deg, rgba(47, 62, 122, 0.06), rgba(59, 130, 246, 0.04)); border-radius: 8px; border-left: 4px solid #2F3E7A; position: absolute; top: 0; left: 0; right: 0; z-index: 2;">
+                            <strong style="color: #2F3E7A;">RQ3:</strong> Can the learned latent representation
+                            effectively predict CI-related biomarkers while providing interpretability?
                         </div>
-                    </div>
 
-                    <div style="display: flex; gap: 20px; font-size: 0.6em; margin-top: 20px;" class="fragment">
-                        <div
-                            style="flex: 1; padding: 6px 10px; background: rgba(47, 62, 122, 0.04); border-radius: 6px; border-left: 3px solid #2F3E7A;">
-                            Mean ± std over <strong>5-fold cross-validation</strong> on the training set
+                        <!-- TABLE -->
+                        <div class="fragment"
+                            style="margin: 10px auto; width: 100%; overflow-x: auto; font-size: 0.5em;">
+                            <table
+                                style="width: 100%; border-collapse: separate; border-spacing: 0; border-radius: 10px; overflow: hidden; box-shadow: 0 3px 12px rgba(0,0,0,0.08); border: 1px solid #e2e8f0;">
+                                <thead>
+                                    <tr>
+                                        <th rowspan="2"
+                                            style="font-size: 1.2em; text-align: center; background: #acaa35; color: #fff; font-weight: 600; vertical-align: middle; border-right: 1px solid rgba(255,255,255,0.2); padding: 8px 12px;">
+                                            Model
+                                        </th>
+                                        <th colspan="3"
+                                            style="font-size: 1.1em; text-align: center; background: #f1f5f9; color: #334155; font-weight: 600; padding: 6px; border-bottom: 2px solid #cbd5e1;">
+                                            CI-related Biomarkers (MAE ↓)
+                                        </th>
+                                    </tr>
+                                    <tr style="background: #f8fafc;">
+                                        <th
+                                            style="padding: 5px 8px; text-align: center; color: #475569; border-right: 1px dotted #e2e8f0;">
+                                            Healthy Control</th>
+                                        <th
+                                            style="padding: 5px 8px; text-align: center; color: #475569; border-right: 1px dotted #e2e8f0;">
+                                            Multiple Sclerosis (brain age)</th>
+                                        <th style="padding: 5px 8px; text-align: center; color: #475569;">Multiple
+                                            Sclerosis
+                                            (SDMT)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr style="border-bottom: 1px solid #f1f5f9;">
+                                        <td
+                                            style="padding: 4px 8px; font-weight: 600; text-align: center; background: #fff; border-right: 1px solid #e2e8f0;">
+                                            RF</td>
+                                        <td
+                                            style="padding: 4px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                            8.192 ± 0.304</td>
+                                        <td
+                                            style="padding: 4px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                            6.145 ± 0.368</td>
+                                        <td style="padding: 4px; text-align: center; background: #fff;">8.821 ± 0.384
+                                        </td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid #f1f5f9; background: #fafafa;">
+                                        <td
+                                            style="padding: 4px 8px; font-weight: 600; text-align: center; border-right: 1px solid #e2e8f0;">
+                                            LR</td>
+                                        <td style="padding: 4px; text-align: center; border-right: 1px dotted #f1f5f9;">
+                                            6.715 ± 0.351</td>
+                                        <td style="padding: 4px; text-align: center; border-right: 1px dotted #f1f5f9;">
+                                            6.314 ± 0.386</td>
+                                        <td style="padding: 4px; text-align: center;">10.648 ± 0.486</td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid #f1f5f9;">
+                                        <td
+                                            style="padding: 4px 8px; font-weight: 600; text-align: center; background: #fff; border-right: 1px solid #e2e8f0;">
+                                            KNN</td>
+                                        <td
+                                            style="padding: 4px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                            8.829 ± 0.336</td>
+                                        <td
+                                            style="padding: 4px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                            7.313 ± 0.535</td>
+                                        <td style="padding: 4px; text-align: center; background: #fff;">9.713 ± 0.491
+                                        </td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid #f1f5f9; background: #fafafa;">
+                                        <td
+                                            style="padding: 4px 8px; font-weight: 600; text-align: center; border-right: 1px solid #e2e8f0;">
+                                            XGB</td>
+                                        <td style="padding: 4px; text-align: center; border-right: 1px dotted #f1f5f9;">
+                                            7.234 ± 0.345</td>
+                                        <td style="padding: 4px; text-align: center; border-right: 1px dotted #f1f5f9;">
+                                            5.929 ± 0.420</td>
+                                        <td style="padding: 4px; text-align: center;">8.853 ± 0.441</td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid #f1f5f9;">
+                                        <td
+                                            style="padding: 4px 8px; font-weight: 600; text-align: center; background: #fff; border-right: 1px solid #e2e8f0;">
+                                            AdaBoost</td>
+                                        <td
+                                            style="padding: 4px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                            7.707 ± 0.261</td>
+                                        <td
+                                            style="padding: 4px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
+                                            6.055 ± 0.439</td>
+                                        <td style="padding: 4px; text-align: center; background: #fff;">8.877 ± 0.459
+                                        </td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid #f1f5f9; background: #fafafa;">
+                                        <td
+                                            style="padding: 4px 8px; font-weight: 600; text-align: center; border-right: 1px solid #e2e8f0;">
+                                            Bagging</td>
+                                        <td style="padding: 4px; text-align: center; border-right: 1px dotted #f1f5f9;">
+                                            8.195 ± 0.292</td>
+                                        <td style="padding: 4px; text-align: center; border-right: 1px dotted #f1f5f9;">
+                                            6.123 ± 0.372</td>
+                                        <td style="padding: 4px; text-align: center;">8.787 ± 0.428</td>
+                                    </tr>
+                                    <tr
+                                        style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(47, 62, 122, 0.08)); border-top: 3px solid #3b82f6;">
+                                        <td
+                                            style="padding: 5px 8px; font-weight: 700; text-align: center; color: #1d4ed8; border-right: 1px solid #bae6fd;">
+                                            SVR</td>
+                                        <td
+                                            style="padding: 5px; text-align: center; color: #1d4ed8; font-weight: 700; border-right: 1px dotted #bae6fd;">
+                                            6.553 ± 0.199</td>
+                                        <td
+                                            style="padding: 5px; text-align: center; color: #1d4ed8; font-weight: 700; border-right: 1px dotted #bae6fd;">
+                                            5.788 ± 0.341</td>
+                                        <td style="padding: 5px; text-align: center; color: #1d4ed8; font-weight: 700;">
+                                            8.670 ± 0.453</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div style="text-align: center; opacity: 0.65; font-style: italic; margin-top: 10px;">
+                                Results of CI-related biomarker prediction across different ML models.
+                            </div>
                         </div>
-                        <div
-                            style="flex: 1; padding: 6px 10px; background: rgba(34, 197, 94, 0.06); border-radius: 6px; border-left: 3px solid #16a34a;">
-                            <strong style="color: #16a34a;">✓</strong> <strong>SVR</strong> achieves best MAE and lowest
-                            STD across all
-                            biomarkers
+
+                        <div style="display: flex; gap: 20px; font-size: 0.6em; margin-top: 20px;" class="fragment">
+                            <div
+                                style="flex: 1; padding: 6px 10px; background: rgba(47, 62, 122, 0.04); border-radius: 6px; border-left: 3px solid #2F3E7A;">
+                                Mean ± std over <strong>5-fold cross-validation</strong> on the training set
+                            </div>
+                            <div
+                                style="flex: 1; padding: 6px 10px; background: rgba(34, 197, 94, 0.06); border-radius: 6px; border-left: 3px solid #16a34a;">
+                                <strong style="color: #16a34a;">✓</strong> <strong>SVR</strong> achieves best MAE and
+                                lowest
+                                STD across all
+                                biomarkers
+                            </div>
                         </div>
-                    </div>
                 </section>
 
                 <section>
@@ -1351,7 +1393,7 @@
                                 <tr style="border-bottom: 1px solid #f1f5f9;">
                                     <td
                                         style="padding: 4px 6px; font-weight: 600; text-align: center; background: #fff; border-right: 1px solid #e2e8f0; font-size: 0.9em;">
-                                        AE</td>
+                                        AE<sup style="color: #3b82f6; font-weight: 700;">[3]</sup></td>
                                     <td
                                         style="padding: 3px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
                                         7.346</td>
@@ -1381,7 +1423,7 @@
                                 <tr style="border-bottom: 1px solid #f1f5f9; background: #fafafa;">
                                     <td
                                         style="padding: 4px 6px; font-weight: 600; text-align: center; border-right: 1px solid #e2e8f0; font-size: 0.9em;">
-                                        VAE</td>
+                                        VAE<sup style="color: #3b82f6; font-weight: 700;">[4]</sup></td>
                                     <td style="padding: 3px; text-align: center; border-right: 1px dotted #f1f5f9;">
                                         7.862</td>
                                     <td style="padding: 3px; text-align: center; border-right: 1px dotted #f1f5f9;">
@@ -1403,7 +1445,7 @@
                                 <tr style="border-bottom: 1px solid #f1f5f9;">
                                     <td
                                         style="padding: 4px 6px; font-weight: 600; text-align: center; background: #fff; border-right: 1px solid #e2e8f0; font-size: 0.9em;">
-                                        \(\beta\)-VAE</td>
+                                        \(\beta\)-VAE<sup style="color: #3b82f6; font-weight: 700;">[5]</sup></td>
                                     <td
                                         style="padding: 3px; text-align: center; background: #fff; border-right: 1px dotted #f1f5f9;">
                                         7.520</td>
@@ -1524,7 +1566,8 @@
                             </div>
                             <div
                                 style="font-size: 0.6em; padding: 10px 10px; background: rgba(47, 62, 122, 0.04); border-radius: 6px; border-left: 3px solid #2F3E7A;">
-                                <strong>🎯 RQ3 Answered:</strong> <span class="keyword">Interpretability</span>
+                                <strong>🎯 RQ3 Answered:</strong> <span class="keyword">Interpretable insights</span>
+                                into latent space.
                             </div>
 
                         </div>
@@ -1562,7 +1605,7 @@
                                 style="background: linear-gradient(135deg, #1a6b3c, #22c55e); color: #fff; font-weight: 700; padding: 12px 15px; display: flex; align-items: center; min-width: 50px; justify-content: center;">
                                 RQ2</div>
                             <div style="padding: 12px 15px; background: #fff; flex: 1;">
-                                Latent space encodes clinically meaningful features (gender, GM/WM volume).
+                                Latent space encodes meaningful information (gender, GM/WM volume).
                             </div>
                         </div>
                         <div
@@ -1633,6 +1676,66 @@
                 </section>
             </section>
 
+            <section>
+                <h2 style="text-transform: uppercase; letter-spacing: 2px; margin-bottom: 30px;">References</h2>
+
+                <div style="font-size: 0.4em; text-align: left; width: 88%; margin: 0 auto; line-height: 1.8;">
+                    <table style="width: 100%; border-collapse: separate; border-spacing: 0 12px;">
+                        <tr>
+                            <td
+                                style="width: 30px; vertical-align: top; font-weight: 700; color: #fff; text-align: center; padding: 8px 6px; background: linear-gradient(135deg, #2F3E7A, #3b82f6); border-radius: 6px; font-size: 1.1em;">
+                                1</td>
+                            <td
+                                style="padding: 8px 16px; background: rgba(47, 62, 122, 0.04); border-radius: 0 6px 6px 0; border-left: 3px solid #3b82f6;">
+                                Marvin M. Goldenberg. "Multiple sclerosis review". In: <em>Pharmacy and
+                                    Therapeutics</em> 37.3 (2012), pp. 175–184.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td
+                                style="width: 30px; vertical-align: top; font-weight: 700; color: #fff; text-align: center; padding: 8px 6px; background: linear-gradient(135deg, #2F3E7A, #3b82f6); border-radius: 6px; font-size: 1.1em;">
+                                2</td>
+                            <td
+                                style="padding: 8px 16px; background: rgba(47, 62, 122, 0.04); border-radius: 0 6px 6px 0; border-left: 3px solid #3b82f6;">
+                                Nancy D. Chiaravalloti and John DeLuca. "Cognitive impairment in multiple sclerosis".
+                                In: <em>The Lancet Neurology</em> 7.12 (2008), pp. 1139–1151.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td
+                                style="width: 30px; vertical-align: top; font-weight: 700; color: #fff; text-align: center; padding: 8px 6px; background: linear-gradient(135deg, #2F3E7A, #3b82f6); border-radius: 6px; font-size: 1.1em;">
+                                3</td>
+                            <td
+                                style="padding: 8px 16px; background: rgba(47, 62, 122, 0.04); border-radius: 0 6px 6px 0; border-left: 3px solid #3b82f6;">
+                                Geoffrey E. Hinton and Ruslan R. Salakhutdinov. "Reducing the dimensionality of data
+                                with neural networks". In: <em>Science</em> 313.5786 (2006), pp. 504–507.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td
+                                style="width: 30px; vertical-align: top; font-weight: 700; color: #fff; text-align: center; padding: 8px 6px; background: linear-gradient(135deg, #2F3E7A, #3b82f6); border-radius: 6px; font-size: 1.1em;">
+                                4</td>
+                            <td
+                                style="padding: 8px 16px; background: rgba(47, 62, 122, 0.04); border-radius: 0 6px 6px 0; border-left: 3px solid #3b82f6;">
+                                Diederik P. Kingma and Max Welling. "Auto-encoding variational bayes". In:
+                                <em>International Conference on Learning Representations (ICLR)</em> (2014).
+                            </td>
+                        </tr>
+                        <tr>
+                            <td
+                                style="width: 30px; vertical-align: top; font-weight: 700; color: #fff; text-align: center; padding: 8px 6px; background: linear-gradient(135deg, #2F3E7A, #3b82f6); border-radius: 6px; font-size: 1.1em;">
+                                5</td>
+                            <td
+                                style="padding: 8px 16px; background: rgba(47, 62, 122, 0.04); border-radius: 0 6px 6px 0; border-left: 3px solid #3b82f6;">
+                                Irina Higgins et al. "β-VAE: Learning Basic Visual Concepts with a Constrained
+                                Variational Framework". In: <em>International Conference on Learning Representations
+                                    (ICLR)</em> (2017).
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </section>
+
             <section
                 style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
                 <h1
@@ -1658,7 +1761,7 @@
             </section>
 
             <div class="footer">
-                Master's Thesis Defence — May, 2026
+                Master's Thesis Defence — May 30, 2026
             </div>
         </div>
     </div>
