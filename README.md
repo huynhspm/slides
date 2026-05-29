@@ -17,7 +17,12 @@ Personal slide decks for **studying**, **researching**, and **teaching** — bui
 │   └── *.md
 │
 ├── study/                      # 📚 Studying
-│   ├── bachelor/               #    Bachelor — UET (coming soon)
+│   ├── bachelor/               #    Bachelor — UET  ✅ 2 slide decks
+│   │   ├── image-captioning.pdf
+│   │   ├── thesis.pdf
+│   │   ├── assets/
+│   │   ├── plugin/
+│   │   └── revealjs/
 │   ├── master/                 #    Master — UET  ✅ 3 slide decks
 │   │   ├── statistical-ml.html
 │   │   ├── advanced-ai.html
@@ -28,9 +33,9 @@ Personal slide decks for **studying**, **researching**, and **teaching** — bui
 │   └── phd/                    #    PhD — VUB (coming soon)
 │
 ├── research/                   # 🔍 Researching
-│   ├── iai/                    #    IAI — UET  (coming soon)
-│   ├── avitech/                #    AVITECH — UET  (coming soon)
-│   └── aims/                   #    AIMS — VUB  (coming soon)
+│   ├── iai/                    #    IAI — UET  ✅ 3 presentations
+│   ├── avitech/                #    AVITECH — UET  ✅ 1 presentation
+│   └── aims/                   #    AIMS — VUB  ✅ 1 presentation
 │
 ├── teach/                      # 👨‍🏫 Teaching
 │   ├── ml/                     #    Machine Learning  ✅ 3 slide decks
@@ -57,7 +62,7 @@ Personal slide decks for **studying**, **researching**, and **teaching** — bui
 
 | Track | Status | Content |
 |-------|--------|---------|
-| **Bachelor — UET** | 🔜 Coming soon | Courses, Thesis |
+| **Bachelor — UET** | ✅ Available | NLP (Image Captioning), Thesis |
 | **Master — UET** | ✅ Available | Statistical ML, Advanced AI, Thesis |
 | **PhD — VUB** | 🔜 Coming soon | Courses, Thesis |
 
