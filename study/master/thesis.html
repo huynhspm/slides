@@ -179,7 +179,7 @@
                         <div
                             style="padding: 12px 20px; border-radius: 10px; background: rgba(59, 130, 246, 0.08); border: 2px solid rgba(47, 62, 122, 0.2); display: flex; align-items: center; gap: 6px; box-shadow: 0 3px 10px rgba(47, 62, 122, 0.08);">
                             <span style="font-size: 1.5em; line-height: 1;">🔑</span>
-                            Key biomarkers for neurodegeneration and cognitive decline in MS
+                            Key biomarkers for neurodegeneration and cognitive decline in MS.
                         </div>
                     </div>
 
@@ -208,7 +208,7 @@
                         style="font-size: 0.7em; margin-bottom: 15px; padding: 12px 18px;">
                         How to perform <span class="keyword">effective</span> and <span
                             class="keyword">interpretable</span> prediction of CI-related biomarkers in MS patients from
-                        3D brain MRI scans
+                        3D brain MRI scans.
                     </div>
 
                     <div class="fragment">
@@ -578,7 +578,7 @@
                     <!-- Extract latent representations -->
                     <div class="fragment"
                         style="font-size: 0.6em; margin-bottom: 30px; padding: 6px 12px; background: rgba(59, 130, 246, 0.05); border-radius: 6px; border-left: 3px solid #3b82f6;">
-                        <strong style="color: #3b82f6;">Extract latent representations:</strong>
+                        <strong style="color: #3b82f6;">Extract compact latent representations:</strong>
                         <div>
                             \[
                             z = \mathcal{E}(X) \in \mathbb{R}^{d}, \quad d \ll H \times W \times D
@@ -643,7 +643,7 @@
                                 \max_{W}\ \mathrm{Tr}(W^\top \Sigma W)
                                 \]
                             </div>
-                            <div>Captures <strong>dominant variance</strong> directions in the latent space</div>
+                            <div>Captures <strong>dominant variance</strong> directions in the latent space.</div>
                         </div>
 
                         <!-- PLSR -->
@@ -658,8 +658,8 @@
                                 \max_{W}\ \mathrm{Cov}(Z_cW, Y_c)
                                 \]
                             </div>
-                            <div>Preserves <strong>task-relevant</strong> latent structures for CI-related biomarkers
-                                prediction</div>
+                            <div>Preserves <strong>task-relevant</strong> latent structures for CI-related biomarker
+                                analysis.</div>
                         </div>
                     </div>
 
@@ -965,7 +965,7 @@
                                 style="flex: 1; padding: 10px 12px; background: rgba(59, 130, 246, 0.06); border-radius: 8px; border-left: 4px solid #3b82f6;">
                                 <strong style="color: #3b82f6;">💡 Insight</strong><br />
                                 Best at (\(\alpha=0, \beta=1\)) → relaxing MI constraint improves
-                                structural preservation
+                                structural preservation.
                             </div>
                         </div>
                 </section>
@@ -973,15 +973,15 @@
                 <section>
                     <h2>Structural Information</h2>
 
-                    <div style="display: flex; gap: 20px; align-items: center;">
+                    <div style="display: flex; gap: 10px; align-items: center;">
 
                         <!-- LEFT: findings -->
-                        <div style="flex: 0.6; display: flex; flex-direction: column; gap: 40px; font-size: 0.4em;"
+                        <div style="flex: 0.59; display: flex; flex-direction: column; gap: 40px; font-size: 0.4em;"
                             class="fragment">
                             <div
                                 style="padding: 10px; background: rgba(34, 197, 94, 0.06); border-radius: 8px; border-left: 3px solid #16a34a;">
                                 <strong style="color: #16a34a;">✓ Best Reconstruction</strong><br />
-                                Our model preserves the most structural details among all VAE variants
+                                Our model preserves the most structural details among all VAE variants.
                             </div>
                             <div
                                 style="padding: 10px; background: rgba(245, 158, 11, 0.06); border-radius: 8px; border-left: 3px solid #f59e0b;">
@@ -996,7 +996,7 @@
                         </div>
 
                         <!-- RIGHT: image -->
-                        <div style="flex: 1.4;">
+                        <div style="flex: 1.41;">
                             <img src="img/thesis/reconstruction.png" alt="Reconstruction Comparison"
                                 style="width: 100%; border-radius: 8px; box-shadow: 0 3px 10px rgba(0,0,0,0.1);">
                             <div
@@ -1639,16 +1639,16 @@
 
                     <!-- Limitations -->
                     <div class="fragment"
-                        style="padding: 10px 20px; border-radius: 10px; background: rgba(239, 68, 68, 0.04); border-left: 4px solid #ef4444;">
+                        style="padding: 10px 15px; border-radius: 10px; background: rgba(239, 68, 68, 0.04); border-left: 4px solid #ef4444;">
                         <strong style="color: #ef4444;">⚠️ Limitations</strong>
                         <div
-                            style="margin-top: 10px; font-size: 0.5em; display: flex; flex-direction: column; gap: 6px;">
+                            style="margin-top: 10px; font-size: 0.5em; display: flex; flex-direction: column; gap: 10px;">
                             <div style="padding: 6px 10px; background: rgba(239, 68, 68, 0.08); border-radius: 5px;">
                                 <strong>VAE-inherent</strong>: blurred reconstructions, limiting visual image-latent
                                 interpretation.
                             </div>
                             <div style="padding: 6px 10px; background: rgba(239, 68, 68, 0.08); border-radius: 5px;">
-                                <strong>Limited scope</strong>: focused on CI biomarker predictions, without disease
+                                <strong>Limited scope</strong>: focused on biomarker predictions, without disease
                                 severity and progression prediction.
                             </div>
                             <div style="padding: 6px 10px; background: rgba(239, 68, 68, 0.08); border-radius: 5px;">
@@ -1660,10 +1660,10 @@
 
                     <!-- Future Work -->
                     <div class="fragment"
-                        style="padding: 10px 20px; border-radius: 10px; background: rgba(34, 197, 94, 0.04); border-left: 4px solid #16a34a; margin-top: 30px;">
+                        style="padding: 10px 20px; border-radius: 10px; background: rgba(34, 197, 94, 0.04); border-left: 4px solid #16a34a; margin-top: 25px;">
                         <strong style="color: #16a34a;">🌱 Future Work</strong>
                         <div
-                            style="margin-top: 10px; font-size: 0.5em; display: flex; flex-direction: column; gap: 6px;">
+                            style="margin-top: 10px; font-size: 0.5em; display: flex; flex-direction: column; gap: 10px;">
                             <div style="padding: 6px 10px; background: rgba(34, 197, 94, 0.08); border-radius: 5px;">
                                 <strong>Advanced GenAI</strong>: Explore stronger generative models for improved latent
                                 representations with controllable latent manipulation.
