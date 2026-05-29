@@ -1,62 +1,68 @@
-# Generative Models — Lecture Series
+# Generative AI — Lecture Slides
 
-Please update the `slide-*.html` files as needed. Reuse existing slides as templates to keep a consistent layout and style.
+Lecture slides for the **Generative AI** course, built with [Reveal.js](https://revealjs.com/).
+
+🌐 **Live:** [https://huynhspm.github.io/slides/teach/gen-ai/](https://huynhspm.github.io/slides/teach/gen-ai/)
 
 ---
 
-## 📚 Lecture Contents
+## 📚 Lectures
 
-| Lecture | Description |
-|--------|------------|
-| Overview | Generative modeling concepts, likelihood vs sampling |
-| Autoregressive Models | PixelCNN, RNN, Transformer-based models |
-| Variational Autoencoders | Latent variable models, ELBO |
-| Generative Adversarial Networks | Adversarial training, mode collapse |
-| Flow-based Models | Normalizing flows, exact likelihood |
-| Diffusion Models | DDPM, score-based models |
-| Energy-based Models | Energy functions, contrastive learning |
-| Evaluation | FID, IS, latent diffusion, applications |
+| # | Lecture | Description | Status |
+|---|---------|-------------|--------|
+| 1 | [Overview](lecture-01-overview.html) | Introduction to generative modeling — likelihood vs sampling, major model families | ✅ Available |
+
+### Planned
+
+| # | Topic | Description |
+|---|-------|-------------|
+| 2 | Autoregressive Models | PixelCNN, RNN, Transformer-based models |
+| 3 | Variational Autoencoders | Latent variable models, ELBO |
+| 4 | Generative Adversarial Networks | Adversarial training, mode collapse |
+| 5 | Flow-based Models | Normalizing flows, exact likelihood |
+| 6 | Diffusion Models | DDPM, score-based models |
+| 7 | Energy-based Models | Energy functions, contrastive learning |
+| 8 | Evaluation | FID, IS, latent diffusion, applications |
 
 ---
 
 ## 🚀 Running Slides
 
-This folder contains lecture slides built with Reveal.js. You can serve them locally or via GitHub Pages.
+### Option 1 — Node.js (recommended)
 
-### Method 1 — Node.js (recommended)
+```bash
+cd teach/gen-ai
+npm install
+npm start
+```
 
-1. Install Node.js (version >= 18)
-2. Run `npm install` inside this folder if needed
-3. Start the server:
+Then open the URL shown in the terminal (typically `http://localhost:3000`).
 
-Linux / Mac:
+### Option 2 — Static viewing
 
-    npm start -- --root=.. --port=8000
-
-Windows:
-
-    node_modules\.bin\gulp serve --root=.. --port=8000
-
-4. Open: http://localhost:8000/generative-models/
-
-
-### Method 2 — Python (simple)
-
-    cd generative-models
-    python3 -m http.server 8765
-
-Open: http://localhost:8765
+Open `lecture-01-overview.html` directly in your browser.
 
 ---
 
-## Assets
+## 📁 Structure
 
-- Images are stored in `img/`
-- Update figures directly in this folder
+```
+teach/gen-ai/
+├── index.html              # Topic index page
+├── index-page.css          # Index page styles
+├── slide-style.css         # Shared slide styles
+├── lecture-01-overview.html
+├── package.json
+├── gulpfile.js
+├── img/                    # Images and figures
+├── plugin/                 # Reveal.js plugins
+└── revealjs/               # Reveal.js library
+```
 
 ---
 
-## Notes
+## 🛠 Tech Stack
 
-- Use consistent naming: `lecture-XX-topic.html`
-- Keep slides concise and visual
+- **[Reveal.js](https://revealjs.com/)** — slide presentation framework
+- **Plugins** — Highlight, Markdown, Math (KaTeX), Notes, Search, Zoom
+- **Gulp** — local development server

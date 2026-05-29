@@ -2,6 +2,8 @@
 
 Personal slide decks for **studying**, **researching**, and **teaching** — built with [Reveal.js](https://revealjs.com/) by **Trinh Ngoc Huynh**.
 
+🌐 **Live site:** [https://huynhspm.github.io/slides/](https://huynhspm.github.io/slides/)
+
 ---
 
 ## 🗂 Repository Structure
