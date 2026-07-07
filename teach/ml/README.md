@@ -8,11 +8,13 @@ Lecture slides for the **Machine Learning** course, built with [Reveal.js](https
 
 ## 📚 Lectures
 
-| # | Lecture | Description | Status |
-|---|---------|-------------|--------|
-| 1 | [Principal Component Analysis](lecture-01-pca.html) | Dimensionality reduction, eigendecomposition, and data projection | ✅ Available |
-| 2 | [Singular Value Decomposition](lecture-02-svd.html) | Matrix factorization, low-rank approximation, and applications | ✅ Available |
-| 3 | [Partial Least Squares Regression](lecture-03-plsr.html) | Supervised dimensionality regression, covariance maximization | ✅ Available |
+| # | Course | Title | Materials | Status |
+|---|--------|-------|-----------|--------|
+| 1 | Dimensionality Reduction | Principal Component Analysis | [Slide](lecture-01-pca.html) | ✅ Available |
+| 2 | Dimensionality Reduction | Singular Value Decomposition | [Slide](lecture-02-svd.html) | 🔜 Empty deck |
+| 3 | Dimensionality Reduction | Partial Least Squares Regression | [Slide](lecture-03-plsr.html) | 🔜 Empty deck |
+
+`lecture-02-svd.html` and `lecture-03-plsr.html` are currently placeholder decks (cover + footer only) — the lecture content has not been written yet.
 
 ---
 
@@ -38,18 +40,18 @@ Open any `lecture-XX-*.html` file directly in your browser.
 
 ```
 teach/ml/
-├── index.html              # Topic index page
-├── index-style.css         # Index page styles
-├── slide-style.css         # Shared slide styles
-├── lecture-01-pca.html
-├── lecture-02-svd.html
-├── lecture-03-plsr.html
+├── index.html               # Topic index page (light/dark theme toggle)
+├── index-style.css          # Index page styles
+├── slide-style.css          # Shared Reveal.js slide styles
+├── lecture-01-pca.html      # Principal Component Analysis
+├── lecture-02-svd.html      # Singular Value Decomposition (placeholder)
+├── lecture-03-plsr.html     # Partial Least Squares Regression (placeholder)
 ├── package.json
 ├── gulpfile.js
-├── img/                    # Images and figures
-│   └── lec-01/             # PCA lecture images
-├── plugin/                 # Reveal.js plugins
-└── revealjs/               # Reveal.js library
+├── img/                     # Images and figures
+│   └── lec-01/               # PCA lecture images
+├── plugin/                  # Reveal.js plugins (highlight, markdown, math/KaTeX, notes, search, zoom)
+└── revealjs/                 # Reveal.js library
 ```
 
 ---

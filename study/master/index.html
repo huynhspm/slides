@@ -8,6 +8,13 @@
   <title>Master</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="index-style.css">
+  <script>
+    (function () {
+      var saved = localStorage.getItem("theme");
+      var theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
 </head>
 
 <body>
@@ -19,6 +26,10 @@
         <a class="secondary-link" href="../../">
           <span class="back-arrow">◀</span> Back to main
         </a>
+        <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle light/dark theme">
+          <span class="theme-toggle-icon theme-toggle-icon--sun">☀️</span>
+          <span class="theme-toggle-icon theme-toggle-icon--moon">🌙</span>
+        </button>
       </div>
       <div class="hero-logo">
         <img src="assets/img/uet.png" alt="UET Logo" height="100">
@@ -55,32 +66,42 @@
                 <th>#</th>
                 <th>Course</th>
                 <th>Title</th>
+                <th>Materials</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td>1</td>
-                <td><a href="statistical-ml.html">Statistical Machine Learning</a></td>
+                <td>Statistical Machine Learning</td>
+                <td>Learning Conditional Generative Models for Phase Retrieval</td>
                 <td><a href="https://www.jmlr.org/papers/volume24/22-0106/22-0106.pdf" target="_blank"
-                    rel="noopener">Learning Conditional Generative Models for PÀhase Retrieval</a></td>
+                    rel="noopener">Paper</a> ·
+                  <a href="statistical-ml.html" target="_blank" rel="noopener">Slide</a>
+                </td>
               </tr>
               <tr>
                 <td>2</td>
-                <td><a href="assets/pdf/latent-diffusion.pdf">Advanced Artificial Intelligence</a></td>
-                <td><a href="https://arxiv.org/pdf/2112.10752" target="_blank" rel="noopener">High-Resolution Image
-                    Synthesis with Latent Diffusion Models</a></td>
+                <td>Advanced Artificial Intelligence</td>
+                <td>High-Resolution Image Synthesis with Latent Diffusion Models</td>
+                <td><a href="https://arxiv.org/pdf/2112.10752" target="_blank" rel="noopener">Paper</a> ·
+                  <a href="assets/pdf/latent-diffusion.pdf" target="_blank" rel="noopener">PDF</a> ·
+                  <a href="advanced-ai.html" target="_blank" rel="noopener">Slide</a>
+                </td>
               </tr>
               <tr>
                 <td>3</td>
-                <td><a href="thesis.html">Thesis</a></td>
-                <td><a href="https://arxiv.org/pdf/2510.00051">Interpretable Prediction from 3D MRI Brain Scans in
-                    Multiple Sclerosis via Latent
-                    Representation Learning with Variational Autoencoders</a></td>
+                <td>Thesis</td>
+                <td>Interpretable Prediction from 3D MRI Brain Scans in Multiple Sclerosis via Latent Representation
+                  Learning with Variational Autoencoders</td>
+                <td><a href="https://arxiv.org/pdf/2510.00051" target="_blank" rel="noopener">Paper</a> ·
+                  <a href="thesis.html" target="_blank" rel="noopener">Slide</a>
+                </td>
               </tr>
               <tr>
                 <td>4</td>
-                <td><a href="graduation-invitation.html">Graduation Invitation</a></td>
-                <td>Master's Graduation Ceremony</td>
+                <td>Graduation Ceremony</td>
+                <td>Graduation Invitation</td>
+                <td><a href="graduation-invitation.html" target="_blank" rel="noopener">Invitation</a></td>
               </tr>
             </tbody>
           </table>
@@ -96,3 +117,18 @@
       </p>
     </footer>
   </main>
+
+  <script>
+    (function () {
+      var toggle = document.getElementById("theme-toggle");
+      toggle.addEventListener("click", function () {
+        var current = document.documentElement.getAttribute("data-theme");
+        var next = current === "dark" ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", next);
+        localStorage.setItem("theme", next);
+      });
+    })();
+  </script>
+</body>
+
+</html>

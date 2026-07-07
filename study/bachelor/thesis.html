@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/png" href="../../favicon.png">
+
+    <title>Thesis</title>
+    <link rel="stylesheet" href="revealjs/dist/reset.css" />
+    <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+    <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+    <link rel="stylesheet" href="slide-style.css" />
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <section>
+                    <h1>Diffusion Model in Latent Space</h1>
+                    <h3>for Medical Image Segmentation</h3>
+                    <p>Khoa Công nghệ Thông tin — Trường Đại học Công nghệ, ĐHQGHN</p>
+                    <p>Khóa luận tốt nghiệp — Năm học 2023-2024</p>
+                    <p>Thực hiện: Trịnh Ngọc Huỳnh</p>
+                    <p>Hướng dẫn: TS. Trần Quốc Long &middot; Đồng hướng dẫn: ThS. Nguyễn Văn Phi</p>
+                </section>
+
+                <section>
+                    <h2>Content</h2>
+                    <ol>
+                        <li>Introduction</li>
+                        <li>Problem</li>
+                        <li>Method</li>
+                        <li>Experiment</li>
+                        <li>Conclusion</li>
+                    </ol>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">1.</span><br />
+                        Introduction
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Medical Image Segmentation</h2>
+                    <p>Common medical imaging modalities:</p>
+                    <ul>
+                        <li class="fragment">X-ray images</li>
+                        <li class="fragment">CT scans</li>
+                        <li class="fragment">Endoscopy images</li>
+                        <li class="fragment">Ultrasound images</li>
+                        <li class="fragment">MRI images</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Semantic vs Instance Segmentation</h2>
+                    <div style="display: flex; gap: 30px;">
+                        <div class="fragment" style="flex: 1;">
+                            <p><strong>Semantic Segmentation</strong></p>
+                            <p style="font-size: 0.8em;">Groups pixels of the same class together (e.g. all lesions
+                                as one region)</p>
+                        </div>
+                        <div class="fragment" style="flex: 1;">
+                            <p><strong>Instance Segmentation</strong></p>
+                            <p style="font-size: 0.8em;">Distinguishes each individual object instance separately
+                            </p>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">2.</span><br />
+                        Problem
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Current Approach</h2>
+                    <p>An AI model is trained on (image, label) pairs to predict a single segmentation mask.</p>
+                    <div class="question-box fragment">
+                        <p style="margin: 0;">In practice, a doctor still reviews and adjusts the AI's output — a
+                            single prediction can still contain mistakes.</p>
+                    </div>
+                    <ul class="fragment">
+                        <li>Medical data is hard and expensive to label</li>
+                        <li>A single result reflects only one person's judgment</li>
+                        <li>Result quality may still be imperfect, with mistakes</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Hypothesis</h2>
+                    <p>What if, instead of one prediction, the model could simulate a <span class="keyword">group of
+                            doctors</span> segmenting the same image independently?</p>
+                    <div class="flow-diagram fragment">
+                        <div class="flow-box">Input image</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box flow-box--accent">AI model</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box flow-box--muted">Set of generated masks</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box">Aggregated result + confidence map</div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Contributions</h2>
+                    <ul>
+                        <li class="fragment">Propose using a <span class="keyword">conditional diffusion model</span>
+                            to solve medical image segmentation, simulating a group of doctors and producing a <span
+                                class="keyword">confidence map</span></li>
+                        <li class="fragment">Combine an <span class="keyword">autoencoder</span> with the conditional
+                            diffusion model to run diffusion in a <span class="keyword">latent space</span></li>
+                        <li class="fragment">Propose a <span class="keyword">weighted cross-entropy loss</span>
+                            instead of MSE for the autoencoder when the segmentation mask is small</li>
+                        <li class="fragment">Implement and <span class="keyword">open-source</span> the full model,
+                            to let the community help improve it further</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">3.</span><br />
+                        Method
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Diffusion Model</h2>
+                    <p><span class="keyword">Forward diffusion</span>: gradually corrupts \(x_0\) into pure noise
+                        \(x_T\) via \(q(x_t | x_{t-1})\).</p>
+                    <p class="fragment"><span class="keyword">Reverse diffusion</span>: a trainable network learns
+                        \(p_\theta(x_{t-1} | x_t)\) to denoise \(x_T\) back to \(x_0\).</p>
+                    <div class="flow-diagram fragment">
+                        <div class="flow-box">\(x_0\)</div>
+                        <div class="flow-arrow">forward →</div>
+                        <div class="flow-box flow-box--muted">...</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box flow-box--accent">\(x_t \rightleftarrows x_{t-1}\)</div>
+                        <div class="flow-arrow">← reverse</div>
+                        <div class="flow-box flow-box--muted">...</div>
+                        <div class="flow-arrow">←</div>
+                        <div class="flow-box">\(x_T\)</div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Autoencoder Model</h2>
+                    <div class="flow-diagram fragment">
+                        <div class="flow-box">Input \(x\)</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box flow-box--accent">Encoder \(g[x, \theta]\)</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box flow-box--muted">\(q(z|x, \theta)\)</div>
+                        <div class="flow-arrow">sample →</div>
+                        <div class="flow-box flow-box--muted">\(z^*\)</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box flow-box--accent">Decoder \(f[z^*, \phi]\)</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box">\(Pr(x|z^*, \phi)\)</div>
+                    </div>
+                    <p class="fragment" style="text-align: center;">
+                        \[z^* = \mu + \Sigma^{1/2}\epsilon^*\]
+                    </p>
+                    <div class="question-box fragment">
+                        <p style="margin: 0;"><span class="keyword">Interpolation</span> in latent space:
+                            \(z = \alpha z_1 + (1-\alpha) z_2\) produces smooth transitions between two samples.</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Proposed Model: Forward Process</h2>
+                    <p>The segmentation mask \(x_0\) is first compressed by the <span
+                            class="keyword">encoder</span> into a latent \(z_0\), then diffused forward into noise
+                        \(z_t, ..., z_T\) in the latent space.</p>
+                    <div class="flow-diagram fragment">
+                        <div class="flow-box">\(x_0\)</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box flow-box--accent">Encoder</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box">\(z_0\)</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box flow-box--muted">\(z_t\)</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box flow-box--muted">...</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box">\(z_T\) (noise)</div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Proposed Model: Reverse Process</h2>
+                    <p>Starting from \(n\) independent noise samples \(z_T^1, ..., z_T^n\), conditioned on the input
+                        image (via a convolutional block), the reverse diffusion process denoises each one into a
+                        distinct latent \(z_0^i\).</p>
+                    <div class="flow-diagram fragment">
+                        <div class="flow-box flow-box--muted">\(z_T^1, ..., z_T^n\) (noise)</div>
+                        <div class="flow-arrow">reverse diffusion →</div>
+                        <div class="flow-box flow-box--accent">\(z_0^1, ..., z_0^n\)</div>
+                        <div class="flow-arrow">Decoder →</div>
+                        <div class="flow-box">\(x^1, ..., x^n\) (masks)</div>
+                    </div>
+                    <p class="fragment">Each \(z_0^i\) is decoded into its own segmentation mask \(x^i\) — simulating
+                        <strong>n different doctors</strong>.</p>
+                    <div class="question-box fragment">
+                        <p style="margin: 0;">Aggregating all \(x^i\) gives the final result and a <span
+                                class="keyword">confidence map</span> (pixel-wise disagreement across samples).</p>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">4.</span><br />
+                        Experiment
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Datasets</h2>
+                    <ul>
+                        <li class="fragment"><span class="keyword">ISIC-2018</span> — skin lesion images</li>
+                        <li class="fragment"><span class="keyword">CVC-Clinic</span> — endoscopy polyp images</li>
+                        <li class="fragment"><span class="keyword">BraTS-2020</span> — brain MRI tumor images</li>
+                        <li class="fragment"><span class="keyword">LIDC-IDRI</span> — lung CT nodule images</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Autoencoder Reconstruction Quality</h2>
+                    <table style="font-size: 0.55em;">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Input</th>
+                                <th>Dice(%)</th>
+                                <th>IoU(%)</th>
+                                <th>SSIM</th>
+                                <th>PSNR</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>ISIC-2018</td>
+                                <td>Mask</td>
+                                <td>98.4</td>
+                                <td>96.9</td>
+                                <td>0.98</td>
+                                <td>38.4</td>
+                            </tr>
+                            <tr>
+                                <td>CVC-Clinic</td>
+                                <td>Mask</td>
+                                <td>99.5</td>
+                                <td>99.0</td>
+                                <td>0.98</td>
+                                <td>38.7</td>
+                            </tr>
+                            <tr>
+                                <td>BraTS-2020</td>
+                                <td>Mask</td>
+                                <td>99.0</td>
+                                <td>98.1</td>
+                                <td>0.99</td>
+                                <td>48.4</td>
+                            </tr>
+                            <tr>
+                                <td>LIDC-IDRI</td>
+                                <td>Mask</td>
+                                <td>94.4</td>
+                                <td>89.4</td>
+                                <td>0.99</td>
+                                <td>46.7</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="fragment" style="font-size: 0.8em;">The autoencoder reconstructs segmentation masks
+                        with high fidelity across all four datasets.</p>
+                </section>
+
+                <section>
+                    <h2>Effect of Sampling Count</h2>
+                    <p>Dice and IoU improve as the number of samples (simulated doctors) increases, then plateau
+                        after roughly 5–10 samples.</p>
+                    <div class="question-box fragment">
+                        <p style="margin: 0;">More samples → more stable aggregated result + sharper confidence map
+                            around ambiguous boundaries.</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Effect of the Latent Space</h2>
+                    <table style="font-size: 0.55em;">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Size</th>
+                                <th>Latent size</th>
+                                <th>Dice(%)</th>
+                                <th>IoU(%)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>ISIC-2018</td>
+                                <td>(64, 64)</td>
+                                <td>—</td>
+                                <td>87.2</td>
+                                <td>77.4</td>
+                            </tr>
+                            <tr class="fragment" style="font-weight: 700;">
+                                <td>ISIC-2018</td>
+                                <td>(256, 256)</td>
+                                <td>(64, 64)</td>
+                                <td>88.0</td>
+                                <td>80.5</td>
+                            </tr>
+                            <tr>
+                                <td>BraTS-2020</td>
+                                <td>(64, 64)</td>
+                                <td>—</td>
+                                <td>87.0</td>
+                                <td>76.9</td>
+                            </tr>
+                            <tr class="fragment" style="font-weight: 700;">
+                                <td>BraTS-2020</td>
+                                <td>(256, 256)</td>
+                                <td>(64, 64)</td>
+                                <td>88.9</td>
+                                <td>78.0</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="fragment" style="font-size: 0.8em;">Running diffusion in a compressed latent space
+                        improves accuracy over running it directly at (64, 64) resolution.</p>
+                </section>
+
+                <section>
+                    <h2>Comparison with Other Models</h2>
+                    <table style="font-size: 0.55em;">
+                        <thead>
+                            <tr>
+                                <th>Model</th>
+                                <th colspan="2">ISIC-2018</th>
+                                <th colspan="2">CVC-Clinic</th>
+                                <th colspan="2">BraTS-2020</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>UNet</td>
+                                <td>85.6</td>
+                                <td>78.5</td>
+                                <td>82.3</td>
+                                <td>75.0</td>
+                                <td>77.3</td>
+                                <td>70.6</td>
+                            </tr>
+                            <tr>
+                                <td>nnUNet</td>
+                                <td>88.0</td>
+                                <td>80.9</td>
+                                <td>81.3</td>
+                                <td>73.3</td>
+                                <td>88.2</td>
+                                <td>80.4</td>
+                            </tr>
+                            <tr class="fragment" style="font-weight: 700;">
+                                <td>MedSegLatDiff (proposed)</td>
+                                <td>88.0</td>
+                                <td>80.5</td>
+                                <td>84.5</td>
+                                <td>73.1</td>
+                                <td>88.8</td>
+                                <td>78.0</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="fragment" style="font-size: 0.8em;">The proposed <span class="keyword">MedSegLatDiff</span>
+                        performs competitively with strong 1-to-1 baselines like nnUNet, while also producing a
+                        confidence map that they cannot.</p>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">5.</span><br />
+                        Conclusion
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Contributions Achieved</h2>
+                    <ul>
+                        <li class="fragment">Used a <span class="keyword">conditional diffusion model</span> to solve
+                            medical image segmentation, simulating a group of doctors and producing a confidence map
+                        </li>
+                        <li class="fragment">Leveraged an <span class="keyword">autoencoder</span> to move the
+                            process into a latent space</li>
+                        <li class="fragment">Diffusion in <span class="keyword">latent space</span> speeds up both
+                            training and inference</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Future Directions</h2>
+                    <ul>
+                        <li class="fragment">Improve encoding methods and better incorporate conditioning into the
+                            model's learning process</li>
+                        <li class="fragment">Apply <span class="keyword">fast sampling</span> methods to speed up the
+                            diffusion sampling process</li>
+                        <li class="fragment">Use a <span class="keyword">full loss function</span> that learns both
+                            mean and variance of the data distribution, instead of the simplified loss used in this
+                            work</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <h2>Summary</h2>
+                <ul>
+                    <li class="fragment">A conditional diffusion model in <span class="keyword">latent space</span>
+                        can simulate multiple annotators for medical image segmentation</li>
+                    <li class="fragment">Results are competitive with strong 1-to-1 baselines, with the added benefit
+                        of a <span class="keyword">confidence map</span></li>
+                    <li class="fragment">Full source code is open-sourced for the community to build on</li>
+                </ul>
+            </section>
+
+            <div class="footer">
+                Diffusion Model in Latent Space for Medical Image Segmentation
+            </div>
+        </div>
+    </div>
+    <script src="revealjs/dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            controlsLayout: "edges",
+            slideNumber: true,
+            hashOneBasedIndex: true,
+            hash: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX],
+        });
+    </script>
+</body>
+
+</html>

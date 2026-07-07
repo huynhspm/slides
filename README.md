@@ -1,6 +1,6 @@
 # 🎓 Slide Collection
 
-Personal slide decks for **studying**, **researching**, and **teaching** — built with [Reveal.js](https://revealjs.com/) by **Trinh Ngoc Huynh**.
+Personal slide decks for **studying**, **researching**, and **teaching** — built with [Reveal.js](https://revealjs.com/) by **Trịnh Ngọc Huỳnh**.
 
 🌐 **Live site:** [https://huynhspm.github.io/slides/](https://huynhspm.github.io/slides/)
 
@@ -10,51 +10,56 @@ Personal slide decks for **studying**, **researching**, and **teaching** — bui
 
 ```
 .
-├── index.html                  # Homepage — lists all decks by purpose
+├── index.html                  # Homepage — lists all decks by purpose, light/dark theme toggle
 ├── index-style.css             # Homepage styles
 ├── favicon.png
-├── prompts/                    # Prompt templates (AI-assisted slide creation)
+├── ai-agents.md                 # Behavioral guidelines for AI coding assistants
+├── prompts/                     # Prompt templates (AI-assisted slide creation)
 │   └── *.md
 │
-├── study/                      # 📚 Studying
-│   ├── bachelor/               #    Bachelor — UET  ✅ 2 slide decks
-│   │   ├── image-captioning.pdf
-│   │   ├── thesis.pdf
+├── study/                       # 📚 Studying
+│   ├── bachelor/                #    Bachelor — UET  ✅ available
+│   │   ├── index.html
 │   │   ├── assets/
 │   │   ├── plugin/
 │   │   └── revealjs/
-│   ├── master/                 #    Master — UET  ✅ 3 slide decks
+│   ├── master/                  #    Master — UET  ✅ available
+│   │   ├── index.html
 │   │   ├── statistical-ml.html
-│   │   ├── advanced-ai.html
 │   │   ├── thesis.html
-│   │   ├── img/
+│   │   ├── graduation-invitation.html
+│   │   ├── assets/
 │   │   ├── plugin/
 │   │   └── revealjs/
-│   └── phd/                    #    PhD — VUB (coming soon)
+│   └── phd/                     #    PhD — VUB (coming soon, empty)
 │
-├── research/                   # 🔍 Researching
-│   ├── iai/                    #    IAI — UET  ✅ 3 presentations
-│   ├── avitech/                #    AVITECH — UET  ✅ 1 presentation
-│   └── aims/                   #    AIMS — VUB  ✅ 1 presentation
+├── research/                    # 🔍 Researching
+│   ├── iai/                     #    IAI — UET  ✅ available
+│   ├── avitech/                 #    AVITECH — UET  ✅ available
+│   └── aims/                    #    AIMS — VUB  ✅ available
 │
-├── teach/                      # 👨‍🏫 Teaching
-│   ├── ml/                     #    Machine Learning  ✅ 3 slide decks
+├── teach/                        # 👨‍🏫 Teaching
+│   ├── ml/                       #    Machine Learning  ✅ available
+│   │   ├── index.html
 │   │   ├── lecture-01-pca.html
 │   │   ├── lecture-02-svd.html
 │   │   ├── lecture-03-plsr.html
 │   │   ├── img/
 │   │   ├── plugin/
 │   │   └── revealjs/
-│   ├── gen-ai/                 #    Generative AI  ✅ 1 slide decks
+│   ├── gen-ai/                   #    Generative AI  ✅ available
+│   │   ├── index.html
 │   │   ├── lecture-01-overview.html
 │   │   ├── img/
 │   │   ├── plugin/
 │   │   └── revealjs/
-│   ├── dl/                     #    Deep Learning  (planned)
-│   └── cv/                     #    Computer Vision  (planned)
+│   ├── dl/                       #    Deep Learning  (planned, empty)
+│   └── cv/                       #    Computer Vision  (planned, empty)
 │
 └── README.md
 ```
+
+Each topic folder (`study/*`, `research/*`, `teach/*`) is a self-contained Reveal.js project: its own `package.json`, `gulpfile.js`, bundled `revealjs/` core + `plugin/`, an `index.html` deck listing, and one `.html` file per lecture/presentation.
 
 ---
 
@@ -62,8 +67,8 @@ Personal slide decks for **studying**, **researching**, and **teaching** — bui
 
 | Track | Status | Content |
 |-------|--------|---------|
-| **Bachelor — UET** | ✅ Available | NLP (Image Captioning), Thesis |
-| **Master — UET** | ✅ Available | Statistical ML, Advanced AI, Thesis |
+| **Bachelor — UET** | ✅ Available | NLP, Thesis |
+| **Master — UET** | ✅ Available | Statistical ML, Thesis, Graduation Invitation |
 | **PhD — VUB** | 🔜 Coming soon | Courses, Thesis |
 
 ---
@@ -72,9 +77,9 @@ Personal slide decks for **studying**, **researching**, and **teaching** — bui
 
 | Lab | Supervisor | Topics |
 |-----|------------|--------|
-| **IAI — UET** | Dr. Tran Quoc Long | Generative Models, Diffusion Models, Flow Matching, Anomaly Detection, Uncertainty Segmentation, Lung Cancer Classification |
-| **AVITECH — UET** | Prof. Dr. Nguyen Linh Trung | Seminars, Group Meetings, Paper Discussions |
-| **AIMS — VUB** | Prof. Dr. Ir. Guy Nagels | Research Presentations, Latent Representation Learning, Brain Age Prediction, Biomarker Discovery |
+| **IAI — UET** | Dr. Tran Quoc Long | AQF, MTMC, LDM |
+| **AVITECH — UET** | Prof. Dr. Nguyen Linh Trung | Seminars |
+| **AIMS — VUB** | Prof. Dr. Ir. Guy Nagels | Introduction |
 
 ---
 
@@ -83,7 +88,7 @@ Personal slide decks for **studying**, **researching**, and **teaching** — bui
 | Course | Status | Topics |
 |--------|--------|--------|
 | **Machine Learning** | ✅ Available | PCA, SVD, PLSR |
-| **Generative AI** | ✅ Available | Overview & Likelihood vs Sampling, Autoregressive Models, VAE & GAN, Diffusion & Flow-based Models |
+| **Generative AI** | ✅ Available | Overview & Likelihood vs Sampling |
 | **Deep Learning** | 🔜 Planned | Neural Network Foundations, CNN, RNN / LSTM, Transformers & Attention |
 | **Computer Vision** | 🔜 Planned | Image Classification, Object Detection, Semantic Segmentation, Vision-Language Models |
 
@@ -122,7 +127,7 @@ Open any `.html` file directly in your browser.
 1. Create a new folder under the appropriate directory (`study/`, `research/`, or `teach/`)
 2. Copy an existing topic folder as a template (e.g. `teach/ml/`)
 3. Update the topic's `index.html`
-4. Add images/resources to `img/`
+4. Add images/resources to `img/` (or `assets/`)
 5. Update the root `index.html` to include the new topic card
 
 ---

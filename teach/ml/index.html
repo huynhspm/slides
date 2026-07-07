@@ -5,9 +5,16 @@
     <meta charset="UTF-8">
     <meta name="description" content="Machine Learning lecture slides at IAI – UET, covering PCA, SVD, and PLSR.">
     <link rel="icon" type="image/png" href="../../favicon.png">
-    <title>ML</title>
+    <title>Machine Learning</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="index-style.css">
+    <script>
+        (function () {
+            var saved = localStorage.getItem("theme");
+            var theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+            document.documentElement.setAttribute("data-theme", theme);
+        })();
+    </script>
 </head>
 
 <body>
@@ -19,7 +26,12 @@
                 <a class="secondary-link" href="../../">
                     <span class="back-arrow">◀</span> Back to main
                 </a>
+                <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle light/dark theme">
+                    <span class="theme-toggle-icon theme-toggle-icon--sun">☀️</span>
+                    <span class="theme-toggle-icon theme-toggle-icon--moon">🌙</span>
+                </button>
             </div>
+            <div class="hero-logo hero-logo--emoji" aria-hidden="true">📊</div>
             <h1>Machine Learning</h1>
             <p class="hero-text">Lecture slides for the Machine Learning course.</p>
         </section>
@@ -37,8 +49,8 @@
             </div>
             <div class="stat-divider" aria-hidden="true"></div>
             <div class="stat-item">
-                <span class="stat-number">3</span>
-                <span class="stat-label">Slide Decks</span>
+                <span class="stat-number">1</span>
+                <span class="stat-label">Available</span>
             </div>
         </section>
 
@@ -50,25 +62,29 @@
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Topic</th>
-                                <th>Description</th>
+                                <th>Course</th>
+                                <th>Title</th>
+                                <th>Materials</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td>1</td>
-                                <td><a href="lecture-01-pca.html">Principal Component Analysis</a></td>
-                                <td>Dimensionality reduction, eigendecomposition, and data projection.</td>
+                                <td>Dimensionality Reduction</td>
+                                <td>Principal Component Analysis</td>
+                                <td><a href="lecture-01-pca.html" target="_blank" rel="noopener">Slide</a></td>
                             </tr>
                             <tr>
                                 <td>2</td>
-                                <td><a href="lecture-02-svd.html">Singular Value Decomposition</a></td>
-                                <td>Matrix factorization, low-rank approximation, and applications.</td>
+                                <td>Dimensionality Reduction</td>
+                                <td>Singular Value Decomposition</td>
+                                <td><a href="lecture-02-svd.html" target="_blank" rel="noopener">Slide</a></td>
                             </tr>
                             <tr>
                                 <td>3</td>
-                                <td><a href="lecture-03-plsr.html">Partial Least Squares Regression</a></td>
-                                <td>Supervised dimensionality regression, covariance maximization.</td>
+                                <td>Dimensionality Reduction</td>
+                                <td>Partial Least Squares Regression</td>
+                                <td><a href="lecture-03-plsr.html" target="_blank" rel="noopener">Slide</a></td>
                             </tr>
                         </tbody>
                     </table>
@@ -84,6 +100,18 @@
             </p>
         </footer>
     </main>
+
+    <script>
+        (function () {
+            var toggle = document.getElementById("theme-toggle");
+            toggle.addEventListener("click", function () {
+                var current = document.documentElement.getAttribute("data-theme");
+                var next = current === "dark" ? "light" : "dark";
+                document.documentElement.setAttribute("data-theme", next);
+                localStorage.setItem("theme", next);
+            });
+        })();
+    </script>
 </body>
 
 </html>

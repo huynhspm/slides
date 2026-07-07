@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/png" href="../../favicon.png">
+
+    <title>Image Captioning</title>
+    <link rel="stylesheet" href="revealjs/dist/reset.css" />
+    <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+    <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+    <link rel="stylesheet" href="slide-style.css" />
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <section>
+                    <h1>Natural Language Processing</h1>
+                    <h3>Image Captioning</h3>
+                    <p>UET · VNU</p>
+                    <p>Presented by: Trinh Ngoc Huynh, Pham Gia Linh</p>
+                </section>
+
+                <section>
+                    <h2>Content</h2>
+                    <ol>
+                        <li>Introduction</li>
+                        <li>Dataset</li>
+                        <li>Method</li>
+                        <li>Experiment</li>
+                        <li>Demo</li>
+                    </ol>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">1.</span><br />
+                        Introduction
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>What is Image Captioning?</h2>
+                    <p>Generating a natural language sentence that describes the content of an image.</p>
+                    <ul>
+                        <li class="fragment">"man in black shirt is playing guitar."</li>
+                        <li class="fragment">"construction worker in orange safety vest is working on road."</li>
+                        <li class="fragment">"two young girls are playing with lego toy."</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Applications</h2>
+                    <ul>
+                        <li class="fragment">Captioning images on social media</li>
+                        <li class="fragment">Assisting visually impaired people through image description</li>
+                        <li class="fragment">Applications in <span class="keyword">healthcare</span>, <span
+                                class="keyword">smart agriculture</span>, and many other fields</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">2.</span><br />
+                        Dataset
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Flickr8k</h2>
+                    <p><span class="keyword">Flickr8k</span>: 8,000 images</p>
+                    <ul>
+                        <li class="fragment">Train set: 6,000 images</li>
+                        <li class="fragment">Validation set: 1,000 images</li>
+                        <li class="fragment">Test set: 1,000 images</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Sample: Multiple Captions per Image</h2>
+                    <p>Each image is annotated with several human-written captions.</p>
+                    <ul style="font-size: 0.8em;">
+                        <li class="fragment">a black and white border collie catches a frisbee in front of an
+                            audience</li>
+                        <li class="fragment">a dog jumps to catch a frisbee while many people watch</li>
+                        <li class="fragment">an agile dog catches a frisbee while a crowd of onlookers watches closely
+                        </li>
+                        <li class="fragment">a brown and white dog catches a frisbee in it mouth in front of a group
+                            of people</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Preparing Training Pairs</h2>
+                    <p>Each caption is split into <span class="keyword">(partial caption, target word)</span> pairs
+                        for every image, using <span class="inline-code">startseq</span> / <span
+                            class="inline-code">endseq</span> markers.</p>
+                    <div class="question-box fragment">
+                        <p style="margin: 0;">Image → <span class="inline-code">startseq the black cat</span> → next
+                            word: <strong>sat</strong></p>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">3.</span><br />
+                        Method
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Where to Put the Image?</h2>
+                    <p>Two strategies for conditioning caption generation on the image feature:</p>
+                    <ul>
+                        <li class="fragment"><span class="keyword">Inject</span>: feed the image into the same RNN
+                            that processes the words</li>
+                        <li class="fragment"><span class="keyword">Merge</span>: combine the image with the RNN
+                            output after processing the words</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Model Overview</h2>
+                    <div class="flow-diagram fragment">
+                        <div class="flow-box">Image</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box flow-box--accent">Pretrained CNN</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box flow-box--muted">Vector \(256 \times 1\)</div>
+                    </div>
+                    <div class="flow-diagram fragment">
+                        <div class="flow-box">Partial caption</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box flow-box--accent">Seq2Seq encoder</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box flow-box--muted">Vector \(256 \times 1\)</div>
+                    </div>
+                    <div class="flow-diagram fragment">
+                        <div class="flow-box flow-box--muted">Both vectors</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box flow-box--accent">Merge</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box flow-box--accent">Fully Connected</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box">Next word</div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Image Embedding</h2>
+                    <p>Pretrained CNN backbones extract a fixed-size feature vector from the input image:</p>
+                    <ul>
+                        <li class="fragment"><span class="keyword">Inception-V3</span></li>
+                        <li class="fragment"><span class="keyword">ResNet</span></li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Text Embedding (Seq2Seq)</h2>
+                    <ul>
+                        <li class="fragment"><span class="keyword">Recurrent Neural Network (RNN)</span></li>
+                        <li class="fragment"><span class="keyword">Long Short-Term Memory (LSTM)</span></li>
+                        <li class="fragment"><span class="keyword">Transformer</span></li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Decoding: Greedy Search</h2>
+                    <p>At each step, pick the single most probable next word.</p>
+                    <div class="question-box fragment">
+                        <p style="margin: 0;">Fast, but can miss the globally best sentence.</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Decoding: Beam Search</h2>
+                    <p>Keep track of the <span class="keyword">top-k</span> candidate sequences at every step,
+                        instead of only the single best one.</p>
+                    <div class="question-box fragment">
+                        <p style="margin: 0;">More expensive, but explores more of the search space and usually
+                            produces better captions than greedy search.</p>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">4.</span><br />
+                        Experiment
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>BLEU Metric</h2>
+                    <p>BLEU measures n-gram overlap between the generated caption and reference captions, penalized
+                        for length mismatch.</p>
+                    <p style="text-align: center;">
+                        \[\text{BLEU} = \min\left(1, \exp\left(1 -
+                        \frac{\text{reference-length}}{\text{output-length}}\right)\right)
+                        \left(\prod_{i=1}^{4} precision_i\right)^{1/4}\]
+                    </p>
+                    <table style="font-size: 0.55em; margin-top: 10px;">
+                        <thead>
+                            <tr>
+                                <th>BLEU Score</th>
+                                <th>Interpretation</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>&lt; 10</td>
+                                <td>Almost useless</td>
+                            </tr>
+                            <tr>
+                                <td>20 - 29</td>
+                                <td>Gist is clear, significant grammatical errors</td>
+                            </tr>
+                            <tr>
+                                <td>40 - 50</td>
+                                <td>High quality translations</td>
+                            </tr>
+                            <tr>
+                                <td>&gt; 60</td>
+                                <td>Quality often better than human</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section>
+                    <h2>Results Comparison</h2>
+                    <table style="font-size: 0.55em;">
+                        <thead>
+                            <tr>
+                                <th>Text Embed Model</th>
+                                <th>use_glove</th>
+                                <th>Merge</th>
+                                <th>BLEU-1</th>
+                                <th>BLEU-2</th>
+                                <th>BLEU-3</th>
+                                <th>BLEU-4</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>RNN</td>
+                                <td>true</td>
+                                <td>add</td>
+                                <td>0.552</td>
+                                <td>0.370</td>
+                                <td>0.237</td>
+                                <td>0.154</td>
+                            </tr>
+                            <tr class="fragment" style="font-weight: 700;">
+                                <td>LSTM</td>
+                                <td>true</td>
+                                <td>add</td>
+                                <td>0.571</td>
+                                <td>0.387</td>
+                                <td>0.251</td>
+                                <td>0.163</td>
+                            </tr>
+                            <tr>
+                                <td>TransformerEncoder</td>
+                                <td>true</td>
+                                <td>add</td>
+                                <td>0.190</td>
+                                <td>0.102</td>
+                                <td>0.041</td>
+                                <td>0.017</td>
+                            </tr>
+                            <tr>
+                                <td>Transformer</td>
+                                <td>false</td>
+                                <td>transformer</td>
+                                <td>0.485</td>
+                                <td>0.298</td>
+                                <td>0.175</td>
+                                <td>0.110</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="question-box fragment">
+                        <p style="margin: 0;"><span class="keyword">LSTM + add merge</span> achieves the best BLEU
+                            scores among the tested configurations.</p>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <h2>Summary</h2>
+                <ul>
+                    <li class="fragment">Image captioning combines a <span class="keyword">CNN image encoder</span>
+                        with a <span class="keyword">sequence decoder</span> (RNN/LSTM/Transformer) merged to predict
+                        the next word</li>
+                    <li class="fragment">Trained and evaluated on <span class="keyword">Flickr8k</span> using the
+                        BLEU metric</li>
+                    <li class="fragment">LSTM with additive merge and GloVe embeddings gave the strongest results
+                    </li>
+                    <li class="fragment">Beam search decoding generally improves caption quality over greedy search
+                    </li>
+                </ul>
+            </section>
+
+            <div class="footer">
+                Natural Language Processing: Image Captioning
+            </div>
+        </div>
+    </div>
+    <script src="revealjs/dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            controlsLayout: "edges",
+            slideNumber: true,
+            hashOneBasedIndex: true,
+            hash: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX],
+        });
+    </script>
+</body>
+
+</html>

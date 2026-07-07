@@ -9,6 +9,13 @@
     <title>Slide Collection</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="index-style.css">
+    <script>
+        (function () {
+            var saved = localStorage.getItem("theme");
+            var theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+            document.documentElement.setAttribute("data-theme", theme);
+        })();
+    </script>
 </head>
 
 <body>
@@ -16,9 +23,13 @@
 
         <!-- ─── HERO ─── -->
         <section class="hero">
+            <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle light/dark theme">
+                <span class="theme-toggle-icon theme-toggle-icon--sun">☀️</span>
+                <span class="theme-toggle-icon theme-toggle-icon--moon">🌙</span>
+            </button>
             <h1>My Slide Collection</h1>
             <p>Slide decks for academic study, research seminars & teaching courses.</p>
-            <p class="hero-author">Trinh Ngoc Huynh</p>
+            <p class="hero-author"><a href="https://huynhspm.github.io/" target="_blank" rel="noopener">Trinh Ngoc Huynh</a></p>
             <div class="hero-contact">
                 <div class="hero-contact-row">
                     <a class="hero-contact-link" href="mailto:huynhtn@vnu.edu.vn">📧 huynhtn@vnu.edu.vn</a>
@@ -306,6 +317,18 @@
             </p>
         </footer>
     </main>
+
+    <script>
+        (function () {
+            var toggle = document.getElementById("theme-toggle");
+            toggle.addEventListener("click", function () {
+                var current = document.documentElement.getAttribute("data-theme");
+                var next = current === "dark" ? "light" : "dark";
+                document.documentElement.setAttribute("data-theme", next);
+                localStorage.setItem("theme", next);
+            });
+        })();
+    </script>
 </body>
 
 </html>

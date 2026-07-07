@@ -69,3 +69,41 @@
 	background: #f7efe6;
 	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
+
+.reveal .flow-diagram {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin: 1em auto;
+}
+
+.reveal .flow-box {
+	border: 2px solid #ccc;
+	border-radius: 10px;
+	padding: 0.5em 0.9em;
+	background: #f8f9fa;
+	font-size: 0.7em;
+	text-align: center;
+	white-space: nowrap;
+}
+
+.reveal .flow-box--accent {
+	border-color: #b15a2b;
+	background: #f7efe6;
+	color: #b15a2b;
+	font-weight: 700;
+}
+
+.reveal .flow-box--muted {
+	border-color: #999;
+	background: #eee;
+	color: #666;
+}
+
+.reveal .flow-arrow {
+	font-size: 0.65em;
+	color: #666;
+	white-space: nowrap;
+}

@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/png" href="../../favicon.png">
+
+    <title>Diffusion Model</title>
+    <link rel="stylesheet" href="revealjs/dist/reset.css" />
+    <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+    <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+    <link rel="stylesheet" href="slide-style.css" />
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <section>
+                    <h1>Computer Graphics</h1>
+                    <h3>Diffusion Model</h3>
+                    <p>UET · VNU — Institute for Artificial Intelligence</p>
+                    <p>Presented by: Trinh Ngoc Huynh, Dang Xuan Loc</p>
+                </section>
+
+                <section>
+                    <h2>Content</h2>
+                    <ol>
+                        <li>Introduction</li>
+                        <li>Backgrounds</li>
+                        <li>Generative Model</li>
+                        <li>Diffusion Model</li>
+                        <li>Demo</li>
+                    </ol>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">1.</span><br />
+                        Introduction
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Deep Generative Learning</h2>
+                    <p><span class="keyword">Learning to generate data</span>: train a neural network on samples
+                        from a data distribution, then sample new data from it.</p>
+                    <div class="flow-diagram fragment">
+                        <div class="flow-box">Data distribution</div>
+                        <div class="flow-arrow">Train →</div>
+                        <div class="flow-box flow-box--accent">Neural Network</div>
+                        <div class="flow-arrow">Sample →</div>
+                        <div class="flow-box">New realistic data</div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Text-to-Image Generation</h2>
+                    <ul>
+                        <li class="fragment"><span class="keyword">DALL·E 2</span> — "a teddy bear on a skateboard in
+                            times square"</li>
+                        <li class="fragment"><span class="keyword">Imagen</span> — "A group of teddy bears in suit in
+                            a corporate office celebrating the birthday of their friend..."</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">2.</span><br />
+                        Backgrounds
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Supervised vs Unsupervised Learning</h2>
+                    <div style="display: flex; gap: 30px;">
+                        <div class="fragment" style="flex: 1;">
+                            <p><strong>Supervised Learning</strong></p>
+                            <p style="font-size: 0.8em;">Data: (x, y) — x is data, y is label</p>
+                            <p style="font-size: 0.8em;">Goal: learn a <span class="inline-code">function</span> to
+                                map x → y</p>
+                        </div>
+                        <div class="fragment" style="flex: 1;">
+                            <p><strong>Unsupervised Learning</strong></p>
+                            <p style="font-size: 0.8em;">Data: x — just data, no labels</p>
+                            <p style="font-size: 0.8em;">Goal: learn some underlying hidden <span
+                                    class="inline-code">structure</span></p>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">3.</span><br />
+                        Generative Model
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>The Landscape of Deep Generative Learning</h2>
+                    <ul>
+                        <li class="fragment">Variational Autoencoders (VAE)</li>
+                        <li class="fragment">Generative Adversarial Networks (GAN)</li>
+                        <li class="fragment">Autoregressive Models</li>
+                        <li class="fragment">Normalizing Flows</li>
+                        <li class="fragment">Energy-based Models</li>
+                        <li class="fragment"><span class="keyword">Denoising Diffusion Models</span></li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Generative Modeling</h2>
+                    <p>Given training data, generate new samples from the same distribution.</p>
+                    <div class="question-box fragment">
+                        <p style="margin: 0;"><strong>Objectives:</strong></p>
+                        <ol style="margin: 0;">
+                            <li>Learn \(p_{model}(x)\) that approximates \(p_{data}(x)\)</li>
+                            <li><strong>Sampling</strong> new \(x\) from \(p_{model}(x)\)</li>
+                        </ol>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Autoencoders</h2>
+                    <p>Unsupervised approach for learning a lower-dimensional feature representation from unlabeled
+                        data.</p>
+                    <div class="flow-diagram fragment">
+                        <div class="flow-box">Input <strong>x</strong></div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box flow-box--accent">Encoder</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box flow-box--muted">Features <strong>z</strong></div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box flow-box--accent">Decoder</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box">Reconstructed \(\hat{x}\)</div>
+                    </div>
+                    <p class="fragment" style="font-size: 0.8em; text-align: center;">Trained with L2 loss:
+                        \[\|x - \hat{x}\|^2\]
+                        — features capture meaningful factors of variation, without using labels.</p>
+                    <div class="question-box fragment">
+                        <p style="margin: 0;">We can reconstruct data, but we can't <strong>generate</strong> new
+                            images — we don't know the space of z.</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>VAE — Variational Autoencoder</h2>
+                    <p>Instead of a fixed latent vector, the encoder outputs a <span
+                            class="keyword">distribution</span> over z: mean \(\mu\) and variance \(\sigma\), so we
+                        can sample and decode new data.</p>
+                    <p class="fragment" style="text-align: center;">
+                        \[z = \mu + \sigma \odot \epsilon, \qquad \epsilon \sim \mathcal{N}(0, I)\]
+                    </p>
+                    <p class="fragment" style="text-align: center;">
+                        \[\mathcal{L}(\phi, \theta, x) = \underbrace{\|x - \hat{x}\|^2}_{\text{reconstruction}} +
+                        \underbrace{D_{KL}\big(q_\phi(z|x) \,\|\, p(z)\big)}_{\text{regularization}}\]
+                    </p>
+                    <div class="question-box fragment">
+                        <p style="margin: 0;"><strong>Limitations:</strong> blurry samples, unrealistic output.</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>GAN — Generative Adversarial Network</h2>
+                    <div class="flow-diagram fragment">
+                        <div class="flow-box">Random noise <strong>z</strong></div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box flow-box--accent">Generator</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box flow-box--muted">Fake / Real images</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box flow-box--accent">Discriminator</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box">Real or Fake?</div>
+                    </div>
+                    <p class="fragment"><span class="keyword">Generator</span>: tries to fool the discriminator by
+                        generating real-looking images.</p>
+                    <p class="fragment"><span class="keyword">Discriminator</span>: tries to distinguish between real
+                        and fake images.</p>
+                    <div class="question-box fragment">
+                        <p style="margin: 0;">After training, use only the generator network to produce new images.
+                        </p>
+                    </div>
+                    <ul class="fragment" style="font-size: 0.85em;">
+                        <li>Unstable training</li>
+                        <li>Mode collapse</li>
+                        <li>Diminished gradient</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">4.</span><br />
+                        Diffusion Model
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Denoising Diffusion Probabilistic Models</h2>
+                    <p>Two processes:</p>
+                    <ul>
+                        <li class="fragment"><span class="keyword">Forward diffusion</span>: gradually adds noise to
+                            the input</li>
+                        <li class="fragment"><span class="keyword">Reverse denoising</span>: learns to generate data
+                            by denoising step by step</li>
+                    </ul>
+                    <div class="flow-diagram fragment">
+                        <div class="flow-box flow-box--accent">Data \(x_0\)</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box flow-box--muted">\(x_1\)</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box flow-box--muted">...</div>
+                        <div class="flow-arrow">→</div>
+                        <div class="flow-box">Noise \(x_T\)</div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Forward Diffusion Process</h2>
+                    <p>Formal definition, in T steps:</p>
+                    <p style="text-align: center;">
+                        \[q(x_t | x_{t-1}) = \mathcal{N}\big(x_t; \sqrt{1 - \beta_t}\, x_{t-1}, \beta_t I\big)\]
+                    </p>
+                    <p class="fragment" style="font-size: 0.8em;">With \(\beta_t \in (0, 1)\) and \(T\) large enough
+                        (1000 → 4000): \(x_t\) converges to \(\mathcal{N}(0, I)\) — pure noise.</p>
+                    <p class="fragment" style="font-size: 0.8em;">Nice property — we can sample \(x_t\) directly from
+                        \(x_0\):</p>
+                    <p class="fragment" style="text-align: center;">
+                        \[q(x_t | x_0) = \mathcal{N}\big(x_t; \sqrt{\bar\alpha_t}\, x_0, (1 - \bar\alpha_t) I\big)\]
+                    </p>
+                </section>
+
+                <section>
+                    <h2>Reverse Denoising Process</h2>
+                    <p>Generation starts from pure noise and iteratively denoises:</p>
+                    <p class="fragment" style="text-align: center;">\[x_T \sim \mathcal{N}(0, I)\]</p>
+                    <p class="fragment" style="text-align: center;">
+                        \[x_{t-1} \sim q(x_{t-1} | x_t) \quad \text{(true denoising distribution)}\]
+                    </p>
+                    <div class="question-box fragment">
+                        <p style="margin: 0;">A trainable network (<span class="keyword">U-Net</span>, denoising
+                            autoencoder) approximates this denoising step at every \(t\).</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Training and Sampling</h2>
+                    <div style="display: flex; gap: 30px; font-size: 0.7em;">
+                        <div class="fragment" style="flex: 1;">
+                            <strong>Algorithm 1: Training</strong>
+                            <ol>
+                                <li>\(x_0 \sim q(x_0)\)</li>
+                                <li>\(t \sim \text{Uniform}(\{1, ..., T\})\)</li>
+                                <li>\(\epsilon \sim \mathcal{N}(0, I)\)</li>
+                                <li>Gradient descent step on the noise-prediction loss:
+                                    \[\nabla_\theta \big\| \epsilon - \epsilon_\theta(\sqrt{\bar\alpha_t} x_0 +
+                                    \sqrt{1-\bar\alpha_t}\epsilon,\ t) \big\|^2\]
+                                </li>
+                            </ol>
+                        </div>
+                        <div class="fragment" style="flex: 1;">
+                            <strong>Algorithm 2: Sampling</strong>
+                            <ol>
+                                <li>\(x_T \sim \mathcal{N}(0, I)\)</li>
+                                <li>for \(t = T, ..., 1\):
+                                    \[x_{t-1} = \frac{1}{\sqrt{\alpha_t}}\Big(x_t -
+                                    \frac{1-\alpha_t}{\sqrt{1-\bar\alpha_t}}\epsilon_\theta(x_t, t)\Big) + \sigma_t z\]
+                                </li>
+                                <li>return \(x_0\)</li>
+                            </ol>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Conditioning: Self vs Cross Attention</h2>
+                    <ul>
+                        <li class="fragment"><span class="keyword">Self attention</span>: tokens attend to each other
+                            within the same input</li>
+                        <li class="fragment"><span class="keyword">Cross attention</span>: tokens attend to a
+                            different condition input (e.g. text, semantic map)</li>
+                    </ul>
+                    <p class="fragment" style="text-align: center;">
+                        \[\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^\top}{\sqrt{d_k}}\right)V\]
+                    </p>
+                </section>
+
+                <section>
+                    <h2>Latent Diffusion Model</h2>
+                    <div class="flow-diagram fragment">
+                        <div class="flow-box">Pixel space \(x\)</div>
+                        <div class="flow-arrow">Encoder →</div>
+                        <div class="flow-box flow-box--accent">Latent \(z\)</div>
+                        <div class="flow-arrow">Diffusion →</div>
+                        <div class="flow-box flow-box--muted">\(z_T\)</div>
+                        <div class="flow-arrow">Decoder →</div>
+                        <div class="flow-box">Pixel space \(\tilde{x}\)</div>
+                    </div>
+                    <p class="fragment">Combines an <span class="keyword">autoencoder</span> (pixel space ↔ latent
+                        space) with a diffusion process running in the compressed <span
+                            class="keyword">latent space</span>, conditioned via cross-attention on text, semantic
+                        maps, images, or representations.</p>
+                    <div class="question-box fragment">
+                        <p style="margin: 0;">Running diffusion in latent space instead of pixel space is
+                            significantly cheaper and faster.</p>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <h2>Summary</h2>
+                <ul>
+                    <li class="fragment">Diffusion models generate data via a fixed <span
+                            class="keyword">forward noising</span> process and a learned <span
+                            class="keyword">reverse denoising</span> process</li>
+                    <li class="fragment">Compared to VAE/GAN, diffusion models avoid blurry samples and unstable
+                        training, at the cost of slower sampling</li>
+                    <li class="fragment"><span class="keyword">Latent diffusion</span> moves the process into a
+                        compressed latent space for efficiency, enabling conditional generation (text, images, masks)
+                    </li>
+                </ul>
+            </section>
+
+            <div class="footer">
+                Computer Graphics: Diffusion Model
+            </div>
+        </div>
+    </div>
+    <script src="revealjs/dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            controlsLayout: "edges",
+            slideNumber: true,
+            hashOneBasedIndex: true,
+            hash: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX],
+        });
+    </script>
+</body>
+
+</html>

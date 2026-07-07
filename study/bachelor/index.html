@@ -6,9 +6,16 @@
   <meta name="description"
     content="Bachelor's coursework and thesis slides at University of Engineering and Technology.">
   <link rel="icon" type="image/png" href="../../favicon.png">
-  <title>Bachelor — UET</title>
+  <title>Bachelor</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="index-style.css">
+  <script>
+    (function () {
+      var saved = localStorage.getItem("theme");
+      var theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
 </head>
 
 <body>
@@ -20,19 +27,23 @@
         <a class="secondary-link" href="../../">
           <span class="back-arrow">◀</span> Back to main
         </a>
+        <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle light/dark theme">
+          <span class="theme-toggle-icon theme-toggle-icon--sun">☀️</span>
+          <span class="theme-toggle-icon theme-toggle-icon--moon">🌙</span>
+        </button>
       </div>
       <div class="hero-logo">
         <img src="assets/img/uet.png" alt="UET Logo" height="100">
       </div>
       <h1>Bachelor — UET</h1>
-      <p class="hero-text">Coursework and thesis slides for Bachelor's program in Computer Science at UET.</p>
+      <p class="hero-text">Coursework and thesis slides for Bachelor's program in Information Technology at UET.</p>
     </section>
 
     <!-- ─── STATS ─── -->
     <section class="stats-row" aria-label="Quick statistics">
       <div class="stat-item">
-        <span class="stat-number">1</span>
-        <span class="stat-label">Course</span>
+        <span class="stat-number">2</span>
+        <span class="stat-label">Courses</span>
       </div>
       <div class="stat-divider" aria-hidden="true"></div>
       <div class="stat-item">
@@ -41,8 +52,8 @@
       </div>
       <div class="stat-divider" aria-hidden="true"></div>
       <div class="stat-item">
-        <span class="stat-number">2</span>
-        <span class="stat-label">Slide Decks</span>
+        <span class="stat-number">3</span>
+        <span class="stat-label">PDF Slides</span>
       </div>
     </section>
 
@@ -56,28 +67,37 @@
                 <th>#</th>
                 <th>Course</th>
                 <th>Title</th>
+                <th>Materials</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td>1</td>
-                <td><a>Natural Language Processing</a>
+                <td>Natural Language Processing
                 </td>
-                <td><a href="assets/pdf/image-captioning.pdf" target="_blank" rel="noopener">Image Captioning</a>
+                <td>Image Captioning
+                </td>
+                <td><a href="assets/pdf/image-captioning.pdf" target="_blank" rel="noopener">PDF</a> ·
+                  <a href="image-captioning.html" target="_blank" rel="noopener">Slide</a>
                 </td>
               </tr>
               <tr>
                 <td>2</td>
-                <td><a>Computer Graphics</a>
+                <td>Computer Graphics
                 </td>
-                <td><a href="assets/pdf/diffusion-model.pdf" target="_blank" rel="noopener">Diffusion Model</a>
+                <td>Diffusion Model
+                </td>
+                <td><a href="assets/pdf/diffusion-model.pdf" target="_blank" rel="noopener">PDF</a> ·
+                  <a href="diffusion-model.html" target="_blank" rel="noopener">Slide</a>
                 </td>
               </tr>
               <tr>
                 <td>3</td>
-                <td><a>Thesis</a></td>
-                <td><a href="assets/pdf/thesis.pdf" target="_blank" rel="noopener">Diffusion Model in Latent Space for
-                    Medical Image Segmentation</a></td>
+                <td>Thesis</td>
+                <td>Diffusion Model in Latent Space for Medical Image Segmentation</td>
+                <td><a href="assets/pdf/thesis.pdf" target="_blank" rel="noopener">PDF</a> ·
+                  <a href="thesis.html" target="_blank" rel="noopener">Slide</a>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -93,6 +113,18 @@
       </p>
     </footer>
   </main>
+
+  <script>
+    (function () {
+      var toggle = document.getElementById("theme-toggle");
+      toggle.addEventListener("click", function () {
+        var current = document.documentElement.getAttribute("data-theme");
+        var next = current === "dark" ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", next);
+        localStorage.setItem("theme", next);
+      });
+    })();
+  </script>
 </body>
 
 </html>
