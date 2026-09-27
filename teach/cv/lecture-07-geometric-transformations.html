@@ -1,0 +1,1031 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/png" href="../../favicon.png">
+    <title>Geometric Transformations</title>
+
+    <link rel="stylesheet" href="revealjs/dist/reset.css" />
+    <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+    <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+    <link rel="stylesheet" href="slide-style.css" />
+</head>
+
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <section>
+                    <h1>Computer Vision</h1>
+                    <h3>Geometric Transformations</h3>
+                    <p>IAI · UET · VNU</p>
+                    <p>Presenter: Trinh Ngoc Huynh </p>
+                    <p>Email: <a href="mailto:huynhtn@vnu.edu.vn">huynhtn@vnu.edu.vn</a></p>
+                </section>
+
+                <section>
+                    <h2>Content</h2>
+
+                    <div class="fragment"
+                        style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; font-size: 0.7em;">
+
+                        <div
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #b15a2b;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #b15a2b; min-width: 40px; text-align: center;">1</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Introduction</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">What geometric
+                                    transformations are and why we need them</p>
+                            </div>
+                        </div>
+
+                        <div
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #2a7ae2; min-width: 40px; text-align: center;">2</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Two Basic Operations</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Spatial mapping and
+                                    intensity interpolation</p>
+                            </div>
+                        </div>
+
+                        <div
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #27ae60; min-width: 40px; text-align: center;">3</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Basic Transformations</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Translation, scaling,
+                                    rotation, shearing</p>
+                            </div>
+                        </div>
+
+                        <div
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #e67e22; min-width: 40px; text-align: center;">4</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Affine & Projective
+                                    Transformations</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Linear transformations
+                                    and the general 3×3 matrix</p>
+                            </div>
+                        </div>
+
+                        <div
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #9727ae;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #9727ae; min-width: 40px; text-align: center;">5</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">General Transformations & Warping
+                                </strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Control points,
+                                    polynomial warps, mesh warping, morphing</p>
+                            </div>
+                        </div>
+
+                        <div
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #c0392b;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #c0392b; min-width: 40px; text-align: center;">6</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Applications</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Rectification,
+                                    registration, and map projections</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light" style="color: #888;">1.</span><br />
+                        Introduction
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>What is Geometric Transformation?</h2>
+
+                    <div style="margin-top: 16px; font-size: 0.65em; text-align: left;">
+
+                        <div class="fragment" style="display: flex; gap: 14px; margin-bottom: 14px;">
+                            <div
+                                style="flex: 1; background: #f8f9fa; padding: 14px 18px; border-radius: 10px; border-left: 4px solid #9727ae;">
+                                <strong style="color: #9727ae;">So Far</strong>
+                                <p style="margin: 4px 0 0 0; color: #555;">
+                                    Image processing operations modify the <span class="keyword">color / intensity
+                                        values</span> of pixels, keeping their positions fixed.
+                                </p>
+                            </div>
+                            <div
+                                style="flex: 1; background: #eef5fc; padding: 14px 18px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                                <strong style="color: #2a7ae2;">Geometric Transformation</strong>
+                                <p style="margin: 4px 0 0 0; color: #555;">
+                                    Modifies the <span class="keyword">positions</span> of pixels in an image, while
+                                    keeping their color values unchanged.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 14px 18px; border-radius: 10px; border-left: 4px solid #e67e22; margin-bottom: 14px;">
+                            <strong style="display: block; color: #d35400;">Purpose</strong>
+                            <ul style="margin: 8px 0 0 0; color: #555;">
+                                <li style="margin-bottom: 4px;">To create special effects</li>
+                                <li style="margin-bottom: 4px;">To register two images taken of the same scene at
+                                    different times</li>
+                                <li>To morph one image into another</li>
+                            </ul>
+                        </div>
+
+                        <div class="fragment"
+                            style="padding: 14px 20px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                            <p style="margin: 0;">
+                                <strong style="color: #b8860b;">Key Idea:</strong>
+                                Geometric transformation is a mapping of pixel <em>positions</em>, not pixel
+                                <em>values</em>.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Illustration of Mapping Functions</h2>
+
+                    <div class="placeholder fragment"
+                        style="border: 2px dashed #b8c0cc; background: #fafbfc; padding:14px; border-radius:8px; margin-top: 16px; font-size: 0.6em; text-align: left;">
+                        <em>🖼️ [Figure placeholder]</em><br />
+                        <strong>Description:</strong> Diagram comparing "Geometric transformations" (identical
+                        shape family: translation, reflection, rotation, shearing → distorted shape) against
+                        "Affine transformations" (similar-shape family: dilation/scale, projection, plus other
+                        warping/morphing), starting from the same original triangle.<br />
+                        <strong>Image prompt:</strong> A branching diagram with an original triangle on the left,
+                        branching into two groups on the right — one labeled "Geometric transformations" showing
+                        translated, reflected, rotated, and sheared versions of the triangle; another labeled
+                        "Affine transformations" showing scaled and projected versions.
+                    </div>
+
+                    <div class="fragment"
+                        style="margin-top: 16px; padding: 12px 18px; border-left: 4px solid #9727ae; background: #f6ecfa; border-radius: 4px; font-size: 0.6em;">
+                        <p style="margin: 0; color: #555;">
+                            Geometric transformations range from simple rigid motions (translation, rotation) to
+                            more general distortions (shearing, projection, warping, morphing).
+                        </p>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Applications</h2>
+
+                    <ul style="font-size: 0.75em;">
+                        <li class="fragment">Correcting camera-induced lens distortion</li>
+                        <li class="fragment">Registering images of the same scene taken from different viewpoints
+                            or times</li>
+                        <li class="fragment">Aligning an image with a map or reference coordinate system</li>
+                        <li class="fragment">Image stitching and panorama creation</li>
+                        <li class="fragment">Image warping and morphing for visual effects</li>
+                        <li class="fragment">Data augmentation for training deep learning models</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light" style="color: #888;">2.</span><br />
+                        Two Basic Operations
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Two Basic Operations</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; font-size: 0.65em;">
+
+                        <div class="fragment"
+                            style="display: flex; gap: 20px; align-items: flex-start; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <div
+                                style="min-width: 48px; height: 48px; background: #2a7ae2; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1.2em;">
+                                1</div>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Spatial Transformation of
+                                    Coordinates</strong>
+                                <p style="margin: 6px 0 0 0; color: #555; line-height: 1.5;">
+                                    Determines <span class="keyword">where</span> each pixel moves to — a mapping
+                                    from input coordinates $(x,y)$ to output coordinates $(x', y')$.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; gap: 20px; align-items: flex-start; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <div
+                                style="min-width: 48px; height: 48px; background: #27ae60; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1.2em;">
+                                2</div>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Intensity Interpolation</strong>
+                                <p style="margin: 6px 0 0 0; color: #555; line-height: 1.5;">
+                                    Assigns intensity values to the spatially transformed pixels, since mapped
+                                    coordinates rarely fall exactly on the pixel grid.
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="fragment"
+                        style="margin-top: 14px; font-size: 0.6em; padding: 12px 18px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                        <p style="margin: 0;">
+                            <strong style="color: #b8860b;">Key Idea:</strong>
+                            Every geometric transformation requires both steps: <em>move</em> the coordinates, then
+                            <em>fill in</em> the intensities.
+                        </p>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Forward vs. Backward (Inverse) Mapping</h2>
+
+                    <div style="margin-top: 16px; font-size: 0.6em; text-align: left;">
+
+                        <div class="fragment"
+                            style="display: flex; gap: 14px; align-items: flex-start; background: #eef5fc; padding: 12px 18px; border-radius: 10px; border-left: 4px solid #2a7ae2; margin-bottom: 12px;">
+                            <div
+                                style="min-width: 34px; height: 34px; background: #2a7ae2; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">
+                                F</div>
+                            <div>
+                                <strong style="font-size: 1.05em; color: #2c3e50;">Forward Mapping</strong>
+                                <p style="margin: 4px 0 0 0; color: #555; line-height: 1.5;">
+                                    $$\begin{bmatrix} x' \\ y' \end{bmatrix} = \mathbf{T} \begin{bmatrix} x \\ y
+                                    \end{bmatrix}$$
+                                    Iterates over pixels $(x,y)$ of the <span class="keyword">input</span> image,
+                                    computes the new location $(x', y')$, and copies the value there.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; gap: 14px; align-items: flex-start; background: #fffaf0; padding: 12px 18px; border-radius: 10px; border-left: 4px solid #d35400; margin-bottom: 12px;">
+                            <div
+                                style="min-width: 34px; height: 34px; background: #d35400; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">
+                                B</div>
+                            <div>
+                                <strong style="font-size: 1.05em; color: #2c3e50;">Backward (Inverse) Mapping</strong>
+                                <p style="margin: 4px 0 0 0; color: #555; line-height: 1.5;">
+                                    Iterates over pixels of the <span class="keyword">output</span> image and uses
+                                    the inverse transformation $\mathbf{T}^{-1}$ to find the source position in the
+                                    input image to sample from.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="padding: 12px 18px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                            <p style="margin: 0;">
+                                <strong style="color: #b8860b;">Key Idea:</strong>
+                                Forward mapping can leave holes or overlaps in the output; backward mapping avoids
+                                this by guaranteeing every output pixel is filled — it is the standard approach in
+                                practice.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Forward vs. Backward Mapping — Illustration</h2>
+
+                    <div class="placeholder fragment"
+                        style="border: 2px dashed #b8c0cc; background: #fafbfc; padding:14px; border-radius:8px; margin-top: 20px; font-size: 0.6em; text-align: left;">
+                        <em>🖼️ [Figure placeholder]</em><br />
+                        <strong>Description:</strong> Left: a grid $I$ with a highlighted source pixel $x$
+                        mapped by $\mathbf{T}$ to pixel $x'$ in output grid $I'$ (forward mapping). Right: a
+                        regular grid of points rotated by $-30°$, showing that some destination pixels are
+                        not covered ("holes") while multiple source pixels can map to the same destination
+                        pixel (overlap).<br />
+                        <strong>Image prompt:</strong> Two-panel diagram — (1) two pixel grids connected by an
+                        arrow labeled T, with one cell highlighted in each; (2) a square grid of points before
+                        and after a −30° rotation, with callouts "Some destination may not be covered" and
+                        "Many source pixels could map to the same destination".
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Intensity Interpolation</h2>
+
+                    <div style="margin-top: 12px; font-size: 0.55em; text-align: left;">
+
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 10px 18px; border-radius: 10px; border-left: 4px solid #2a7ae2; margin-bottom: 14px;">
+                            <p style="margin: 0; color: #555;">
+                                With backward (inverse) warping, the sampled source position rarely lands exactly on
+                                a pixel — the intensity must be <span class="keyword">interpolated</span> from
+                                nearby pixels.
+                            </p>
+                        </div>
+
+                        <div class="fragment" style="display: flex; gap: 14px; margin-bottom: 14px;">
+                            <div
+                                style="flex: 1; background: #eef5fc; padding: 10px 14px; border-radius: 8px; text-align: center;">
+                                <strong style="color: #2a7ae2;">Nearest Neighbor</strong>
+                                <p style="margin: 4px 0 0 0; color: #555;">Assigns the intensity of the nearest
+                                    pixel.</p>
+                            </div>
+                            <div
+                                style="flex: 1; background: #fffaf0; padding: 10px 14px; border-radius: 8px; text-align: center;">
+                                <strong style="color: #d35400;">Bilinear</strong>
+                                <p style="margin: 4px 0 0 0; color: #555;">Uses the <strong>4</strong> nearest
+                                    neighbors to fit<br />$v = ax + by + cxy + d$.</p>
+                            </div>
+                            <div
+                                style="flex: 1; background: #eafaf1; padding: 10px 14px; border-radius: 8px; text-align: center;">
+                                <strong style="color: #27ae60;">Bicubic</strong>
+                                <p style="margin: 4px 0 0 0; color: #555;">Uses the <strong>16</strong> nearest
+                                    neighbors to fit<br />$v = \sum_{i,j=0}^{3} a_{ij}\, x^i y^j$.</p>
+                            </div>
+                        </div>
+
+                        <div class="placeholder fragment"
+                            style="border: 2px dashed #b8c0cc; background: #fafbfc; padding:12px; border-radius:8px; margin-bottom: 12px;">
+                            <em>🖼️ [Figure placeholder]</em><br />
+                            <strong>Description:</strong> A checkerboard/grid image rotated by −21°, shown at
+                            three interpolation qualities side by side: nearest neighbor, bilinear, bicubic.<br />
+                            <strong>Image prompt:</strong> Three side-by-side close-up crops of the same rotated
+                            grid image, labeled "Nearest neighbor" (blocky/jagged edges), "Bilinear" (smoother),
+                            "Bicubic" (smoothest, sharpest).
+                        </div>
+
+                        <div class="fragment"
+                            style="padding: 10px 16px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                            <p style="margin: 0;">
+                                <strong style="color: #b8860b;">Key Idea:</strong>
+                                More neighbors used $\rightarrow$ smoother results, but higher computational cost.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light" style="color: #888;">3.</span><br />
+                        Basic Transformations
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Scaling</h2>
+
+                    <div style="margin-top: 16px; font-size: 0.65em; text-align: left;">
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 16px 20px; border-radius: 10px; border-left: 4px solid #2a7ae2; margin-bottom: 14px;">
+                            <p style="text-align: center; font-size: 1.3em; margin: 0;">
+                                $$x' = c_x \cdot x, \qquad y' = c_y \cdot y$$
+                            </p>
+                        </div>
+
+                        <div class="placeholder fragment"
+                            style="border: 2px dashed #b8c0cc; background: #fafbfc; padding:12px; border-radius:8px; margin-bottom: 14px;">
+                            <em>🖼️ [Figure placeholder]</em><br />
+                            <strong>Description:</strong> A shape (e.g. triangle) shown at original size next to
+                            an enlarged/shrunk version after scaling.<br />
+                            <strong>Image prompt:</strong> Two coordinate-axis panels side by side: a triangle
+                            centered at the origin, and the same triangle scaled larger (or smaller) on the axes
+                            next to it.
+                        </div>
+
+                        <div class="fragment" style="display: flex; gap: 20px;">
+                            <div
+                                style="flex: 1; background: #eef5fc; padding: 14px 18px; border-radius: 10px; text-align: center;">
+                                <strong style="color: #2a7ae2;">$c_x, c_y$</strong>
+                                <p style="margin: 4px 0 0 0; color: #666; font-size: 0.9em;">Scaling factors along
+                                    x and y</p>
+                            </div>
+                            <div
+                                style="flex: 1; background: #fffaf0; padding: 14px 18px; border-radius: 10px; text-align: center;">
+                                <strong style="color: #d35400;">Uniform</strong>
+                                <p style="margin: 4px 0 0 0; color: #666; font-size: 0.9em;">$c_x = c_y$: preserves
+                                    aspect ratio</p>
+                            </div>
+                            <div
+                                style="flex: 1; background: #eafaf1; padding: 14px 18px; border-radius: 10px; text-align: center;">
+                                <strong style="color: #27ae60;">Non-uniform</strong>
+                                <p style="margin: 4px 0 0 0; color: #666; font-size: 0.9em;">$c_x \neq c_y$:
+                                    distorts aspect ratio</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Translation</h2>
+
+                    <div style="margin-top: 16px; font-size: 0.65em; text-align: left;">
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 16px 20px; border-radius: 10px; border-left: 4px solid #27ae60; margin-bottom: 14px;">
+                            <p style="text-align: center; font-size: 1.3em; margin: 0;">
+                                $$x' = x + t_x, \qquad y' = y + t_y$$
+                            </p>
+                        </div>
+
+                        <div class="placeholder fragment"
+                            style="border: 2px dashed #b8c0cc; background: #fafbfc; padding:12px; border-radius:8px; margin-bottom: 14px;">
+                            <em>🖼️ [Figure placeholder]</em><br />
+                            <strong>Description:</strong> A triangle centered at the origin on one set of axes,
+                            and the same triangle shifted up-and-right on a second set of axes (no change in
+                            size or orientation).<br />
+                            <strong>Image prompt:</strong> Two coordinate-axis panels side by side, each showing
+                            an identical triangle — the second triangle offset from the origin to illustrate a
+                            pure positional shift.
+                        </div>
+
+                        <div class="fragment"
+                            style="padding: 14px 20px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                            <p style="margin: 0;">
+                                <strong style="color: #b8860b;">Key Idea:</strong>
+                                Shifts every pixel by the fixed offset $(t_x, t_y)$ — shape, size, and orientation
+                                are all preserved.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Rotation</h2>
+
+                    <div style="margin-top: 16px; font-size: 0.65em; text-align: left;">
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 16px 20px; border-radius: 10px; border-left: 4px solid #9727ae; margin-bottom: 14px;">
+                            <p style="text-align: center; font-size: 1.2em; margin: 0;">
+                                $$x' = x\cos\theta - y\sin\theta, \qquad y' = x\sin\theta + y\cos\theta$$
+                            </p>
+                        </div>
+
+                        <div class="fragment" style="display: flex; gap: 20px;">
+                            <div style="flex: 1; background: #eef5fc; padding: 14px 18px; border-radius: 10px;">
+                                <strong style="color: #2a7ae2;">What?</strong>
+                                <p style="margin: 4px 0 0 0; color: #555;">
+                                    Rotates the image by angle $\theta$ about the origin.
+                                </p>
+                            </div>
+                            <div style="flex: 1; background: #fffaf0; padding: 14px 18px; border-radius: 10px;">
+                                <strong style="color: #d35400;">Convention</strong>
+                                <p style="margin: 4px 0 0 0; color: #555;">
+                                    Positive $\theta$ rotates counterclockwise in standard axes — with image
+                                    coordinates ($y$ pointing down), the same matrix appears to rotate clockwise.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Shearing</h2>
+
+                    <div style="margin-top: 16px; font-size: 0.65em; text-align: left;">
+                        <div class="fragment" style="display: flex; gap: 14px; margin-bottom: 14px;">
+                            <div
+                                style="flex: 1; background: #eef5fc; padding: 14px 18px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                                <strong style="color: #2a7ae2;">Vertical Shear</strong>
+                                <p style="text-align: center; font-size: 1.15em; margin: 10px 0 0 0;">
+                                    $$x' = x + s_v\, y, \qquad y' = y$$
+                                </p>
+                                <p style="margin: 10px 0 0 0; color: #666; font-size: 0.9em; text-align: center;">
+                                    Pixels shift horizontally in proportion to their $y$ coordinate.
+                                </p>
+                            </div>
+                            <div
+                                style="flex: 1; background: #fffaf0; padding: 14px 18px; border-radius: 10px; border-left: 4px solid #d35400;">
+                                <strong style="color: #d35400;">Horizontal Shear</strong>
+                                <p style="text-align: center; font-size: 1.15em; margin: 10px 0 0 0;">
+                                    $$x' = x, \qquad y' = y + s_h\, x$$
+                                </p>
+                                <p style="margin: 10px 0 0 0; color: #666; font-size: 0.9em; text-align: center;">
+                                    Pixels shift vertically in proportion to their $x$ coordinate.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="padding: 14px 20px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                            <p style="margin: 0;">
+                                <strong style="color: #b8860b;">Key Idea:</strong>
+                                Shearing shifts each pixel proportionally to its <em>other</em> coordinate — the
+                                image slants, but straight lines remain straight.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Combining Transformations</h2>
+
+                    <div style="margin-top: 16px; font-size: 0.65em; text-align: left;">
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 14px 18px; border-radius: 10px; border-left: 4px solid #2a7ae2; margin-bottom: 14px;">
+                            <p style="margin: 0; color: #555;">
+                                Each basic transformation (translation, scaling, rotation, shearing) can be written
+                                in <span class="keyword">homogeneous coordinates</span> as a $3\times3$ matrix
+                                acting on $\begin{bmatrix} x \\ y \\ 1 \end{bmatrix}$, so multiple transformations
+                                can be <span class="keyword">chained</span> by matrix multiplication.
+                            </p>
+                        </div>
+
+                        <div class="fragment" style="display: flex; gap: 12px;">
+                            <div
+                                style="flex: 1; background: #eef5fc; padding: 10px 14px; border-radius: 8px; text-align: center;">
+                                <strong style="color: #2a7ae2;">Translation</strong>
+                                <p style="margin: 4px 0 0 0; font-size: 0.9em;">
+                                    $\begin{bmatrix} 1 & 0 & t_x \\ 0 & 1 & t_y \\ 0 & 0 & 1 \end{bmatrix}$
+                                </p>
+                            </div>
+                            <div
+                                style="flex: 1; background: #eafaf1; padding: 10px 14px; border-radius: 8px; text-align: center;">
+                                <strong style="color: #27ae60;">Scaling</strong>
+                                <p style="margin: 4px 0 0 0; font-size: 0.9em;">
+                                    $\begin{bmatrix} c_x & 0 & 0 \\ 0 & c_y & 0 \\ 0 & 0 & 1 \end{bmatrix}$
+                                </p>
+                            </div>
+                            <div
+                                style="flex: 1; background: #f6ecfa; padding: 10px 14px; border-radius: 8px; text-align: center;">
+                                <strong style="color: #9727ae;">Rotation</strong>
+                                <p style="margin: 4px 0 0 0; font-size: 0.9em;">
+                                    $\begin{bmatrix} \cos\theta & -\sin\theta & 0 \\ \sin\theta & \cos\theta & 0 \\ 0
+                                    & 0 & 1 \end{bmatrix}$
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="margin-top: 14px; padding: 12px 18px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                            <p style="margin: 0;">
+                                <strong style="color: #b8860b;">Key Idea:</strong>
+                                Order matters — matrix products do not commute. E.g. rotating about an arbitrary
+                                point $c$: translate $c$ to the origin, rotate, translate back:
+                                $M = T(c)\, R(\theta)\, T(-c)$.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light" style="color: #888;">4.</span><br />
+                        Affine & Projective Transformations
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Linear Transformation: Two Types</h2>
+
+                    <div style="margin-top: 16px; font-size: 0.65em; text-align: left;">
+
+                        <div class="fragment"
+                            style="display: flex; gap: 14px; align-items: flex-start; background: #eef5fc; padding: 12px 18px; border-radius: 10px; border-left: 4px solid #2a7ae2; margin-bottom: 12px;">
+                            <div>
+                                <strong style="font-size: 1.05em; color: #2c3e50;">Affine Transformation</strong>
+                                <p style="margin: 4px 0 0 0; color: #555; line-height: 1.5;">
+                                    Preserves <span class="keyword">parallelism</span> and <span
+                                        class="keyword">ratios of lengths</span> along parallel lines — parallel
+                                    lines stay parallel, but lengths and angles are generally <em>not</em>
+                                    preserved.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; gap: 14px; align-items: flex-start; background: #fffaf0; padding: 12px 18px; border-radius: 10px; border-left: 4px solid #d35400; margin-bottom: 12px;">
+                            <div>
+                                <strong style="font-size: 1.05em; color: #2c3e50;">Projective Transformation</strong>
+                                <p style="margin: 4px 0 0 0; color: #555; line-height: 1.5;">
+                                    Preserves only <span class="keyword">collinearity</span> and <span
+                                        class="keyword">incidence</span>. Parallel lines may converge to a vanishing
+                                    point.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="padding: 12px 18px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                            <p style="margin: 0;">
+                                <strong style="color: #b8860b;">Key Idea:</strong>
+                                Affine is a special case of projective transformation — projective adds the
+                                ability to simulate perspective / 3D viewpoint change.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Affine vs. Projective — Illustration</h2>
+
+                    <div class="placeholder fragment"
+                        style="border: 2px dashed #b8c0cc; background: #fafbfc; padding:14px; border-radius:8px; margin-top: 20px; font-size: 0.6em; text-align: left;">
+                        <em>🖼️ [Figure placeholder]</em><br />
+                        <strong>Description:</strong> Comparison figure showing a square transformed
+                        affinely (remains a parallelogram) vs. projectively (becomes a general
+                        quadrilateral, e.g. a trapezoid simulating a 3D viewpoint change). Source:
+                        graphicsmill.com.<br />
+                        <strong>Image prompt:</strong> Side-by-side diagrams of a square grid: left labeled
+                        "Affine" showing it sheared/rotated into a parallelogram; right labeled "Projective"
+                        showing it warped into a trapezoid-like quadrilateral with converging lines.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Affine Transformation</h2>
+
+                    <div style="margin-top: 12px; font-size: 0.6em; text-align: left;">
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 14px 18px; border-radius: 10px; border-left: 4px solid #2a7ae2; margin-bottom: 12px;">
+                            <p style="text-align: center; font-size: 1.15em; margin: 0;">
+                                $$\begin{bmatrix} x' \\ y' \\ 1 \end{bmatrix} = \mathbf{A}
+                                \begin{bmatrix} x \\ y \\ 1 \end{bmatrix} =
+                                \begin{bmatrix} a_{11} & a_{12} & a_{13} \\ a_{21} & a_{22} & a_{23} \\ 0 & 0 & 1
+                                \end{bmatrix}
+                                \begin{bmatrix} x \\ y \\ 1 \end{bmatrix}$$
+                            </p>
+                        </div>
+
+                        <ul class="fragment" style="font-size: 1em;">
+                            <li style="margin-bottom: 6px;">Combines rotation, scaling, shearing, and translation
+                                into a single $3\times3$ matrix</li>
+                            <li style="margin-bottom: 6px;">Defined by <strong>6</strong> parameters — needs at
+                                least <strong>3</strong> pairs of corresponding points to solve for</li>
+                            <li>Widely used for image alignment and feature-based matching</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Affine Transformation — Common Cases</h2>
+
+                    <div class="placeholder fragment"
+                        style="border: 2px dashed #b8c0cc; background: #fafbfc; padding:14px; border-radius:8px; margin-top: 16px; font-size: 0.55em; text-align: left;">
+                        <em>🖼️ [Figure placeholder]</em><br />
+                        <strong>Description:</strong> Reference table listing named affine transformations —
+                        Identity, Scaling/Reflection, Rotation (about origin), Translation, Shear (vertical),
+                        Shear (horizontal) — each with its $3\times3$ matrix, coordinate equations, and a small
+                        "T"-letter example showing the visual effect.<br />
+                        <strong>Image prompt:</strong> A 4-column table (Transformation Name | Affine Matrix |
+                        Coordinate Equations | Example) with 6 rows, each row's "Example" column showing a small
+                        letter "T" glyph transformed accordingly (identity, scaled, rotated, translated, sheared
+                        vertically, sheared horizontally).
+                    </div>
+                </section>
+
+                <section>
+                    <h2>General Transformation Matrix</h2>
+
+                    <div style="margin-top: 12px; font-size: 0.6em; text-align: left;">
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 16px 20px; border-radius: 10px; border-left: 4px solid #9727ae; margin-bottom: 14px;">
+                            <p style="text-align: center; font-size: 1.15em; margin: 0;">
+                                $$\begin{bmatrix} x' \\ y' \\ w' \end{bmatrix} =
+                                \begin{bmatrix} a_{11} & a_{12} & b_1 \\ a_{21} & a_{22} & b_2 \\ c_1 & c_2 & 1
+                                \end{bmatrix}
+                                \begin{bmatrix} x \\ y \\ 1 \end{bmatrix}$$
+                            </p>
+                            <p style="text-align: center; margin: 8px 0 0 0; color: #666; font-size: 0.85em;">
+                                The result is in <span class="keyword">homogeneous coordinates</span> — the final
+                                pixel position is $\left(\dfrac{x'}{w'},\; \dfrac{y'}{w'}\right)$.
+                            </p>
+                        </div>
+
+                        <div class="fragment" style="display: flex; gap: 14px; margin-bottom: 14px;">
+                            <div
+                                style="flex: 1; background: #eef5fc; padding: 10px 14px; border-radius: 8px; text-align: center;">
+                                <strong style="color: #2a7ae2;">Rotation matrix</strong>
+                                <p style="margin: 4px 0 0 0; color: #555; font-size: 0.9em;">$a_{11}, a_{12}, a_{21},
+                                    a_{22}$</p>
+                            </div>
+                            <div
+                                style="flex: 1; background: #eafaf1; padding: 10px 14px; border-radius: 8px; text-align: center;">
+                                <strong style="color: #27ae60;">Translation vector</strong>
+                                <p style="margin: 4px 0 0 0; color: #555; font-size: 0.9em;">$b_1, b_2$</p>
+                            </div>
+                            <div
+                                style="flex: 1; background: #fdeeee; padding: 10px 14px; border-radius: 8px; text-align: center;">
+                                <strong style="color: #c0392b;">Projection vector</strong>
+                                <p style="margin: 4px 0 0 0; color: #555; font-size: 0.9em;">$c_1, c_2$</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="padding: 14px 20px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                            <p style="margin: 0;">
+                                <strong style="color: #b8860b;">Key Idea:</strong>
+                                This $3\times3$ matrix is also known as the <span
+                                    class="keyword">homography matrix</span> — when $c_1 = c_2 = 0$, it reduces to
+                                a pure affine transformation.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light" style="color: #888;">5.</span><br />
+                        General Transformations & Warping
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Beyond Linear Transformations</h2>
+
+                    <div style="margin-top: 16px; font-size: 0.65em; text-align: left;">
+
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 14px 18px; border-radius: 10px; border-left: 4px solid #2a7ae2; margin-bottom: 12px;">
+                            <p style="margin: 0; color: #555;">
+                                Rotation, scaling, translation, and projective transformation are all
+                                <span class="keyword">linear</span> in $x$ and $y$. More general transformations
+                                use <span class="keyword">polynomial</span> mappings of order higher than 1.
+                            </p>
+                        </div>
+
+                        <div class="fragment"
+                            style="background: #fffaf0; padding: 14px 18px; border-radius: 10px; border-left: 4px solid #d35400; margin-bottom: 12px;">
+                            <strong style="color: #d35400;">Control Points</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">
+                                The exact transformation is derived from <span class="keyword">control
+                                    points</span> — a point in the input image and its corresponding point in the
+                                output image.
+                            </p>
+                        </div>
+
+                        <div class="fragment"
+                            style="padding: 14px 20px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                            <p style="margin: 0;">
+                                <strong style="color: #b8860b;">Key Idea:</strong>
+                                General transformations trade a compact formula for flexibility — they can model
+                                distortions that no single matrix can capture.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Polynomial Transformation</h2>
+
+                    <div style="margin-top: 12px; font-size: 0.6em; text-align: left;">
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 16px 20px; border-radius: 10px; border-left: 4px solid #9727ae; margin-bottom: 14px;">
+                            <p style="margin: 0; color: #555;">
+                                Assume $a(x,y)$ and $b(x,y)$ are polynomials of order $N$ with unknown
+                                coefficients:
+                            </p>
+                            <p style="text-align: center; font-size: 1.05em; margin: 10px 0 0 0;">
+                                $$x' = a(x,y) = \sum_{i=0}^{N} \sum_{j=0}^{N-i} a_{ij}\, x^i y^j, \qquad
+                                y' = b(x,y) = \sum_{i=0}^{N} \sum_{j=0}^{N-i} b_{ij}\, x^i y^j$$
+                            </p>
+                        </div>
+
+                        <div class="fragment"
+                            style="background: #eafaf1; padding: 12px 18px; border-radius: 10px; border-left: 4px solid #27ae60; margin-bottom: 12px;">
+                            <strong style="color: #27ae60;">Example — Order $N = 2$</strong>
+                            <p style="text-align: center; margin: 8px 0 0 0; font-size: 0.95em;">
+                                $$x' = a_{00} + a_{10}x + a_{01}y + a_{11}xy + a_{20}x^2 + a_{02}y^2$$
+                            </p>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.9em;">
+                                Each polynomial has 6 coefficients $\rightarrow$ at least 6 control points are
+                                required.
+                            </p>
+                        </div>
+
+                        <div class="fragment"
+                            style="padding: 12px 18px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                            <p style="margin: 0;">
+                                <strong style="color: #b8860b;">Key Idea:</strong>
+                                Determining the coefficients requires at least as many control points as the
+                                polynomials have coefficients — solved as a least-squares fit when more are
+                                available.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Example of Polynomial Geometric Warps</h2>
+
+                    <div class="placeholder fragment"
+                        style="border: 2px dashed #b8c0cc; background: #fafbfc; padding:14px; border-radius:8px; margin-top: 16px; font-size: 0.55em; text-align: left;">
+                        <em>🖼️ [Figure placeholder]</em><br />
+                        <strong>Description:</strong> Grid of 8 checkerboard images illustrating different
+                        polynomial warps applied to the same original pattern: original, shift, scale in x,
+                        shear, y-dependent scale in x, quadratic scale in x, rotation, and a general quadratic
+                        warp. (Fig. 4.9, Schowengerdt 1997)<br />
+                        <strong>Image prompt:</strong> 3×3 grid of checkerboard-pattern thumbnails labeled
+                        "original", "shift", "scale in x", "shear", "y-dependent scale in x", "quadratic scale in
+                        x", "rotation", "quadratic" — each showing the checkerboard progressively more distorted.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Mesh Warping</h2>
+
+                    <div style="margin-top: 12px; font-size: 0.6em; text-align: left;">
+                        <div class="fragment" style="display: flex; gap: 14px; margin-bottom: 14px;">
+                            <div
+                                style="flex: 1; background: #eef5fc; padding: 10px 14px; border-radius: 8px; text-align: center;">
+                                <strong style="color: #2a7ae2;">1. Specify points</strong>
+                                <p style="margin: 4px 0 0 0; color: #555; font-size: 0.9em;">Mark corresponding
+                                    landmark points on source and target images.</p>
+                            </div>
+                            <div
+                                style="flex: 1; background: #eafaf1; padding: 10px 14px; border-radius: 8px; text-align: center;">
+                                <strong style="color: #27ae60;">2. Build mesh</strong>
+                                <p style="margin: 4px 0 0 0; color: #555; font-size: 0.9em;">Convert the points
+                                    into a warping mesh over each image.</p>
+                            </div>
+                            <div
+                                style="flex: 1; background: #f6ecfa; padding: 10px 14px; border-radius: 8px; text-align: center;">
+                                <strong style="color: #9727ae;">3. Interpolate</strong>
+                                <p style="margin: 4px 0 0 0; color: #555; font-size: 0.9em;">Interpolate the mesh
+                                    into a complete, smooth warping function.</p>
+                            </div>
+                        </div>
+
+                        <div class="placeholder fragment"
+                            style="border: 2px dashed #b8c0cc; background: #fafbfc; padding:12px; border-radius:8px;">
+                            <em>🖼️ [Figure placeholder]</em><br />
+                            <strong>Description:</strong> A human face and a cheetah face with matching
+                            landmark points (eyes, nose, mouth) marked, converted into deformable meshes, and
+                            the human face warped toward the cheetah's geometry.<br />
+                            <strong>Image prompt:</strong> Four-panel figure: (1) human face with landmark dots,
+                            (2) animal face with corresponding landmark dots, (3) both faces overlaid with a
+                            warping mesh grid, (4) the human face warped step-by-step toward the target shape
+                            with a "warp" arrow.
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Image Morphing</h2>
+
+                    <div style="margin-top: 16px; font-size: 0.65em; text-align: left;">
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 14px 18px; border-radius: 10px; border-left: 4px solid #2a7ae2; margin-bottom: 14px;">
+                            <p style="margin: 0; color: #555;">
+                                Synthesizes a <span class="keyword">fluid transformation</span> from one image
+                                into another, combining geometric warping with cross-dissolving of intensities
+                                over time.
+                            </p>
+                        </div>
+
+                        <div class="fragment"
+                            style="padding: 14px 20px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                            <p style="margin: 0;">
+                                <strong style="color: #b8860b;">Key Idea:</strong>
+                                Morphing = mesh warping (shape) + cross-dissolve (appearance), applied gradually
+                                across a sequence of intermediate frames.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light" style="color: #888;">6.</span><br />
+                        Applications
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Applications of Geometric Transformation</h2>
+
+                    <div style="margin-top: 12px; font-size: 0.6em; text-align: left;">
+
+                        <div class="fragment"
+                            style="display: flex; gap: 14px; align-items: flex-start; background: #f8f9fa; padding: 10px 18px; border-radius: 10px; border-left: 4px solid #2a7ae2; margin-bottom: 12px;">
+                            <div
+                                style="min-width: 34px; height: 34px; background: #2a7ae2; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">
+                                1</div>
+                            <div>
+                                <strong style="font-size: 1.05em; color: #2c3e50;">Geometric Calibration / Image
+                                    Rectification</strong>
+                                <p style="margin: 4px 0 0 0; color: #555; line-height: 1.5;">
+                                    Removes camera-induced distortion, converting non-rectangular pixel
+                                    coordinates into rectangular ones.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; gap: 14px; align-items: flex-start; background: #fffaf0; padding: 10px 18px; border-radius: 10px; border-left: 4px solid #d35400; margin-bottom: 12px;">
+                            <div
+                                style="min-width: 34px; height: 34px; background: #d35400; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">
+                                2</div>
+                            <div>
+                                <strong style="font-size: 1.05em; color: #2c3e50;">Image Registration</strong>
+                                <p style="margin: 4px 0 0 0; color: #555; line-height: 1.5;">
+                                    Geometrically matches two images, or an image and a map, so that stationary
+                                    objects share the same position in both.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; gap: 14px; align-items: flex-start; background: #eafaf1; padding: 10px 18px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <div
+                                style="min-width: 34px; height: 34px; background: #27ae60; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">
+                                3</div>
+                            <div>
+                                <strong style="font-size: 1.05em; color: #2c3e50;">Map Projections</strong>
+                                <p style="margin: 4px 0 0 0; color: #555; line-height: 1.5;">
+                                    Transforms geographic coordinates on the curved Earth surface onto a flat map.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Example of Image Rectification</h2>
+
+                    <div class="placeholder fragment"
+                        style="border: 2px dashed #b8c0cc; background: #fafbfc; padding:14px; border-radius:8px; margin-top: 16px; font-size: 0.55em; text-align: left;">
+                        <em>🖼️ [Figure placeholder]</em><br />
+                        <strong>Description:</strong> Fish-eye lens rectification example: (a) a flat dot-grid
+                        test target, (b) the same target photographed with a fish-eye lens (barrel-distorted),
+                        (c) a hallway photo taken with the fish-eye lens, (d) the hallway photo geometrically
+                        rectified back to straight lines. (Fig. 4.8, Castleman 1996)<br />
+                        <strong>Image prompt:</strong> 2×2 grid of images — top row: flat dot grid vs.
+                        fish-eye-distorted dot grid (barrel-curved rows); bottom row: a fish-eye hallway photo
+                        (curved walls) vs. the same hallway after rectification (straight walls).
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Example of Image Registration</h2>
+
+                    <div class="placeholder fragment"
+                        style="border: 2px dashed #b8c0cc; background: #fafbfc; padding:14px; border-radius:8px; margin-top: 16px; font-size: 0.6em; text-align: left;">
+                        <em>🖼️ [Figure placeholder]</em><br />
+                        <strong>Description:</strong> Two images of the same scene (e.g. medical or satellite
+                        imagery) taken at different times or from different sensors, aligned via geometric
+                        transformation so that corresponding structures overlap.<br />
+                        <strong>Image prompt:</strong> Before/after pair — two misaligned photos of the same
+                        scene side by side, then a third panel showing them overlaid/aligned after registration.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Summary</h2>
+
+                    <ul style="font-size: 0.8em;">
+                        <li class="fragment">Geometric transformations reposition pixels while keeping their color
+                            values unchanged.</li>
+                        <li class="fragment">Every transformation involves spatial mapping <strong>and</strong>
+                            intensity interpolation; backward mapping avoids holes and overlaps.</li>
+                        <li class="fragment">Translation, scaling, rotation, and shearing are basic linear
+                            transformations expressible as $3\times3$ matrices.</li>
+                        <li class="fragment">Affine transformations preserve parallel lines; projective
+                            transformations only preserve collinearity.</li>
+                        <li class="fragment">Polynomial transformations, control points, and mesh warping enable
+                            general, non-linear warps and morphing.</li>
+                        <li class="fragment">Key applications: lens distortion correction, image registration,
+                            and map projection.</li>
+                    </ul>
+                </section>
+            </section>
+
+            <div class="footer">
+                Computer Vision: Geometric Transformations
+            </div>
+        </div>
+    </div>
+    <script src="revealjs/dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            controlsLayout: "edges",
+            slideNumber: true,
+            hashOneBasedIndex: true,
+            hash: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX],
+        });
+    </script>
+</body>
+
+</html>

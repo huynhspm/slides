@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/png" href="../../favicon.png">
+    <title>Autoregressive Models II: Transformers & Visual Tokens</title>
+
+    <link rel="stylesheet" href="revealjs/dist/reset.css" />
+    <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+    <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+    <link rel="stylesheet" href="slide-style.css" />
+</head>
+
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <section>
+                    <h1>Generative AI</h1>
+                    <h3>Autoregressive Models II: Transformers & Visual Tokens</h3>
+                    <p>IAI · UET · VNU</p>
+                    <p>Presenter: Trinh Ngoc Huynh</p>
+                    <p>Email: <a href="mailto:huynhtn@vnu.edu.vn">huynhtn@vnu.edu.vn</a></p>
+                </section>
+
+                <section>
+                    <h2>Content</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; font-size: 0.7em;">
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #b15a2b;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #b15a2b; min-width: 40px; text-align: center;">1</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">From RNNs to Transformers</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Self-attention, causal masking and the decoder block</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #2a7ae2; min-width: 40px; text-align: center;">2</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Visual Tokens</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Why pixels are too long, and what a tokenizer buys</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #27ae60; min-width: 40px; text-align: center;">3</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">The Autoregressive Objective</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Cross-entropy over tokens, and the link to GPT</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #e67e22; min-width: 40px; text-align: center;">4</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Sampling Strategies</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Temperature, top-k and top-p decoding</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">1.</span><br />
+                        From RNNs to Transformers
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>The Problem with Recurrence</h2>
+                    <ul>
+                        <li class="fragment">RNNs compress all history into one fixed-size state</li>
+                        <li class="fragment">Long-range dependencies fade through repeated updates</li>
+                        <li class="fragment">Sequential computation prevents parallel training</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Self-Attention</h2>
+                    <div class="question-box">
+                        $$ \text{Attention}(Q,K,V) = \text{softmax}\!\left(\frac{QK^\top}{\sqrt{d_k}}\right)V $$
+                    </div>
+                    <ul>
+                        <li class="fragment">Every position looks at every other position <span class="keyword">directly</span></li>
+                        <li class="fragment">Path length between any two positions is \( O(1) \)</li>
+                        <li class="fragment">The \( \sqrt{d_k} \) keeps the softmax out of its saturated regime</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Causal Masking</h2>
+                    <div class="question-box">
+                        Set attention scores to \( -\infty \) for all future positions before the softmax.
+                    </div>
+                    <ul>
+                        <li class="fragment">Position \( i \) may attend only to positions \( \le i \)</li>
+                        <li class="fragment">This is what preserves \( p(x_i \mid x_{&lt;i}) \)</li>
+                        <li class="fragment">The Transformer equivalent of a masked convolution</li>
+                    </ul>
+                    <div class="placeholder" style="border:1px dashed #999;padding:18px;border-radius:8px;">
+                        <em>[Figure: Causal Attention Mask]</em><br />
+                        <strong>Description:</strong> A lower-triangular attention matrix with the upper triangle blocked.<br />
+                        <strong>Image prompt:</strong> A square grid: lower triangle including diagonal shaded blue, upper triangle greyed out and marked minus infinity.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>The Transformer Decoder Block</h2>
+                    <ul>
+                        <li class="fragment">Masked multi-head self-attention</li>
+                        <li class="fragment">Position-wise feed-forward network</li>
+                        <li class="fragment">Residual connections and layer normalisation</li>
+                        <li class="fragment">Stack \( N \) of these blocks</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Positional Information</h2>
+                    <ul>
+                        <li class="fragment">Attention alone is <span class="keyword">permutation-equivariant</span></li>
+                        <li class="fragment">Order must be injected explicitly via positional encodings</li>
+                        <li class="fragment">For images, the encoding carries 2D spatial position</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">2.</span><br />
+                        Visual Tokens
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Why Not Pixels?</h2>
+                    <ul>
+                        <li class="fragment">Attention costs \( O(L^2) \) in sequence length</li>
+                        <li class="fragment">A \( 256\times256 \) image is \( L = 65{,}536 \) — about \( 4 \times 10^9 \) attention scores</li>
+                        <li class="fragment">We need a <span class="keyword">much shorter</span> sequence</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Visual Tokens</h2>
+                    <div class="question-box">
+                        Compress the image into a small grid of <span class="keyword">discrete tokens</span>, then model those tokens autoregressively.
+                    </div>
+                    <ul>
+                        <li class="fragment">\( 256\times256 \) pixels → e.g. a \( 32\times32 \) grid = 1024 tokens</li>
+                        <li class="fragment">A 64x reduction in sequence length</li>
+                        <li class="fragment">Each token is an index into a learned vocabulary</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Tokenizer — For Now, a Black Box</h2>
+                    <div class="question-box">
+                        <strong>Assume</strong> we have an encoder mapping an image to a grid of discrete indices, and a decoder mapping them back.
+                    </div>
+                    <ul>
+                        <li class="fragment">We use it here; we <span class="keyword">build</span> it in Lecture 07 (VQ-VAE)</li>
+                        <li class="fragment">This deferral is deliberate — the mechanism needs vector quantization</li>
+                        <li class="fragment">For today, only its interface matters</li>
+                    </ul>
+                    <div class="placeholder" style="border:1px dashed #999;padding:18px;border-radius:8px;">
+                        <em>[Figure: Two-Stage Pipeline]</em><br />
+                        <strong>Description:</strong> Stage 1 tokenizes the image, stage 2 models the token sequence.<br />
+                        <strong>Image prompt:</strong> Left: image into encoder producing a grid of index numbers. Right: Transformer over that grid, then decoder back to an image.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Continuous vs Discrete</h2>
+                    <ul>
+                        <li class="fragment"><strong>Continuous</strong> latents — smooth, but need a density model</li>
+                        <li class="fragment"><strong>Discrete</strong> tokens — a plain softmax classifier suffices</li>
+                        <li class="fragment">Discreteness is what lets us reuse the language-model machinery</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Two-Stage Recipe</h2>
+                    <ul>
+                        <li class="fragment"><strong>Stage 1:</strong> train the tokenizer (image ↔ tokens)</li>
+                        <li class="fragment"><strong>Stage 2:</strong> train a Transformer over token sequences</li>
+                        <li class="fragment">VQGAN adds a perceptual and adversarial loss to sharpen stage 1</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">3.</span><br />
+                        The Autoregressive Objective
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>The Objective Is Unchanged</h2>
+                    <div class="question-box">
+                        $$ \mathcal{L}(\theta) = -\sum_{i=1}^{L} \log p_\theta(t_i \mid t_{&lt;i}) $$
+                    </div>
+                    <ul>
+                        <li class="fragment">Cross-entropy over the token vocabulary</li>
+                        <li class="fragment">Identical in form to a language model — only the vocabulary differs</li>
+                        <li class="fragment">This is the bridge from image generation to <span class="keyword">GPT-style</span> models</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Relation to Language Models</h2>
+                    <ul>
+                        <li class="fragment">Same architecture, same loss, same training recipe</li>
+                        <li class="fragment">Only the tokenizer changes: text sub-words vs visual tokens</li>
+                        <li class="fragment">This shared formulation is why one recipe scales across modalities</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Conditioning</h2>
+                    <ul>
+                        <li class="fragment">Prepend a condition to the sequence: class token, text embedding</li>
+                        <li class="fragment">The model then learns \( p(t \mid c) \) with no change to the objective</li>
+                        <li class="fragment">Simple, and it is how early text-to-image Transformers worked</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">4.</span><br />
+                        Sampling Strategies
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Sampling Strategies</h2>
+                    <ul>
+                        <li class="fragment"><strong>Greedy</strong> — always take the argmax; repetitive and dull</li>
+                        <li class="fragment"><strong>Pure sampling</strong> — sample the full distribution; can be incoherent</li>
+                        <li class="fragment">The useful methods sit between these extremes</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Temperature</h2>
+                    <div class="question-box">
+                        $$ p_\tau(t) \propto \exp\!\left(\frac{\log p(t)}{\tau}\right) $$
+                    </div>
+                    <ul>
+                        <li class="fragment">\( \tau < 1 \) sharpens toward the mode — safer, less diverse</li>
+                        <li class="fragment">\( \tau > 1 \) flattens — more diverse, more errors</li>
+                        <li class="fragment">\( \tau \to 0 \) recovers greedy decoding</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Top-k and Top-p</h2>
+                    <ul>
+                        <li class="fragment"><strong>Top-k:</strong> keep the \( k \) most likely tokens, renormalise</li>
+                        <li class="fragment"><strong>Top-p (nucleus):</strong> keep the smallest set with mass \( \ge p \)</li>
+                        <li class="fragment">Top-p adapts its cut-off to how peaked the distribution is</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Quality vs Diversity, Again</h2>
+                    <ul>
+                        <li class="fragment">Every one of these knobs trades <span class="keyword">quality against diversity</span></li>
+                        <li class="fragment">None of them changes the trained model — only how we read it</li>
+                        <li class="fragment">The same trade-off returns as guidance strength in Lecture 13</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Summary</h2>
+                    <ul>
+                        <li class="fragment">Self-attention with <span class="keyword">causal masking</span> gives parallel training and exact likelihood</li>
+                        <li class="fragment">Pixels are too long a sequence, so we model <span class="keyword">visual tokens</span> instead</li>
+                        <li class="fragment">The tokenizer stays a black box until Lecture 07</li>
+                        <li class="fragment">The objective is plain cross-entropy — the same as a language model</li>
+                        <li class="fragment">Sampling strategies trade quality against diversity at generation time</li>
+                    </ul>
+                </section>
+            </section>
+            <div class="footer">
+                Generative AI: Autoregressive Models II: Transformers & Visual Tokens
+            </div>
+        </div>
+    </div>
+    <script src="revealjs/dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            controlsLayout: "edges",
+            slideNumber: true,
+            hashOneBasedIndex: true,
+            hash: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX],
+        });
+    </script>
+</body>
+
+</html>

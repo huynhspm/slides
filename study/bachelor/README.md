@@ -4,15 +4,17 @@ Coursework and thesis slides for the **Bachelor's program in Information Technol
 
 🌐 **Live:** [https://huynhspm.github.io/slides/study/bachelor/](https://huynhspm.github.io/slides/study/bachelor/)
 
+**Status:** 🎓 Completed (09/2020 – 06/2024)
+
 ---
 
 ## 📚 Slide Decks
 
 | Course | Title | Materials |
 |--------|-------|-----------|
-| Natural Language Processing | Image Captioning | [PDF](assets/pdf/image-captioning.pdf) · [Slide](image-captioning.html) |
-| Computer Graphics | Diffusion Model | [PDF](assets/pdf/diffusion-model.pdf) · [Slide](diffusion-model.html) |
-| Thesis | Diffusion Model in Latent Space for Medical Image Segmentation | [PDF](assets/pdf/thesis.pdf) · [Slide](thesis.html) |
+| Natural Language Processing | Image Captioning | [PDF](assets/pdf/image-captioning.pdf) · [HTML](image-captioning.html) |
+| Computer Graphics | Diffusion Model | [PDF](assets/pdf/diffusion-model.pdf) · [HTML](diffusion-model.html) |
+| Thesis | Diffusion Model in Latent Space for Medical Image Segmentation | [PDF](assets/pdf/thesis.pdf) · [HTML](thesis.html) |
 
 Each `.html` deck is a Reveal.js rebuild of the corresponding PDF, with math rendered via KaTeX and diagrams redrawn as HTML/CSS flow boxes.
 

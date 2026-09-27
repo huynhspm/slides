@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="description"
+    content="Computer Vision lecture slides at IAI – UET, covering image processing, image representation, and image understanding.">
+  <link rel="icon" type="image/png" href="../../favicon.png">
+  <title>Computer Vision</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="index-page.css">
+  <script>
+    (function () {
+      var saved = localStorage.getItem("theme");
+      var theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
+</head>
+
+<body>
+  <main class="page-shell page-shell-wide">
+
+    <!-- ─── HERO ─── -->
+    <section class="hero">
+      <div class="hero-back">
+        <a class="secondary-link" href="../../">
+          <span class="back-arrow">◀</span> Back to main
+        </a>
+        <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle light/dark theme">
+          <span class="theme-toggle-icon theme-toggle-icon--sun">☀️</span>
+          <span class="theme-toggle-icon theme-toggle-icon--moon">🌙</span>
+        </button>
+      </div>
+      <div class="hero-logo hero-logo--emoji" aria-hidden="true">👁️</div>
+      <h1>Computer Vision</h1>
+      <p class="hero-text">Lecture slides for the Computer Vision course.</p>
+    </section>
+
+    <!-- ─── STATS ─── -->
+    <section class="stats-row" aria-label="Quick statistics">
+      <div class="stat-item">
+        <span class="stat-number">18</span>
+        <span class="stat-label">Lectures</span>
+      </div>
+      <div class="stat-divider" aria-hidden="true"></div>
+      <div class="stat-item">
+        <span class="stat-number">4</span>
+        <span class="stat-label">Topics</span>
+      </div>
+      <div class="stat-divider" aria-hidden="true"></div>
+      <div class="stat-item">
+        <span class="stat-number">0</span>
+        <span class="stat-label">Available</span>
+      </div>
+    </section>
+
+    <!-- ─── SLIDES ─── -->
+    <section>
+      <div class="panel">
+        <div class="table-wrap">
+          <table class="slides-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Lecture</th>
+                <th>Materials</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="section-row">
+                <td colspan="3">Part 1: Vision Foundations</td>
+              </tr>
+              <tr>
+                <td>1</td>
+                <td>Introduction</td>
+                <td><a href="lecture-01-introduction.html" target="_blank" rel="noopener">Slide</a></td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>Human Visual Perception</td>
+                <td><a href="lecture-02-human-visual-perception.html" target="_blank" rel="noopener">Slide</a></td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>Image Formation</td>
+                <td><a href="lecture-03-image-formation.html" target="_blank" rel="noopener">Slide</a></td>
+              </tr>
+              <tr class="section-row">
+                <td colspan="3">Part 2: Low-Level Vision: Image Processing</td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>Image Fundamentals</td>
+                <td><a href="lecture-04-image-fundamentals.html" target="_blank" rel="noopener">Slide</a></td>
+              </tr>
+              <tr>
+                <td>5</td>
+                <td>Image Enhancement</td>
+                <td><a href="lecture-05-image-enhancement-1.html" target="_blank" rel="noopener">Slide</a></td>
+              </tr>
+              <tr>
+                <td>6</td>
+                <td>Image Enhancement (Cnt.)</td>
+                <td><a href="lecture-06-image-enhancement-2.html" target="_blank" rel="noopener">Slide</a></td>
+              </tr>
+              <tr>
+                <td>7</td>
+                <td>Geometric Transformations</td>
+                <td><a href="lecture-07-geometric-transformations.html" target="_blank" rel="noopener">Slide</a></td>
+              </tr>
+              <tr>
+                <td>8</td>
+                <td>Morphological Operations</td>
+                <td><a href="lecture-08-morphological-operations.html" target="_blank" rel="noopener">Slide</a></td>
+              </tr>
+              <tr>
+                <td>9</td>
+                <td>Image Restoration</td>
+                <td><a href="lecture-09-image-restoration.html" target="_blank" rel="noopener">Slide</a></td>
+              </tr>
+              <tr>
+                <td>10</td>
+                <td>Image Compression</td>
+                <td><a href="lecture-10-image-compression.html" target="_blank" rel="noopener">Slide</a></td>
+              </tr>
+              <tr class="section-row">
+                <td colspan="3">Part 3: Mid-Level Vision: Image Representation</td>
+              </tr>
+              <tr>
+                <td>11</td>
+                <td>Feature Extraction</td>
+                <td><a href="lecture-11-feature-extraction.html" target="_blank" rel="noopener">Slide</a></td>
+              </tr>
+              <tr>
+                <td>12</td>
+                <td>Feature Description</td>
+                <td><a href="lecture-12-feature-description.html" target="_blank" rel="noopener">Slide</a></td>
+              </tr>
+              <tr>
+                <td>13</td>
+                <td>Feature Matching</td>
+                <td><a href="lecture-13-feature-matching.html" target="_blank" rel="noopener">Slide</a></td>
+              </tr>
+              <tr>
+                <td>14</td>
+                <td>Representation Learning</td>
+                <td><a href="lecture-14-representation-learning.html" target="_blank" rel="noopener">Slide</a></td>
+              </tr>
+              <tr class="section-row">
+                <td colspan="3">Part 4: High-Level Vision: Image Understanding</td>
+              </tr>
+              <tr>
+                <td>15</td>
+                <td>Image Classification</td>
+                <td><a href="lecture-15-classification.html" target="_blank" rel="noopener">Slide</a></td>
+              </tr>
+              <tr>
+                <td>16</td>
+                <td>Object Detection</td>
+                <td><a href="lecture-16-detection.html" target="_blank" rel="noopener">Slide</a></td>
+              </tr>
+              <tr>
+                <td>17</td>
+                <td>Semantic Segmentation</td>
+                <td><a href="lecture-17-segmentation.html" target="_blank" rel="noopener">Slide</a></td>
+              </tr>
+              <tr>
+                <td>18</td>
+                <td>Object Tracking</td>
+                <td><a href="lecture-18-tracking.html" target="_blank" rel="noopener">Slide</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── FOOTER ─── -->
+    <footer class="footer">
+      <p class="footer-author">
+        Built by <strong>Trinh Ngoc Huynh</strong> · Slides powered by
+        <a href="https://revealjs.com" target="_blank" rel="noopener">Reveal.js</a>
+      </p>
+    </footer>
+  </main>
+
+  <script>
+    (function () {
+      var toggle = document.getElementById("theme-toggle");
+      toggle.addEventListener("click", function () {
+        var current = document.documentElement.getAttribute("data-theme");
+        var next = current === "dark" ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", next);
+        localStorage.setItem("theme", next);
+      });
+    })();
+  </script>
+</body>
+
+</html>

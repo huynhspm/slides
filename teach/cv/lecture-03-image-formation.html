@@ -1,0 +1,507 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/png" href="../../favicon.png">
+    <title>Image Formation</title>
+
+    <link rel="stylesheet" href="revealjs/dist/reset.css" />
+    <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+    <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+    <link rel="stylesheet" href="slide-style.css" />
+</head>
+
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <section>
+                    <h1>Computer Vision</h1>
+                    <h3>Image Formation</h3>
+                    <p>IAI · UET · VNU</p>
+                    <p>Presenter: Trinh Ngoc Huynh</p>
+                    <p>Email: <a href="mailto:huynhtn@vnu.edu.vn">huynhtn@vnu.edu.vn</a></p>
+                </section>
+
+                <section>
+                    <h2>Content</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; font-size: 0.7em;">
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #b15a2b;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #b15a2b; min-width: 40px; text-align: center;">1</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Image Acquisition</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">From light and scene to a
+                                    sensed image</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #2a7ae2; min-width: 40px; text-align: center;">2</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">The Pinhole Camera Model</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Perspective projection &amp;
+                                    its geometry</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #27ae60; min-width: 40px; text-align: center;">3</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Cameras with Lenses</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Focal length, aperture,
+                                    focus, and sensors</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #e67e22; min-width: 40px; text-align: center;">4</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Camera Parameters & Representations</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Intrinsics, extrinsics, and
+                                    2D / 3D image forms</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">1.</span><br />
+                        Image Acquisition
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>What is an Image?</h2>
+
+                    <div class="question-box fragment" style="font-size: 0.72em; margin-top: 8px;">
+                        <p style="margin: 0;">
+                            <strong style="color: #b15a2b;">Image formation:</strong>
+                            The process by which light from a 3D scene is <span class="keyword">projected</span> onto
+                            a 2D sensor to produce an image.
+                        </p>
+                    </div>
+
+                    <ul style="font-size: 0.7em; margin-top: 18px;">
+                        <li class="fragment" style="margin-bottom: 8px;">An image records the light <span
+                                class="keyword">reflected</span> (or emitted) by surfaces in a scene</li>
+                        <li class="fragment" style="margin-bottom: 8px;">It depends on the <span class="keyword">scene
+                                geometry</span>, the <span class="keyword">lighting</span>, the <span
+                                class="keyword">surface properties</span>, and the <span class="keyword">camera</span></li>
+                        <li class="fragment">Understanding formation lets us <em>invert</em> it — to recover scene
+                            information from images</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Acquisition Pipeline</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px; font-size: 0.6em;">
+                        <div class="fragment"
+                            style="display: flex; gap: 16px; align-items: center; background: #f8f9fa; padding: 8px 20px; border-radius: 10px; border-left: 4px solid #b15a2b;">
+                            <div style="min-width: 30px; height: 30px; background: #b15a2b; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700;">1</div>
+                            <p style="margin: 0; color: #555;"><strong>Illumination</strong> — an energy source lights
+                                the scene</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; gap: 16px; align-items: center; background: #f8f9fa; padding: 8px 20px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <div style="min-width: 30px; height: 30px; background: #2a7ae2; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700;">2</div>
+                            <p style="margin: 0; color: #555;"><strong>Reflection</strong> — surfaces reflect energy
+                                toward the camera</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; gap: 16px; align-items: center; background: #f8f9fa; padding: 8px 20px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <div style="min-width: 30px; height: 30px; background: #27ae60; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700;">3</div>
+                            <p style="margin: 0; color: #555;"><strong>Optics</strong> — a lens focuses the light onto
+                                the image plane</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; gap: 16px; align-items: center; background: #f8f9fa; padding: 8px 20px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <div style="min-width: 30px; height: 30px; background: #e67e22; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700;">4</div>
+                            <p style="margin: 0; color: #555;"><strong>Sensing</strong> — a sensor converts light into
+                                electrical signals</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; gap: 16px; align-items: center; background: #f8f9fa; padding: 8px 20px; border-radius: 10px; border-left: 4px solid #9727ae;">
+                            <div style="min-width: 30px; height: 30px; background: #9727ae; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700;">5</div>
+                            <p style="margin: 0; color: #555;"><strong>Digitization</strong> — signals are converted to
+                                a digital image <em>(next lecture)</em></p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Sensing Color & Space</h2>
+
+                    <div style="display: flex; gap: 14px; margin-top: 16px; font-size: 0.64em;">
+                        <div class="fragment"
+                            style="flex: 1; background: #eef5fc; padding: 14px 18px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <strong style="color: #2a7ae2;">Color sensing</strong>
+                            <p style="margin: 6px 0 0 0; color: #555;">A color filter array (e.g. the <span
+                                    class="keyword">Bayer pattern</span>) lets each sensor site record R, G, or B;
+                                the full color is interpolated (demosaicing).</p>
+                        </div>
+                        <div class="fragment"
+                            style="flex: 1; background: #eafaf1; padding: 14px 18px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <strong style="color: #27ae60;">Spatial sensing</strong>
+                            <p style="margin: 6px 0 0 0; color: #555;">A 2D grid of sensing elements samples the scene
+                                across space, producing the pixel grid.</p>
+                        </div>
+                    </div>
+
+                    <div class="placeholder fragment"
+                        style="border:1px dashed #999; padding:12px; border-radius:8px; margin-top: 14px; font-size: 0.58em;">
+                        <em>[Figure placeholder]</em><br />
+                        <strong>Description:</strong> A Bayer RGB filter mosaic over a sensor array, with
+                        demosaicing producing a full-color image.<br />
+                        <strong>Image prompt:</strong> A sensor grid overlaid with a Bayer RGGB color filter
+                        pattern, and an arrow to a reconstructed full-color image.
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">2.</span><br />
+                        The Pinhole Camera Model
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>The Pinhole Camera</h2>
+
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                        <div class="fragment" style="flex: 1; font-size: 0.66em;">
+                            <p style="color: #555;">
+                                The simplest camera: a tiny hole lets a single ray from each scene point pass to the
+                                image plane, forming an <span class="keyword">inverted</span> image.
+                            </p>
+                            <ul style="margin-top: 10px;">
+                                <li style="margin-bottom: 4px;">No lens — infinite depth of field</li>
+                                <li style="margin-bottom: 4px;">Small hole → sharp but dim</li>
+                                <li>Large hole → bright but blurry</li>
+                            </ul>
+                        </div>
+                        <div class="placeholder fragment"
+                            style="flex: 1; border:1px dashed #999; padding:14px; border-radius:8px; font-size: 0.56em;">
+                            <em>[Figure placeholder]</em><br />
+                            <strong>Description:</strong> A pinhole camera: an object, rays passing through a
+                            pinhole, and the inverted image on the back plane.<br />
+                            <strong>Image prompt:</strong> A classic camera obscura diagram — a candle/tree, rays
+                            crossing at a pinhole, and the flipped image on the opposite wall.
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Perspective Projection</h2>
+
+                    <div style="font-size: 0.68em;">
+                        <p class="fragment" style="color: #555;">A 3D point $(X, Y, Z)$ projects to the image plane
+                            at focal length $f$:</p>
+
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 14px 20px; border-radius: 10px; border-left: 4px solid #2a7ae2; margin: 12px 0;">
+                            <p style="text-align: center; font-size: 1.3em; margin: 0;">
+                                $$x = f\frac{X}{Z}, \qquad y = f\frac{Y}{Z}$$
+                            </p>
+                        </div>
+
+                        <ul style="margin-top: 6px;">
+                            <li class="fragment" style="margin-bottom: 6px;">Division by $Z$ makes farther objects
+                                appear <span class="keyword">smaller</span></li>
+                            <li class="fragment" style="margin-bottom: 6px;">Parallel lines converge to a <span
+                                    class="keyword">vanishing point</span></li>
+                            <li class="fragment">This is why perspective distorts sizes and angles</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Projection in Homogeneous Form</h2>
+
+                    <div style="font-size: 0.66em;">
+                        <p class="fragment" style="color: #555;">Using homogeneous coordinates, projection is
+                            <span class="keyword">linear</span>:</p>
+
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 14px 18px; border-radius: 10px; border-left: 4px solid #9727ae; margin: 12px 0;">
+                            <p style="text-align: center; margin: 0;">
+                                $$Z\begin{bmatrix} x \\ y \\ 1 \end{bmatrix} =
+                                \begin{bmatrix} f & 0 & 0 & 0 \\ 0 & f & 0 & 0 \\ 0 & 0 & 1 & 0 \end{bmatrix}
+                                \begin{bmatrix} X \\ Y \\ Z \\ 1 \end{bmatrix}$$
+                            </p>
+                        </div>
+
+                        <div class="fragment"
+                            style="margin-top: 12px; padding: 12px 18px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                            <p style="margin: 0;">
+                                <strong style="color: #b8860b;">Key Idea:</strong>
+                                Homogeneous coordinates turn the nonlinear perspective divide into a matrix
+                                multiplication — convenient for calibration and geometry.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">3.</span><br />
+                        Cameras with Lenses
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Why Lenses?</h2>
+
+                    <ul style="font-size: 0.7em; margin-top: 10px;">
+                        <li class="fragment" style="margin-bottom: 8px;">A pinhole gathers little light — real cameras
+                            use a <span class="keyword">lens</span> with a larger aperture</li>
+                        <li class="fragment" style="margin-bottom: 8px;">A lens focuses many rays from a point back to
+                            a single image point — bright <em>and</em> sharp</li>
+                        <li class="fragment">Governed by the <span class="keyword">thin-lens equation</span>:</li>
+                    </ul>
+
+                    <div class="fragment"
+                        style="background: #f8f9fa; padding: 14px 20px; border-radius: 10px; border-left: 4px solid #2a7ae2; margin-top: 12px; font-size: 0.72em;">
+                        <p style="text-align: center; font-size: 1.3em; margin: 0;">
+                            $$\frac{1}{f} = \frac{1}{z_o} + \frac{1}{z_i}$$
+                        </p>
+                        <p style="text-align: center; margin: 8px 0 0 0; color: #666; font-size: 0.8em;">
+                            $f$ = focal length, $z_o$ = object distance, $z_i$ = image distance
+                        </p>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Focal Length, Aperture & Focus</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px; font-size: 0.62em;">
+                        <div class="fragment"
+                            style="background: #eef5fc; padding: 10px 18px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <strong style="color: #2a7ae2;">Focal length $f$</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Sets the field of view — long $f$ zooms in
+                                (narrow FOV), short $f$ is wide-angle.</p>
+                        </div>
+                        <div class="fragment"
+                            style="background: #fffaf0; padding: 10px 18px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <strong style="color: #d35400;">Aperture</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Controls light and <span class="keyword">depth
+                                    of field</span> — small aperture = more in focus.</p>
+                        </div>
+                        <div class="fragment"
+                            style="background: #eafaf1; padding: 10px 18px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <strong style="color: #27ae60;">Focus</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Only objects at the right distance are sharp;
+                                others blur (the "circle of confusion").</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Lens Effects & Distortion</h2>
+
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                        <div class="fragment" style="flex: 1; font-size: 0.66em;">
+                            <p style="color: #555;">Real lenses deviate from the ideal model:</p>
+                            <ul style="margin-top: 8px;">
+                                <li style="margin-bottom: 4px;"><span class="keyword">Radial distortion</span> —
+                                    straight lines bow (barrel / pincushion)</li>
+                                <li style="margin-bottom: 4px;"><span class="keyword">Vignetting</span> — darker
+                                    corners</li>
+                                <li><span class="keyword">Chromatic aberration</span> — color fringing at edges</li>
+                            </ul>
+                        </div>
+                        <div class="placeholder fragment"
+                            style="flex: 1; border:1px dashed #999; padding:14px; border-radius:8px; font-size: 0.56em;">
+                            <em>[Figure placeholder]</em><br />
+                            <strong>Description:</strong> A grid photographed with barrel and pincushion distortion
+                            vs. an undistorted grid.<br />
+                            <strong>Image prompt:</strong> Three grids side by side: barrel-distorted (bulging),
+                            ideal (straight), pincushion-distorted (pinched).
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Image Sensors</h2>
+
+                    <table
+                        style="width: 100%; table-layout: fixed; border-collapse: collapse; margin-top: 16px; font-size: 0.66em;">
+                        <thead>
+                            <tr>
+                                <th
+                                    style="background: #2a7ae2; color: #fff; padding: 12px 16px; text-align: left; border-radius: 10px 0 0 0;">
+                                    CCD</th>
+                                <th
+                                    style="background: #27ae60; color: #fff; padding: 12px 16px; text-align: left; border-radius: 0 10px 0 0;">
+                                    CMOS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="fragment">
+                                <td style="padding: 10px 16px; border-bottom: 1px solid #eee; vertical-align: top;">
+                                    Charge moved &amp; read serially</td>
+                                <td style="padding: 10px 16px; border-bottom: 1px solid #eee; vertical-align: top;">
+                                    Each pixel has its own readout</td>
+                            </tr>
+                            <tr class="fragment">
+                                <td style="padding: 10px 16px; border-bottom: 1px solid #eee; vertical-align: top;">
+                                    High quality, low noise</td>
+                                <td style="padding: 10px 16px; border-bottom: 1px solid #eee; vertical-align: top;">
+                                    Cheaper, faster, lower power</td>
+                            </tr>
+                            <tr class="fragment">
+                                <td style="padding: 10px 16px; vertical-align: top;">Common in scientific imaging</td>
+                                <td style="padding: 10px 16px; vertical-align: top;">Dominant in phones &amp; consumer
+                                    cameras</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">4.</span><br />
+                        Camera Parameters & Representations
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Intrinsic Parameters</h2>
+
+                    <div style="font-size: 0.66em;">
+                        <p class="fragment" style="color: #555;">Intrinsics map camera-space points to pixel
+                            coordinates, packed in the <span class="keyword">calibration matrix</span> $K$:</p>
+
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 14px 18px; border-radius: 10px; border-left: 4px solid #2a7ae2; margin: 12px 0;">
+                            <p style="text-align: center; margin: 0;">
+                                $$K = \begin{bmatrix} f_x & s & c_x \\ 0 & f_y & c_y \\ 0 & 0 & 1 \end{bmatrix}$$
+                            </p>
+                        </div>
+
+                        <ul style="margin-top: 6px;">
+                            <li class="fragment" style="margin-bottom: 4px;">$f_x, f_y$ — focal length in pixels</li>
+                            <li class="fragment" style="margin-bottom: 4px;">$c_x, c_y$ — principal point (image
+                                center)</li>
+                            <li class="fragment">$s$ — skew (usually 0)</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Extrinsic Parameters</h2>
+
+                    <div style="font-size: 0.68em;">
+                        <p class="fragment" style="color: #555;">Extrinsics place the camera in the world — a
+                            <span class="keyword">rotation</span> $R$ and <span class="keyword">translation</span>
+                            $t$:</p>
+
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 14px 18px; border-radius: 10px; border-left: 4px solid #9727ae; margin: 12px 0;">
+                            <p style="text-align: center; margin: 0;">
+                                $$\tilde{x} = K\,[\,R \mid t\,]\,\tilde{X}$$
+                            </p>
+                        </div>
+
+                        <div class="fragment"
+                            style="margin-top: 12px; padding: 12px 18px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                            <p style="margin: 0;">
+                                <strong style="color: #b8860b;">Key Idea:</strong>
+                                The full camera model $P = K[R \mid t]$ maps 3D world points to 2D image points —
+                                finding it is called <span class="keyword">camera calibration</span>.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Ways to Represent a Scene</h2>
+
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 16px; font-size: 0.6em;">
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 12px 16px; border-radius: 8px; border-left: 3px solid #2a7ae2;">
+                            <strong style="color: #2a7ae2;">2D image</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">A grid of pixel intensities / colors.</p>
+                        </div>
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 12px 16px; border-radius: 8px; border-left: 3px solid #27ae60;">
+                            <strong style="color: #27ae60;">3D image / depth</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Adds a depth value per pixel (RGB-D).</p>
+                        </div>
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 12px 16px; border-radius: 8px; border-left: 3px solid #e67e22;">
+                            <strong style="color: #d35400;">Point cloud</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">A set of 3D points $(X, Y, Z)$.</p>
+                        </div>
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 12px 16px; border-radius: 8px; border-left: 3px solid #9727ae;">
+                            <strong style="color: #9727ae;">Mesh</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Points connected into surfaces (triangles).</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Summary</h2>
+
+                    <ul style="font-size: 0.72em; margin-top: 16px;">
+                        <li class="fragment" style="margin-bottom: 10px;">Image formation projects a lit 3D scene
+                            onto a 2D sensor through optics.</li>
+                        <li class="fragment" style="margin-bottom: 10px;">The <span class="keyword">pinhole model</span>
+                            gives perspective projection $x = fX/Z$, $y = fY/Z$.</li>
+                        <li class="fragment" style="margin-bottom: 10px;">Real cameras use <span class="keyword">lenses</span>
+                            (focal length, aperture, focus) and sensors (CCD/CMOS), with lens distortion.</li>
+                        <li class="fragment" style="margin-bottom: 10px;">The camera model $P = K[R\mid t]$ combines
+                            <span class="keyword">intrinsics</span> and <span class="keyword">extrinsics</span>.</li>
+                        <li class="fragment">Scenes can be represented as 2D images, depth, point clouds, or meshes.</li>
+                    </ul>
+                </section>
+            </section>
+
+            <div class="footer">
+                Computer Vision: Image Formation
+            </div>
+        </div>
+    </div>
+    <script src="revealjs/dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            controlsLayout: "edges",
+            slideNumber: true,
+            hashOneBasedIndex: true,
+            hash: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX],
+        });
+    </script>
+</body>
+
+</html>

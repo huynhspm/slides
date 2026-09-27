@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="PhD coursework, research and thesis slides at Vrije Universiteit Brussel.">
+  <link rel="icon" type="image/png" href="../../favicon.png">
+  <title>PhD</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="index-style.css">
+  <script>
+    (function () {
+      var saved = localStorage.getItem("theme");
+      var theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
+</head>
+
+<body>
+  <main class="page-shell page-shell-wide">
+
+    <!-- ─── HERO ─── -->
+    <section class="hero">
+      <div class="hero-back">
+        <a class="secondary-link" href="../../">
+          <span class="back-arrow">◀</span> Back to main
+        </a>
+        <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle light/dark theme">
+          <span class="theme-toggle-icon theme-toggle-icon--sun">☀️</span>
+          <span class="theme-toggle-icon theme-toggle-icon--moon">🌙</span>
+        </button>
+      </div>
+      <div class="hero-logo">
+        <img src="assets/img/vub.png" alt="VUB Logo" height="84">
+      </div>
+      <h1>PhD — VUB</h1>
+      <p class="hero-period">📅 09/2026 – present</p>
+      <p class="hero-text">Course slides from the PhD programme at VUB.</p>
+    </section>
+
+    <!-- ─── STATS ─── -->
+    <section class="stats-row" aria-label="Quick statistics">
+      <div class="stat-item">
+        <span class="stat-number">0</span>
+        <span class="stat-label">Courses</span>
+      </div>
+      <div class="stat-divider" aria-hidden="true"></div>
+      <div class="stat-item">
+        <span class="stat-number">0</span>
+        <span class="stat-label">Paper</span>
+      </div>
+      <div class="stat-divider" aria-hidden="true"></div>
+      <div class="stat-item">
+        <span class="stat-number">0</span>
+        <span class="stat-label">PDF</span>
+      </div>
+      <div class="stat-divider" aria-hidden="true"></div>
+      <div class="stat-item">
+        <span class="stat-number">0</span>
+        <span class="stat-label">HTML</span>
+      </div>
+    </section>
+
+    <!-- ─── SLIDES ─── -->
+    <section>
+      <div class="panel">
+        <div class="table-wrap">
+          <table class="slides-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Course</th>
+                <th>Title</th>
+                <th>Materials</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Add one row per deck, e.g.
+              <tr>
+                <td>1</td>
+                <td>Course name</td>
+                <td>Deck title</td>
+                <td><a href="https://arxiv.org/pdf/xxxx.xxxxx" target="_blank" rel="noopener">Paper</a> ·
+                  <a href="deck-name.html" target="_blank" rel="noopener">HTML</a>
+                </td>
+              </tr>
+              -->
+              <tr>
+                <td>—</td>
+                <td colspan="3">No slide decks yet — PhD in progress.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── FOOTER ─── -->
+    <footer class="footer">
+      <p class="footer-author">
+        Built by <strong>Trinh Ngoc Huynh</strong> · Slides powered by
+        <a href="https://revealjs.com" target="_blank" rel="noopener">Reveal.js</a>
+      </p>
+    </footer>
+  </main>
+
+  <script>
+    (function () {
+      var toggle = document.getElementById("theme-toggle");
+      toggle.addEventListener("click", function () {
+        var current = document.documentElement.getAttribute("data-theme");
+        var next = current === "dark" ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", next);
+        localStorage.setItem("theme", next);
+      });
+    })();
+  </script>
+</body>
+
+</html>

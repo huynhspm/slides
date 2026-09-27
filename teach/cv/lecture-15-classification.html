@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/png" href="../../favicon.png">
+    <title>Image Classification</title>
+
+    <link rel="stylesheet" href="revealjs/dist/reset.css" />
+    <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+    <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+    <link rel="stylesheet" href="slide-style.css" />
+</head>
+
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <section>
+                    <h1>Computer Vision</h1>
+                    <h3>Image Classification</h3>
+                    <p>IAI · UET · VNU</p>
+                    <p>Presenter: Trinh Ngoc Huynh</p>
+                    <p>Email: <a href="mailto:huynhtn@vnu.edu.vn">huynhtn@vnu.edu.vn</a></p>
+                </section>
+
+                <section>
+                    <h2>Content</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; font-size: 0.7em;">
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #b15a2b;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #b15a2b; min-width: 40px; text-align: center;">1</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">The Classification Problem</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Task, challenges, and the
+                                    data-driven approach</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #2a7ae2; min-width: 40px; text-align: center;">2</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Classical Pipeline</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Features + classifiers:
+                                    k-NN, SVM</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #27ae60; min-width: 40px; text-align: center;">3</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Deep Classification</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">CNN classifiers and key
+                                    architectures</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #e67e22; min-width: 40px; text-align: center;">4</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Evaluation</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Accuracy, confusion
+                                    matrix, top-k</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">1.</span><br />
+                        The Classification Problem
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>What is Image Classification?</h2>
+
+                    <div class="question-box fragment" style="font-size: 0.72em; margin-top: 8px;">
+                        <p style="margin: 0;">
+                            <strong style="color: #b15a2b;">Task:</strong>
+                            Assign an input image a single <span class="keyword">label</span> from a fixed set of
+                            categories — the canonical high-level vision problem.
+                        </p>
+                    </div>
+
+                    <ul style="font-size: 0.7em; margin-top: 16px;">
+                        <li class="fragment" style="margin-bottom: 8px;">Input: an image → Output: a class (cat, dog,
+                            car…)</li>
+                        <li class="fragment" style="margin-bottom: 8px;">The building block for detection,
+                            segmentation, and retrieval</li>
+                        <li class="fragment">Benchmarked on datasets like <span class="keyword">ImageNet</span>
+                            (1000 classes)</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Why is it Hard?</h2>
+
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 16px; font-size: 0.58em;">
+                        <div class="fragment" style="background: #f8f9fa; padding: 10px 16px; border-radius: 8px; border-left: 3px solid #2a7ae2;">
+                            <strong style="color: #2a7ae2;">Viewpoint</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">The same object from many angles</p>
+                        </div>
+                        <div class="fragment" style="background: #f8f9fa; padding: 10px 16px; border-radius: 8px; border-left: 3px solid #27ae60;">
+                            <strong style="color: #27ae60;">Illumination</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Lighting changes pixel values</p>
+                        </div>
+                        <div class="fragment" style="background: #f8f9fa; padding: 10px 16px; border-radius: 8px; border-left: 3px solid #e67e22;">
+                            <strong style="color: #d35400;">Deformation & occlusion</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Shape changes, partial views</p>
+                        </div>
+                        <div class="fragment" style="background: #f8f9fa; padding: 10px 16px; border-radius: 8px; border-left: 3px solid #9727ae;">
+                            <strong style="color: #9727ae;">Intra-class variation</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Chairs come in endless forms</p>
+                        </div>
+                    </div>
+
+                    <div class="fragment"
+                        style="margin-top: 14px; font-size: 0.62em; padding: 12px 18px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                        <p style="margin: 0;">
+                            <strong style="color: #b8860b;">Key Idea:</strong>
+                            There is no simple rule — we take a <span class="keyword">data-driven</span> approach:
+                            learn from labeled examples.
+                        </p>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">2.</span><br />
+                        Classical Pipeline
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Features + Classifier</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px; font-size: 0.6em;">
+                        <div class="fragment"
+                            style="display: flex; gap: 14px; align-items: center; background: #f8f9fa; padding: 8px 18px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <div style="min-width: 26px; height: 26px; background: #2a7ae2; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700;">1</div>
+                            <p style="margin: 0; color: #555;"><strong>Extract features</strong> — SIFT/HOG, or a
+                                bag-of-visual-words histogram</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; gap: 14px; align-items: center; background: #f8f9fa; padding: 8px 18px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <div style="min-width: 26px; height: 26px; background: #27ae60; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700;">2</div>
+                            <p style="margin: 0; color: #555;"><strong>Train a classifier</strong> on the feature
+                                vectors</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; gap: 14px; align-items: center; background: #f8f9fa; padding: 8px 18px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <div style="min-width: 26px; height: 26px; background: #e67e22; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700;">3</div>
+                            <p style="margin: 0; color: #555;"><strong>Predict</strong> the label of new images</p>
+                        </div>
+                    </div>
+
+                    <p class="fragment" style="font-size: 0.6em; color: #888; text-align: center; margin-top: 12px;">
+                        Features are hand-crafted (Part 3); only the classifier is learned.
+                    </p>
+                </section>
+
+                <section>
+                    <h2>k-Nearest Neighbors</h2>
+
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                        <div class="fragment" style="flex: 1; font-size: 0.66em;">
+                            <p style="color: #555;">Classify by the majority label among the $k$ closest training
+                                examples in feature space.</p>
+                            <ul style="margin-top: 10px;">
+                                <li style="margin-bottom: 6px;">No training — just store the data</li>
+                                <li style="margin-bottom: 6px;">Slow at test time; sensitive to the distance metric</li>
+                                <li>A simple baseline</li>
+                            </ul>
+                        </div>
+                        <div class="placeholder fragment"
+                            style="flex: 1; border:1px dashed #999; padding:14px; border-radius:8px; font-size: 0.56em;">
+                            <em>[Figure placeholder]</em><br />
+                            <strong>Description:</strong> A 2D feature space with two classes and a query point
+                            classified by its $k$ nearest neighbors.<br />
+                            <strong>Image prompt:</strong> Scatter of two colored classes, a query point with a
+                            circle enclosing its k nearest neighbors.
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Support Vector Machines</h2>
+
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                        <div class="fragment" style="flex: 1; font-size: 0.66em;">
+                            <p style="color: #555;">Find the hyperplane that separates classes with the <span
+                                    class="keyword">maximum margin</span>.</p>
+                            <ul style="margin-top: 10px;">
+                                <li style="margin-bottom: 6px;">Strong generalization from limited data</li>
+                                <li style="margin-bottom: 6px;">The <span class="keyword">kernel trick</span> handles
+                                    non-linear boundaries</li>
+                                <li>A dominant classifier before deep learning</li>
+                            </ul>
+                        </div>
+                        <div class="placeholder fragment"
+                            style="flex: 1; border:1px dashed #999; padding:14px; border-radius:8px; font-size: 0.56em;">
+                            <em>[Figure placeholder]</em><br />
+                            <strong>Description:</strong> Two classes separated by a maximum-margin hyperplane with
+                            support vectors highlighted.<br />
+                            <strong>Image prompt:</strong> A 2D scatter with a separating line, margin band, and
+                            circled support vectors.
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">3.</span><br />
+                        Deep Classification
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>End-to-End CNN Classifiers</h2>
+
+                    <ul style="font-size: 0.68em; margin-top: 8px;">
+                        <li class="fragment" style="margin-bottom: 8px;">A CNN learns features <span class="keyword">and</span>
+                            the classifier together, end-to-end</li>
+                        <li class="fragment" style="margin-bottom: 8px;">A final <span class="keyword">softmax</span>
+                            layer outputs class probabilities</li>
+                        <li class="fragment" style="margin-bottom: 8px;">Trained by minimizing <span class="keyword">cross-entropy</span>
+                            loss with backpropagation</li>
+                        <li class="fragment">The 2012 <span class="keyword">AlexNet</span> result on ImageNet
+                            launched the deep learning era</li>
+                    </ul>
+
+                    <div class="placeholder fragment"
+                        style="border:1px dashed #999; padding:12px; border-radius:8px; margin-top: 12px; font-size: 0.58em;">
+                        <em>[Figure placeholder]</em><br />
+                        <strong>Description:</strong> A CNN classifier: image → conv/pool stack → fully connected →
+                        softmax over classes.<br />
+                        <strong>Image prompt:</strong> A CNN diagram ending in a softmax bar chart over class
+                        labels.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Landmark Architectures</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px; font-size: 0.6em;">
+                        <div class="fragment"
+                            style="background: #eef5fc; padding: 10px 18px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <strong style="color: #2a7ae2;">AlexNet (2012)</strong> — deep CNNs + GPUs win ImageNet</div>
+                        <div class="fragment"
+                            style="background: #eafaf1; padding: 10px 18px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <strong style="color: #27ae60;">VGG (2014)</strong> — deeper, uniform 3×3 convolutions</div>
+                        <div class="fragment"
+                            style="background: #fffaf0; padding: 10px 18px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <strong style="color: #d35400;">ResNet (2015)</strong> — skip connections enable very deep
+                            nets</div>
+                        <div class="fragment"
+                            style="background: #f6ecfa; padding: 10px 18px; border-radius: 10px; border-left: 4px solid #9727ae;">
+                            <strong style="color: #9727ae;">Vision Transformers (2020+)</strong> — attention over image
+                            patches</div>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">4.</span><br />
+                        Evaluation
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Metrics</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px; font-size: 0.62em;">
+                        <div class="fragment"
+                            style="background: #eef5fc; padding: 10px 18px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <strong style="color: #2a7ae2;">Accuracy</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Fraction of images classified correctly.</p>
+                        </div>
+                        <div class="fragment"
+                            style="background: #eafaf1; padding: 10px 18px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <strong style="color: #27ae60;">Top-k accuracy</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Correct if the true label is in the top $k$
+                                predictions (common: top-5).</p>
+                        </div>
+                        <div class="fragment"
+                            style="background: #fffaf0; padding: 10px 18px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <strong style="color: #d35400;">Precision / Recall / F1</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Per-class quality, important for imbalanced
+                                data.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>The Confusion Matrix</h2>
+
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                        <div class="fragment" style="flex: 1; font-size: 0.66em;">
+                            <p style="color: #555;">Rows = true class, columns = predicted class.</p>
+                            <ul style="margin-top: 10px;">
+                                <li style="margin-bottom: 6px;">Diagonal = correct predictions</li>
+                                <li style="margin-bottom: 6px;">Off-diagonal = which classes get confused</li>
+                                <li>Reveals systematic errors a single accuracy number hides</li>
+                            </ul>
+                        </div>
+                        <div class="placeholder fragment"
+                            style="flex: 1; border:1px dashed #999; padding:14px; border-radius:8px; font-size: 0.56em;">
+                            <em>[Figure placeholder]</em><br />
+                            <strong>Description:</strong> A confusion matrix heatmap with a bright diagonal and a
+                            few off-diagonal hot spots.<br />
+                            <strong>Image prompt:</strong> A grid heatmap of true vs. predicted classes, dark
+                            diagonal, lighter off-diagonal cells.
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Summary</h2>
+
+                    <ul style="font-size: 0.72em; margin-top: 16px;">
+                        <li class="fragment" style="margin-bottom: 10px;">Classification assigns an image one label —
+                            hard due to viewpoint, lighting, and intra-class variation.</li>
+                        <li class="fragment" style="margin-bottom: 10px;">The classical pipeline pairs hand-crafted
+                            features with <span class="keyword">k-NN</span> or <span class="keyword">SVM</span>.</li>
+                        <li class="fragment" style="margin-bottom: 10px;"><span class="keyword">CNNs</span> learn
+                            features and classifier end-to-end — AlexNet → ResNet → ViT.</li>
+                        <li class="fragment" style="margin-bottom: 10px;">Evaluate with accuracy, top-k, and the
+                            <span class="keyword">confusion matrix</span>.</li>
+                        <li class="fragment">Next: not just <em>what</em> but <em>where</em> — object detection.</li>
+                    </ul>
+                </section>
+            </section>
+
+            <div class="footer">
+                Computer Vision: Image Classification
+            </div>
+        </div>
+    </div>
+    <script src="revealjs/dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            controlsLayout: "edges",
+            slideNumber: true,
+            hashOneBasedIndex: true,
+            hash: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX],
+        });
+    </script>
+</body>
+
+</html>

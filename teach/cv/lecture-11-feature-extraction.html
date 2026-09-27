@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/png" href="../../favicon.png">
+    <title>Feature Extraction</title>
+
+    <link rel="stylesheet" href="revealjs/dist/reset.css" />
+    <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+    <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+    <link rel="stylesheet" href="slide-style.css" />
+</head>
+
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <section>
+                    <h1>Computer Vision</h1>
+                    <h3>Feature Extraction</h3>
+                    <p>IAI · UET · VNU</p>
+                    <p>Presenter: Trinh Ngoc Huynh</p>
+                    <p>Email: <a href="mailto:huynhtn@vnu.edu.vn">huynhtn@vnu.edu.vn</a></p>
+                </section>
+
+                <section>
+                    <h2>Content</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; font-size: 0.7em;">
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #b15a2b;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #b15a2b; min-width: 40px; text-align: center;">1</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">What is a Feature?</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">From pixels to meaningful
+                                    structure</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #2a7ae2; min-width: 40px; text-align: center;">2</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Edge Detection</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Gradients, LoG, and the
+                                    Canny detector</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #27ae60; min-width: 40px; text-align: center;">3</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Corners & Blobs</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Harris corners and
+                                    blob detection</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #e67e22; min-width: 40px; text-align: center;">4</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Line Detection</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">The Hough transform</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">1.</span><br />
+                        What is a Feature?
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>From Pixels to Features</h2>
+
+                    <div class="question-box fragment" style="font-size: 0.72em; margin-top: 8px;">
+                        <p style="margin: 0;">
+                            <strong style="color: #b15a2b;">Feature:</strong>
+                            A piece of <span class="keyword">meaningful, distinctive</span> information extracted
+                            from an image — an edge, corner, blob, or region — more compact than raw pixels.
+                        </p>
+                    </div>
+
+                    <ul style="font-size: 0.7em; margin-top: 16px;">
+                        <li class="fragment" style="margin-bottom: 8px;">This is <span class="keyword">mid-level</span>
+                            vision: image → features / regions of interest</li>
+                        <li class="fragment" style="margin-bottom: 8px;">Good features are <span class="keyword">repeatable</span>,
+                            <span class="keyword">distinctive</span>, and <span class="keyword">local</span></li>
+                        <li class="fragment">They power matching, recognition, tracking, and reconstruction</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Types of Features</h2>
+
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 16px; font-size: 0.6em;">
+                        <div class="fragment" style="background: #eef5fc; padding: 12px 16px; border-radius: 8px; border-left: 3px solid #2a7ae2;">
+                            <strong style="color: #2a7ae2;">Edges</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Boundaries where intensity changes sharply.</p>
+                        </div>
+                        <div class="fragment" style="background: #eafaf1; padding: 12px 16px; border-radius: 8px; border-left: 3px solid #27ae60;">
+                            <strong style="color: #27ae60;">Corners</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Points where two edges meet — highly
+                                localizable.</p>
+                        </div>
+                        <div class="fragment" style="background: #fffaf0; padding: 12px 16px; border-radius: 8px; border-left: 3px solid #e67e22;">
+                            <strong style="color: #d35400;">Blobs</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Regions that differ from their surroundings.</p>
+                        </div>
+                        <div class="fragment" style="background: #f6ecfa; padding: 12px 16px; border-radius: 8px; border-left: 3px solid #9727ae;">
+                            <strong style="color: #9727ae;">Lines & shapes</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Geometric primitives spanning the image.</p>
+                        </div>
+                    </div>
+
+                    <div class="fragment"
+                        style="margin-top: 16px; font-size: 0.62em; padding: 12px 18px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                        <p style="margin: 0;">
+                            <strong style="color: #b8860b;">Key Idea:</strong>
+                            Different tasks need different features — but nearly all start from <em>local intensity
+                                change</em>.
+                        </p>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">2.</span><br />
+                        Edge Detection
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>What is an Edge?</h2>
+
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                        <div class="fragment" style="flex: 1; font-size: 0.66em;">
+                            <p style="color: #555;">An edge is a <span class="keyword">significant local change</span>
+                                in intensity — usually the boundary of an object.</p>
+                            <ul style="margin-top: 10px;">
+                                <li style="margin-bottom: 6px;">The <strong>first derivative</strong> peaks at an
+                                    edge</li>
+                                <li>The <strong>second derivative</strong> has a zero-crossing at an edge</li>
+                            </ul>
+                        </div>
+                        <div class="placeholder fragment"
+                            style="flex: 1; border:1px dashed #999; padding:14px; border-radius:8px; font-size: 0.56em;">
+                            <em>[Figure placeholder]</em><br />
+                            <strong>Description:</strong> An intensity ramp/step with its first derivative (a peak)
+                            and second derivative (a zero-crossing) plotted below.<br />
+                            <strong>Image prompt:</strong> A 1D intensity profile of an edge, plus its first- and
+                            second-derivative curves aligned underneath.
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>The Image Gradient</h2>
+
+                    <div style="font-size: 0.64em;">
+                        <p class="fragment" style="color: #555;">The gradient points toward the steepest intensity
+                            increase:</p>
+
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 12px 18px; border-radius: 10px; border-left: 4px solid #2a7ae2; margin: 10px 0;">
+                            <p style="text-align: center; margin: 0;">
+                                $$\nabla f = \Big[\frac{\partial f}{\partial x}, \frac{\partial f}{\partial y}\Big],
+                                \quad |\nabla f| = \sqrt{f_x^2 + f_y^2}, \quad \theta = \tan^{-1}\!\frac{f_y}{f_x}$$
+                            </p>
+                        </div>
+
+                        <ul style="margin-top: 6px;">
+                            <li class="fragment" style="margin-bottom: 6px;">Approximate $f_x, f_y$ with <span
+                                    class="keyword">Sobel / Prewitt</span> kernels</li>
+                            <li class="fragment" style="margin-bottom: 6px;"><strong>Magnitude</strong> = edge
+                                strength; <strong>angle</strong> = edge direction</li>
+                            <li class="fragment">Threshold the magnitude to get an edge map</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>LoG & Second-Order Detection</h2>
+
+                    <div style="font-size: 0.66em;">
+                        <p class="fragment" style="color: #555;">The <span class="keyword">Laplacian of Gaussian
+                                (LoG)</span> smooths first, then takes the second derivative:</p>
+
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 10px 16px; border-radius: 10px; border-left: 4px solid #9727ae; margin: 10px 0;">
+                            <p style="text-align: center; margin: 0;">
+                                $$\text{LoG} = \nabla^2\big(G_\sigma * f\big)$$
+                            </p>
+                        </div>
+
+                        <ul style="margin-top: 6px;">
+                            <li class="fragment" style="margin-bottom: 6px;">Gaussian blur suppresses noise before
+                                differentiation</li>
+                            <li class="fragment" style="margin-bottom: 6px;">Edges = <span class="keyword">zero-crossings</span>
+                                of the LoG response</li>
+                            <li class="fragment">Also called the "Mexican hat" filter</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>The Canny Edge Detector</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px; font-size: 0.58em;">
+                        <div class="fragment"
+                            style="display: flex; gap: 14px; align-items: center; background: #f8f9fa; padding: 8px 18px; border-radius: 10px; border-left: 4px solid #b15a2b;">
+                            <div style="min-width: 26px; height: 26px; background: #b15a2b; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700;">1</div>
+                            <p style="margin: 0; color: #555;"><strong>Smooth</strong> with a Gaussian to reduce noise</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; gap: 14px; align-items: center; background: #f8f9fa; padding: 8px 18px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <div style="min-width: 26px; height: 26px; background: #2a7ae2; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700;">2</div>
+                            <p style="margin: 0; color: #555;"><strong>Gradient</strong> — compute magnitude &amp;
+                                direction</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; gap: 14px; align-items: center; background: #f8f9fa; padding: 8px 18px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <div style="min-width: 26px; height: 26px; background: #27ae60; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700;">3</div>
+                            <p style="margin: 0; color: #555;"><strong>Non-maximum suppression</strong> — thin edges to
+                                1 pixel</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; gap: 14px; align-items: center; background: #f8f9fa; padding: 8px 18px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <div style="min-width: 26px; height: 26px; background: #e67e22; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700;">4</div>
+                            <p style="margin: 0; color: #555;"><strong>Hysteresis thresholding</strong> — link strong
+                                &amp; weak edges</p>
+                        </div>
+                    </div>
+
+                    <p class="fragment" style="font-size: 0.6em; color: #888; text-align: center; margin-top: 12px;">
+                        Canny remains the classic, high-quality edge detector.
+                    </p>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">3.</span><br />
+                        Corners & Blobs
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Why Corners?</h2>
+
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                        <div class="fragment" style="flex: 1; font-size: 0.66em;">
+                            <p style="color: #555;">Edges are ambiguous <em>along</em> their direction (the aperture
+                                problem). <span class="keyword">Corners</span> are localizable in <strong>both</strong>
+                                directions.</p>
+                            <ul style="margin-top: 10px;">
+                                <li style="margin-bottom: 6px;">Flat region: no change in any direction</li>
+                                <li style="margin-bottom: 6px;">Edge: change in one direction</li>
+                                <li>Corner: change in <strong>all</strong> directions</li>
+                            </ul>
+                        </div>
+                        <div class="placeholder fragment"
+                            style="flex: 1; border:1px dashed #999; padding:14px; border-radius:8px; font-size: 0.56em;">
+                            <em>[Figure placeholder]</em><br />
+                            <strong>Description:</strong> A window slid over a flat area, an edge, and a corner,
+                            showing how much the patch changes in each case.<br />
+                            <strong>Image prompt:</strong> Three patches — flat (no change), edge (change one way),
+                            corner (change all ways) — with shift arrows.
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Harris Corner Detector</h2>
+
+                    <div style="font-size: 0.62em;">
+                        <p class="fragment" style="color: #555;">Analyze the <span class="keyword">second-moment
+                                matrix</span> of gradients in a window:</p>
+
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 10px 16px; border-radius: 10px; border-left: 4px solid #2a7ae2; margin: 8px 0;">
+                            <p style="text-align: center; margin: 0;">
+                                $$M = \sum_{w} \begin{bmatrix} f_x^2 & f_x f_y \\ f_x f_y & f_y^2 \end{bmatrix},
+                                \qquad R = \det(M) - k\,[\text{tr}(M)]^2$$
+                            </p>
+                        </div>
+
+                        <ul style="margin-top: 6px;">
+                            <li class="fragment" style="margin-bottom: 6px;">Both eigenvalues large → <span
+                                    class="keyword">corner</span></li>
+                            <li class="fragment" style="margin-bottom: 6px;">One large → edge; both small → flat</li>
+                            <li class="fragment">$R$ is large &amp; positive at corners; invariant to rotation</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Blob Detection</h2>
+
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                        <div class="fragment" style="flex: 1; font-size: 0.66em;">
+                            <p style="color: #555;">A <span class="keyword">blob</span> is a region brighter or
+                                darker than its surroundings, detected at a characteristic <em>scale</em>.</p>
+                            <ul style="margin-top: 10px;">
+                                <li style="margin-bottom: 6px;">Apply LoG (or its fast approximation <span
+                                        class="keyword">DoG</span>) at multiple scales</li>
+                                <li style="margin-bottom: 6px;">Blobs = extrema in space <em>and</em> scale</li>
+                                <li>The basis of scale-invariant detectors (SIFT)</li>
+                            </ul>
+                        </div>
+                        <div class="placeholder fragment"
+                            style="flex: 1; border:1px dashed #999; padding:14px; border-radius:8px; font-size: 0.56em;">
+                            <em>[Figure placeholder]</em><br />
+                            <strong>Description:</strong> An image with detected blobs marked by circles whose
+                            radius reflects the detection scale.<br />
+                            <strong>Image prompt:</strong> A photo with colored circles of varying radius over
+                            blob-like regions (scale-space extrema).
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">4.</span><br />
+                        Line Detection
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>The Hough Transform</h2>
+
+                    <div style="font-size: 0.66em;">
+                        <p class="fragment" style="color: #555;">A <span class="keyword">voting</span> technique that
+                            finds lines even when they are broken or noisy.</p>
+
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 10px 16px; border-radius: 10px; border-left: 4px solid #9727ae; margin: 8px 0;">
+                            <p style="text-align: center; margin: 0;">
+                                $$\rho = x\cos\theta + y\sin\theta$$
+                            </p>
+                        </div>
+
+                        <ul style="margin-top: 6px;">
+                            <li class="fragment" style="margin-bottom: 6px;">Each edge point votes for all lines
+                                $(\rho, \theta)$ passing through it</li>
+                            <li class="fragment" style="margin-bottom: 6px;">Votes accumulate in a $(\rho, \theta)$
+                                <span class="keyword">accumulator</span> array</li>
+                            <li class="fragment">Peaks in the accumulator = detected lines</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Hough in Practice</h2>
+
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                        <div class="fragment" style="flex: 1; font-size: 0.66em;">
+                            <p style="color: #555;">Typical pipeline:</p>
+                            <ol style="margin-top: 8px;">
+                                <li style="margin-bottom: 6px;">Detect edges (e.g. Canny)</li>
+                                <li style="margin-bottom: 6px;">Each edge pixel votes in $(\rho, \theta)$ space</li>
+                                <li style="margin-bottom: 6px;">Find accumulator peaks</li>
+                                <li>Map peaks back to image lines</li>
+                            </ol>
+                            <p style="color: #555; margin-top: 8px;">Extends to circles and other parametric shapes.</p>
+                        </div>
+                        <div class="placeholder fragment"
+                            style="flex: 1; border:1px dashed #999; padding:14px; border-radius:8px; font-size: 0.56em;">
+                            <em>[Figure placeholder]</em><br />
+                            <strong>Description:</strong> An edge image, its Hough accumulator with bright peaks,
+                            and the recovered lines drawn on the original.<br />
+                            <strong>Image prompt:</strong> Three panels — Canny edges, the (ρ,θ) accumulator
+                            heatmap, and detected lines overlaid on the photo.
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Summary</h2>
+
+                    <ul style="font-size: 0.72em; margin-top: 16px;">
+                        <li class="fragment" style="margin-bottom: 10px;">Features are compact, distinctive structures
+                            extracted from pixels — the mid-level of vision.</li>
+                        <li class="fragment" style="margin-bottom: 10px;"><span class="keyword">Edges</span>: gradient
+                            magnitude, LoG zero-crossings, and the multi-step <span class="keyword">Canny</span>
+                            detector.</li>
+                        <li class="fragment" style="margin-bottom: 10px;"><span class="keyword">Corners</span> (Harris)
+                            and <span class="keyword">blobs</span> (LoG/DoG) are localizable interest points.</li>
+                        <li class="fragment" style="margin-bottom: 10px;">The <span class="keyword">Hough transform</span>
+                            detects lines and shapes by voting.</li>
+                        <li class="fragment">Next: how to <em>describe</em> these features so they can be matched.</li>
+                    </ul>
+                </section>
+            </section>
+
+            <div class="footer">
+                Computer Vision: Feature Extraction
+            </div>
+        </div>
+    </div>
+    <script src="revealjs/dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            controlsLayout: "edges",
+            slideNumber: true,
+            hashOneBasedIndex: true,
+            hash: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX],
+        });
+    </script>
+</body>
+
+</html>

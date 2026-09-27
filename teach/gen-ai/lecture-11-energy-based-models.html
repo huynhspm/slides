@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/png" href="../../favicon.png">
+    <title>Energy-Based Models & MCMC Sampling</title>
+
+    <link rel="stylesheet" href="revealjs/dist/reset.css" />
+    <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+    <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+    <link rel="stylesheet" href="slide-style.css" />
+</head>
+
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <section>
+                    <h1>Generative AI</h1>
+                    <h3>Energy-Based Models & MCMC Sampling</h3>
+                    <p>IAI · UET · VNU</p>
+                    <p>Presenter: Trinh Ngoc Huynh</p>
+                    <p>Email: <a href="mailto:huynhtn@vnu.edu.vn">huynhtn@vnu.edu.vn</a></p>
+                </section>
+
+                <section>
+                    <h2>Content</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; font-size: 0.7em;">
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #b15a2b;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #b15a2b; min-width: 40px; text-align: center;">1</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">The Energy Perspective</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Unnormalized densities and the partition function</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #2a7ae2; min-width: 40px; text-align: center;">2</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Training Without Z</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Contrastive divergence and the two-phase gradient</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #27ae60; min-width: 40px; text-align: center;">3</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">MCMC and Langevin Dynamics</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Sampling using only the score</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #e67e22; min-width: 40px; text-align: center;">4</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">The Bridge to Diffusion</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">How energy, score and diffusion connect</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">1.</span><br />
+                        The Energy Perspective
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>A Different Starting Point</h2>
+                    <div class="question-box">
+                        Instead of a normalised density, assign every \( x \) a scalar <span class="keyword">energy</span>: low for plausible data, high for implausible.
+                    </div>
+                    <ul>
+                        <li class="fragment">No architectural restriction at all</li>
+                        <li class="fragment">Any network that outputs one number will do</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Boltzmann Distribution</h2>
+                    <div class="question-box">
+                        $$ p_\theta(x) = \frac{\exp(-E_\theta(x))}{Z_\theta}, \qquad Z_\theta = \int \exp(-E_\theta(x))\, dx $$
+                    </div>
+                    <ul>
+                        <li class="fragment">Low energy → high probability</li>
+                        <li class="fragment">\( Z_\theta \) is the <span class="keyword">partition function</span></li>
+                        <li class="fragment">It makes the density integrate to one</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Partition Function Problem</h2>
+                    <ul>
+                        <li class="fragment">\( Z_\theta \) is an integral over <span class="keyword">all possible images</span></li>
+                        <li class="fragment">Intractable for any interesting model</li>
+                        <li class="fragment">So we can compare \( p(x_1) \) and \( p(x_2) \), but never state either</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Unnormalized Freedom</h2>
+                    <ul>
+                        <li class="fragment">Flows must be invertible; autoregressive models must be causal</li>
+                        <li class="fragment">An EBM has <span class="keyword">no such constraint</span></li>
+                        <li class="fragment">Maximum flexibility, paid for with an intractable normaliser</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">2.</span><br />
+                        Training Without Z
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>The Likelihood Gradient</h2>
+                    <div class="question-box">
+                        $$ \nabla_\theta \log p_\theta(x) = -\nabla_\theta E_\theta(x) + \mathbb{E}_{p_\theta(x')}\big[\nabla_\theta E_\theta(x')\big] $$
+                    </div>
+                    <ul>
+                        <li class="fragment">The first term uses <span class="keyword">real</span> data — easy</li>
+                        <li class="fragment">The second is an expectation under the <span class="keyword">model</span> — hard</li>
+                        <li class="fragment">Note that \( Z_\theta \) itself has vanished</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Push Down, Push Up</h2>
+                    <ul>
+                        <li class="fragment"><strong>Positive phase:</strong> lower the energy of observed data</li>
+                        <li class="fragment"><strong>Negative phase:</strong> raise the energy of model samples</li>
+                        <li class="fragment">Training sculpts an energy landscape around the data</li>
+                    </ul>
+                    <div class="placeholder" style="border:1px dashed #999;padding:18px;border-radius:8px;">
+                        <em>[Figure: Contrastive Learning of an Energy Landscape]</em><br />
+                        <strong>Description:</strong> Energy pushed down at data points and up at model samples.<br />
+                        <strong>Image prompt:</strong> A 1D energy curve over data space with downward arrows on real data points and upward arrows on sampled points.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Contrastive Divergence</h2>
+                    <ul>
+                        <li class="fragment">We need model samples \( x' \sim p_\theta \) at every gradient step</li>
+                        <li class="fragment">Run a <span class="keyword">short</span> MCMC chain instead of a converged one</li>
+                        <li class="fragment">Biased but workable — the practical compromise</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">3.</span><br />
+                        MCMC and Langevin Dynamics
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Markov Chain Monte Carlo</h2>
+                    <ul>
+                        <li class="fragment">Build a chain whose stationary distribution is \( p_\theta \)</li>
+                        <li class="fragment">Each step needs only <span class="keyword">unnormalized</span> density ratios</li>
+                        <li class="fragment">So \( Z_\theta \) never has to be computed</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Langevin Dynamics</h2>
+                    <div class="question-box">
+                        $$ x_{t+1} = x_t - \frac{\eta}{2}\nabla_x E_\theta(x_t) + \sqrt{\eta}\, \epsilon_t, \qquad \epsilon_t \sim \mathcal{N}(0,I) $$
+                    </div>
+                    <ul>
+                        <li class="fragment">Gradient descent on energy, <span class="keyword">plus noise</span></li>
+                        <li class="fragment">The noise prevents collapse onto a single minimum</li>
+                        <li class="fragment">As \( \eta \to 0 \) and \( t \to \infty \) it samples \( p_\theta \) exactly</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Score Function</h2>
+                    <div class="question-box">
+                        $$ \nabla_x \log p_\theta(x) = -\nabla_x E_\theta(x) $$
+                    </div>
+                    <ul>
+                        <li class="fragment">\( Z_\theta \) is constant in \( x \), so it <span class="keyword">disappears</span> under \( \nabla_x \)</li>
+                        <li class="fragment">The score is computable even though the density is not</li>
+                        <li class="fragment">Remember this identity — Lecture 13 is built on it</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Why Sampling Is Slow</h2>
+                    <ul>
+                        <li class="fragment">Chains need many steps to mix across modes</li>
+                        <li class="fragment">Poor mixing gives biased gradients, which give a poor model</li>
+                        <li class="fragment">This is the practical ceiling on EBM training</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">4.</span><br />
+                        The Bridge to Diffusion
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>EBMs and Score Models</h2>
+                    <ul>
+                        <li class="fragment">An EBM learns energy; its gradient <em>is</em> the score</li>
+                        <li class="fragment">Score models learn \( \nabla_x \log p(x) \) <span class="keyword">directly</span></li>
+                        <li class="fragment">Doing so skips both \( Z_\theta \) and the MCMC training loop</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>From Langevin to Diffusion</h2>
+                    <ul>
+                        <li class="fragment">Langevin sampling walks noise toward the data using the score</li>
+                        <li class="fragment">Diffusion models learn that score at <span class="keyword">many noise levels</span></li>
+                        <li class="fragment">Annealing the noise fixes exactly the mixing problem above</li>
+                    </ul>
+                    <div class="placeholder" style="border:1px dashed #999;padding:18px;border-radius:8px;">
+                        <em>[Figure: From Energy to Diffusion]</em><br />
+                        <strong>Description:</strong> The conceptual chain linking energy, score, Langevin sampling and diffusion.<br />
+                        <strong>Image prompt:</strong> A left-to-right flow: energy function, gradient arrow to score, Langevin sampling steps, then multi-noise-level diffusion.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Where EBMs Appear Today</h2>
+                    <ul>
+                        <li class="fragment">Rarely as a standalone image generator</li>
+                        <li class="fragment">The <span class="keyword">perspective</span> is what endures</li>
+                        <li class="fragment">Guidance in diffusion is an energy-based correction to the score</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Summary</h2>
+                    <ul>
+                        <li class="fragment">EBMs define \( p_\theta(x) \propto \exp(-E_\theta(x)) \) with no architectural constraints</li>
+                        <li class="fragment">The <span class="keyword">partition function</span> \( Z_\theta \) is intractable</li>
+                        <li class="fragment">Training contrasts real data against model samples drawn by MCMC</li>
+                        <li class="fragment"><span class="keyword">Langevin dynamics</span> samples using only the score</li>
+                        <li class="fragment">The score identity is the direct bridge to diffusion models</li>
+                    </ul>
+                </section>
+            </section>
+            <div class="footer">
+                Generative AI: Energy-Based Models & MCMC Sampling
+            </div>
+        </div>
+    </div>
+    <script src="revealjs/dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            controlsLayout: "edges",
+            slideNumber: true,
+            hashOneBasedIndex: true,
+            hash: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX],
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/png" href="../../favicon.png">
+    <title>Image Enhancement (2)</title>
+
+    <link rel="stylesheet" href="revealjs/dist/reset.css" />
+    <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+    <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+    <link rel="stylesheet" href="slide-style.css" />
+</head>
+
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <section>
+                    <h1>Computer Vision</h1>
+                    <h3>Image Enhancement — Spatial & Frequency Filtering</h3>
+                    <p>IAI · UET · VNU</p>
+                    <p>Presenter: Trinh Ngoc Huynh</p>
+                    <p>Email: <a href="mailto:huynhtn@vnu.edu.vn">huynhtn@vnu.edu.vn</a></p>
+                </section>
+
+                <section>
+                    <h2>Content</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; font-size: 0.7em;">
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #b15a2b;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #b15a2b; min-width: 40px; text-align: center;">1</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Spatial Filtering Basics</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Kernels, correlation vs.
+                                    convolution, padding</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #2a7ae2; min-width: 40px; text-align: center;">2</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Smoothing Filters</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Box, Gaussian, and median
+                                    (order-statistic)</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #27ae60; min-width: 40px; text-align: center;">3</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Sharpening & Edges</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Laplacian, unsharp masking,
+                                    gradient operators</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #e67e22; min-width: 40px; text-align: center;">4</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Frequency-Domain Filtering</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Fourier transform, low-
+                                    &amp; high-pass filters</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">1.</span><br />
+                        Spatial Filtering Basics
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>The Filter Kernel</h2>
+
+                    <div class="question-box fragment" style="font-size: 0.72em; margin-top: 8px;">
+                        <p style="margin: 0;">
+                            <strong style="color: #b15a2b;">Kernel:</strong>
+                            A small array (also called <em>mask</em>, <em>window</em>, or <em>template</em>) whose
+                            size sets the neighborhood and whose coefficients define the filter.
+                        </p>
+                    </div>
+
+                    <ul style="font-size: 0.7em; margin-top: 16px;">
+                        <li class="fragment" style="margin-bottom: 8px;">Spatial filtering replaces each pixel with a
+                            function of its <span class="keyword">neighborhood</span></li>
+                        <li class="fragment" style="margin-bottom: 8px;">The kernel slides over the image; its center
+                            $w(0,0)$ aligns with the pixel at $(x, y)$</li>
+                        <li class="fragment">A <span class="keyword">linear</span> filter computes a weighted sum of
+                            the pixels under the kernel</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Correlation vs. Convolution</h2>
+
+                    <div style="display: flex; gap: 14px; margin-top: 14px; font-size: 0.62em;">
+                        <div class="fragment"
+                            style="flex: 1; background: #eef5fc; padding: 14px 18px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <strong style="color: #2a7ae2;">Correlation</strong>
+                            <p style="margin: 6px 0 0 0; color: #555;">Slide the kernel as-is and take weighted sums.</p>
+                            <p style="text-align: center; margin: 8px 0 0 0;">
+                                $$\sum_{s}\sum_{t} w(s,t)\, f(x\!+\!s, y\!+\!t)$$
+                            </p>
+                        </div>
+                        <div class="fragment"
+                            style="flex: 1; background: #eafaf1; padding: 14px 18px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <strong style="color: #27ae60;">Convolution</strong>
+                            <p style="margin: 6px 0 0 0; color: #555;">Same, but rotate the kernel by $180°$ first.</p>
+                            <p style="text-align: center; margin: 8px 0 0 0;">
+                                $$\sum_{s}\sum_{t} w(s,t)\, f(x\!-\!s, y\!-\!t)$$
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="fragment"
+                        style="margin-top: 14px; font-size: 0.62em; padding: 12px 18px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                        <p style="margin: 0;">
+                            <strong style="color: #b8860b;">Key Idea:</strong>
+                            For symmetric kernels the two are identical. Convolution is preferred in theory — it is
+                            commutative and associative.
+                        </p>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Border Handling: Padding</h2>
+
+                    <ul style="font-size: 0.68em; margin-top: 8px;">
+                        <li class="fragment" style="margin-bottom: 8px;">At borders the kernel extends past the image —
+                            we must <span class="keyword">pad</span></li>
+                        <li class="fragment" style="margin-bottom: 8px;"><span class="keyword">Zero padding</span>:
+                            simple, but can create a dark border artifact</li>
+                        <li class="fragment" style="margin-bottom: 8px;"><span class="keyword">Replicate / reflect</span>:
+                            repeat or mirror edge pixels — usually cleaner</li>
+                        <li class="fragment">For a $1 \times m$ kernel we need $(m-1)/2$ pad pixels on each side</li>
+                    </ul>
+
+                    <div class="placeholder fragment"
+                        style="border:1px dashed #999; padding:12px; border-radius:8px; margin-top: 12px; font-size: 0.58em;">
+                        <em>[Figure placeholder]</em><br />
+                        <strong>Description:</strong> The same image smoothed with zero padding (dark border) vs.
+                        replicate padding (clean border).<br />
+                        <strong>Image prompt:</strong> Two smoothed images side by side, one with a dark halo at
+                        the edges (zero-pad), one clean (replicate-pad).
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">2.</span><br />
+                        Smoothing Filters
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Box (Averaging) Filter</h2>
+
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                        <div class="fragment" style="flex: 1; font-size: 0.66em;">
+                            <p style="color: #555;">Every coefficient is equal — a plain average of the neighborhood.</p>
+                            <div
+                                style="background: #f8f9fa; padding: 12px 16px; border-radius: 10px; border-left: 4px solid #2a7ae2; margin-top: 10px;">
+                                <p style="text-align: center; margin: 0;">
+                                    $$\frac{1}{9}\begin{bmatrix} 1 & 1 & 1 \\ 1 & 1 & 1 \\ 1 & 1 & 1 \end{bmatrix}$$
+                                </p>
+                            </div>
+                            <ul style="margin-top: 10px;">
+                                <li style="margin-bottom: 4px;">Fast and simple</li>
+                                <li>Blurs edges; favors blurring along kernel axes</li>
+                            </ul>
+                        </div>
+                        <div class="placeholder fragment"
+                            style="flex: 1; border:1px dashed #999; padding:14px; border-radius:8px; font-size: 0.56em;">
+                            <em>[Figure placeholder]</em><br />
+                            <strong>Description:</strong> An image before and after box filtering with increasing
+                            kernel size (3×3, 11×11, 21×21).<br />
+                            <strong>Image prompt:</strong> A photo progressively blurred by larger box kernels.
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Gaussian Filter</h2>
+
+                    <div style="font-size: 0.66em;">
+                        <p class="fragment" style="color: #555;">Weights follow a 2D Gaussian — nearer pixels count
+                            more:</p>
+
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 12px 18px; border-radius: 10px; border-left: 4px solid #27ae60; margin: 10px 0;">
+                            <p style="text-align: center; margin: 0;">
+                                $$G(s,t) = \frac{1}{2\pi\sigma^2}\, e^{-\frac{s^2 + t^2}{2\sigma^2}}$$
+                            </p>
+                        </div>
+
+                        <ul style="margin-top: 6px;">
+                            <li class="fragment" style="margin-bottom: 6px;">Smooths more gently than a box filter — no
+                                axis bias</li>
+                            <li class="fragment" style="margin-bottom: 6px;"><span class="keyword">Separable</span>: a
+                                2D Gaussian = two 1D Gaussians → faster</li>
+                            <li class="fragment">$\sigma$ controls the amount of blur</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Median Filter</h2>
+
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                        <div class="fragment" style="flex: 1; font-size: 0.66em;">
+                            <p style="color: #555;">A <span class="keyword">nonlinear order-statistic</span> filter:
+                                replace each pixel with the <strong>median</strong> of its neighborhood.</p>
+                            <ul style="margin-top: 10px;">
+                                <li style="margin-bottom: 6px;">Excellent at removing <span class="keyword">salt-and-pepper</span>
+                                    noise</li>
+                                <li style="margin-bottom: 6px;">Preserves edges better than averaging</li>
+                                <li>Not a convolution — cannot be written as a kernel</li>
+                            </ul>
+                        </div>
+                        <div class="placeholder fragment"
+                            style="flex: 1; border:1px dashed #999; padding:14px; border-radius:8px; font-size: 0.56em;">
+                            <em>[Figure placeholder]</em><br />
+                            <strong>Description:</strong> Salt-and-pepper noisy image cleaned by a median filter vs.
+                            a blurring average filter.<br />
+                            <strong>Image prompt:</strong> Three panels — noisy image, mean-filtered (still
+                            smeared), median-filtered (clean, sharp edges).
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">3.</span><br />
+                        Sharpening & Edges
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Sharpening with the Laplacian</h2>
+
+                    <div style="font-size: 0.64em;">
+                        <p class="fragment" style="color: #555;">The Laplacian is a second derivative that responds to
+                            rapid intensity change:</p>
+
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 12px 18px; border-radius: 10px; border-left: 4px solid #2a7ae2; margin: 10px 0;">
+                            <p style="text-align: center; margin: 0;">
+                                $$\nabla^2 f = \frac{\partial^2 f}{\partial x^2} + \frac{\partial^2 f}{\partial y^2}
+                                \quad\Rightarrow\quad
+                                \begin{bmatrix} 0 & 1 & 0 \\ 1 & -4 & 1 \\ 0 & 1 & 0 \end{bmatrix}$$
+                            </p>
+                        </div>
+
+                        <p class="fragment" style="color: #555; margin-top: 6px;">Add it back to sharpen:</p>
+                        <div class="fragment"
+                            style="background: #eafaf1; padding: 10px 16px; border-radius: 10px; border-left: 4px solid #27ae60; margin-top: 6px;">
+                            <p style="text-align: center; margin: 0; font-size: 1.05em;">
+                                $$g(x,y) = f(x,y) - c\,\nabla^2 f(x,y)$$
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Unsharp Masking</h2>
+
+                    <div style="font-size: 0.66em;">
+                        <p class="fragment" style="color: #555;">Subtract a blurred copy to emphasize detail:</p>
+
+                        <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
+                            <div class="fragment"
+                                style="background: #eef5fc; padding: 10px 16px; border-radius: 8px;">
+                                <strong style="color: #2a7ae2;">1. Mask</strong> &nbsp; $g_{mask} = f - \bar{f}$
+                                &nbsp;<span style="color:#888;">(original − blurred)</span>
+                            </div>
+                            <div class="fragment"
+                                style="background: #eafaf1; padding: 10px 16px; border-radius: 8px;">
+                                <strong style="color: #27ae60;">2. Add back</strong> &nbsp; $g = f + k\, g_{mask}$
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="margin-top: 12px; padding: 12px 18px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                            <p style="margin: 0;">
+                                <strong style="color: #b8860b;">Key Idea:</strong>
+                                $k = 1$ is unsharp masking; $k > 1$ is <span class="keyword">high-boost</span>
+                                filtering.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Edge Detection with Gradients</h2>
+
+                    <div style="font-size: 0.62em;">
+                        <p class="fragment" style="color: #555;">First derivatives (the gradient) highlight edges:</p>
+
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 10px 16px; border-radius: 10px; border-left: 4px solid #9727ae; margin: 8px 0;">
+                            <p style="text-align: center; margin: 0;">
+                                $$|\nabla f| = \sqrt{G_x^2 + G_y^2}, \qquad \theta = \tan^{-1}\!\frac{G_y}{G_x}$$
+                            </p>
+                        </div>
+
+                        <div style="display: flex; gap: 12px; margin-top: 8px;">
+                            <div class="fragment"
+                                style="flex: 1; background: #eef5fc; padding: 10px 14px; border-radius: 8px; text-align: center;">
+                                <strong style="color: #2a7ae2;">Sobel $G_x$</strong>
+                                <p style="text-align: center; margin: 6px 0 0 0; font-size: 0.85em;">
+                                    $\begin{bmatrix} -1 & 0 & 1 \\ -2 & 0 & 2 \\ -1 & 0 & 1 \end{bmatrix}$
+                                </p>
+                            </div>
+                            <div class="fragment"
+                                style="flex: 1; background: #eafaf1; padding: 10px 14px; border-radius: 8px; text-align: center;">
+                                <strong style="color: #27ae60;">Sobel $G_y$</strong>
+                                <p style="text-align: center; margin: 6px 0 0 0; font-size: 0.85em;">
+                                    $\begin{bmatrix} -1 & -2 & -1 \\ 0 & 0 & 0 \\ 1 & 2 & 1 \end{bmatrix}$
+                                </p>
+                            </div>
+                        </div>
+                        <p class="fragment" style="color: #888; text-align: center; margin-top: 8px; font-size: 0.9em;">
+                            Prewitt uses uniform weights; Sobel emphasizes the center row/column.
+                        </p>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">4.</span><br />
+                        Frequency-Domain Filtering
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>The Fourier Transform</h2>
+
+                    <div class="question-box fragment" style="font-size: 0.7em; margin-top: 8px;">
+                        <p style="margin: 0;">
+                            <strong style="color: #b15a2b;">Idea:</strong>
+                            Any image can be written as a sum of sinusoids. The <span class="keyword">Fourier
+                                transform</span> expresses it in terms of <span class="keyword">frequency</span>
+                            instead of space.
+                        </p>
+                    </div>
+
+                    <div class="fragment"
+                        style="background: #f8f9fa; padding: 12px 18px; border-radius: 10px; border-left: 4px solid #2a7ae2; margin-top: 14px; font-size: 0.62em;">
+                        <p style="text-align: center; margin: 0;">
+                            $$F(u,v) = \sum_{x=0}^{M-1}\sum_{y=0}^{N-1} f(x,y)\, e^{-j2\pi(ux/M + vy/N)}$$
+                        </p>
+                    </div>
+
+                    <ul style="font-size: 0.62em; margin-top: 12px;">
+                        <li class="fragment" style="margin-bottom: 6px;"><span class="keyword">Low frequencies</span> =
+                            slow changes (smooth areas); <span class="keyword">high frequencies</span> = rapid
+                            changes (edges, noise)</li>
+                        <li class="fragment">Computed efficiently with the <span class="keyword">FFT</span></li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Magnitude & Phase</h2>
+
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                        <div class="fragment" style="flex: 1; font-size: 0.66em;">
+                            <p style="color: #555;">The transform is complex — it has a <span class="keyword">magnitude</span>
+                                (how much of each frequency) and a <span class="keyword">phase</span> (where it sits).</p>
+                            <p style="color: #555; margin-top: 10px;">Phase carries most of the <em>structure</em>:
+                                reconstructing from phase alone still shows recognizable edges, while magnitude alone
+                                does not.</p>
+                        </div>
+                        <div class="placeholder fragment"
+                            style="flex: 1; border:1px dashed #999; padding:14px; border-radius:8px; font-size: 0.56em;">
+                            <em>[Figure placeholder]</em><br />
+                            <strong>Description:</strong> An image with its Fourier magnitude spectrum and phase
+                            spectrum shown separately.<br />
+                            <strong>Image prompt:</strong> A photo, its centered log-magnitude spectrum (bright
+                            cross/center), and its phase image.
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Filtering in the Frequency Domain</h2>
+
+                    <div style="font-size: 0.64em;">
+                        <p class="fragment" style="color: #555;">By the <span class="keyword">convolution
+                                theorem</span>, spatial convolution = frequency multiplication:</p>
+
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 10px 18px; border-radius: 10px; border-left: 4px solid #9727ae; margin: 8px 0;">
+                            <p style="text-align: center; margin: 0;">
+                                $$f * h \;\;\Longleftrightarrow\;\; F \cdot H$$
+                            </p>
+                        </div>
+
+                        <div style="display: flex; gap: 12px; margin-top: 10px;">
+                            <div class="fragment"
+                                style="flex: 1; background: #eef5fc; padding: 10px 14px; border-radius: 8px;">
+                                <strong style="color: #2a7ae2;">Low-pass</strong>
+                                <p style="margin: 4px 0 0 0; color: #555;">Keep low frequencies → <span class="keyword">smoothing</span>
+                                    / blur.</p>
+                            </div>
+                            <div class="fragment"
+                                style="flex: 1; background: #eafaf1; padding: 10px 14px; border-radius: 8px;">
+                                <strong style="color: #27ae60;">High-pass</strong>
+                                <p style="margin: 4px 0 0 0; color: #555;">Keep high frequencies → <span class="keyword">sharpening</span>
+                                    / edges.</p>
+                            </div>
+                        </div>
+
+                        <p class="fragment" style="color: #888; text-align: center; margin-top: 10px; font-size: 0.9em;">
+                            Ideal, Butterworth, and Gaussian filters trade sharpness against ringing artifacts.
+                        </p>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Summary</h2>
+
+                    <ul style="font-size: 0.7em; margin-top: 16px;">
+                        <li class="fragment" style="margin-bottom: 10px;">Spatial filtering slides a <span
+                                class="keyword">kernel</span> over the image; convolution rotates it $180°$.</li>
+                        <li class="fragment" style="margin-bottom: 10px;"><span class="keyword">Smoothing</span>: box,
+                            Gaussian (separable), and median (nonlinear, edge-preserving).</li>
+                        <li class="fragment" style="margin-bottom: 10px;"><span class="keyword">Sharpening</span>:
+                            Laplacian and unsharp masking; <span class="keyword">edges</span> via Sobel/Prewitt
+                            gradients.</li>
+                        <li class="fragment" style="margin-bottom: 10px;">The <span class="keyword">Fourier
+                                transform</span> reveals frequency content; filtering = multiplication there.</li>
+                        <li class="fragment">Low-pass smooths, high-pass sharpens — the frequency view of spatial
+                            filtering.</li>
+                    </ul>
+                </section>
+            </section>
+
+            <div class="footer">
+                Computer Vision: Image Enhancement (2)
+            </div>
+        </div>
+    </div>
+    <script src="revealjs/dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            controlsLayout: "edges",
+            slideNumber: true,
+            hashOneBasedIndex: true,
+            hash: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX],
+        });
+    </script>
+</body>
+
+</html>

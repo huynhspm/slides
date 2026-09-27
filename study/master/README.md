@@ -4,15 +4,17 @@ Coursework and thesis defence slides for the **Master's program in Information T
 
 🌐 **Live:** [https://huynhspm.github.io/slides/study/master/](https://huynhspm.github.io/slides/study/master/)
 
+**Status:** 🎓 Completed (09/2024 – 06/2026)
+
 ---
 
 ## 📚 Slide Decks
 
 | Course | Title | Materials | Status |
 |--------|-------|-----------|--------|
-| Statistical Machine Learning | Learning Conditional Generative Models for Phase Retrieval | [Paper](https://www.jmlr.org/papers/volume24/22-0106/22-0106.pdf) · [Slide](statistical-ml.html) | 🔜 Empty deck |
-| Advanced Artificial Intelligence | High-Resolution Image Synthesis with Latent Diffusion Models | [Paper](https://arxiv.org/pdf/2112.10752) · [PDF](assets/pdf/latent-diffusion.pdf) · [Slide](advanced-ai.html) | 🔜 Empty deck |
-| Thesis | Interpretable Prediction from 3D MRI Brain Scans in Multiple Sclerosis via Latent Representation Learning with Variational Autoencoders | [Paper](https://arxiv.org/pdf/2510.00051) · [Slide](thesis.html) | ✅ Available |
+| Statistical Machine Learning | Learning Conditional Generative Models for Phase Retrieval | [Paper](https://www.jmlr.org/papers/volume24/22-0106/22-0106.pdf) · [HTML](statistical-ml.html) | 🔜 Empty deck |
+| Advanced Artificial Intelligence | High-Resolution Image Synthesis with Latent Diffusion Models | [Paper](https://arxiv.org/pdf/2112.10752) · [PDF](assets/pdf/latent-diffusion.pdf) · [HTML](advanced-ai.html) | 🔜 Empty deck |
+| Thesis | Interpretable Prediction from 3D MRI Brain Scans in Multiple Sclerosis via Latent Representation Learning with Variational Autoencoders | [Paper](https://arxiv.org/pdf/2510.00051) · [HTML](thesis.html) | ✅ Available |
 | Graduation Ceremony | Graduation Invitation | [Invitation](graduation-invitation.html) | ✅ Available |
 
 `statistical-ml.html` and `advanced-ai.html` are currently placeholder decks (cover + footer only) — the paper-review content has not been written yet.

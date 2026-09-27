@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/png" href="../../favicon.png">
+    <title>Advanced VAEs & Learned Visual Representations</title>
+
+    <link rel="stylesheet" href="revealjs/dist/reset.css" />
+    <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+    <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+    <link rel="stylesheet" href="slide-style.css" />
+</head>
+
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <section>
+                    <h1>Generative AI</h1>
+                    <h3>Advanced VAEs & Learned Visual Representations</h3>
+                    <p>IAI · UET · VNU</p>
+                    <p>Presenter: Trinh Ngoc Huynh</p>
+                    <p>Email: <a href="mailto:huynhtn@vnu.edu.vn">huynhtn@vnu.edu.vn</a></p>
+                </section>
+
+                <section>
+                    <h2>Content</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; font-size: 0.7em;">
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #b15a2b;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #b15a2b; min-width: 40px; text-align: center;">1</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">β-VAE and Posterior Collapse</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Disentanglement, collapse, and how to avoid it</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #2a7ae2; min-width: 40px; text-align: center;">2</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">VQ-VAE</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Vector quantization, the codebook and the commitment loss</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #27ae60; min-width: 40px; text-align: center;">3</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Hierarchical Models & VQGAN</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Multi-level latents and learned priors</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #e67e22; min-width: 40px; text-align: center;">4</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">The Bridge to Modern Generation</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">How representations feed Transformers and diffusion</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">1.</span><br />
+                        β-VAE and Posterior Collapse
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Weighting the KL Term</h2>
+                    <div class="question-box">
+                        $$ \mathcal{L}_\beta = \mathbb{E}_{q_\phi}[\log p_\theta(x\mid z)] - \beta \, D_{\mathrm{KL}}\big(q_\phi(z\mid x)\,\|\,p(z)\big) $$
+                    </div>
+                    <ul>
+                        <li class="fragment">\( \beta = 1 \) recovers the standard VAE</li>
+                        <li class="fragment">\( \beta > 1 \) presses the posterior harder toward the prior</li>
+                        <li class="fragment">No longer a likelihood bound — a deliberate trade</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Disentanglement</h2>
+                    <ul>
+                        <li class="fragment">A factorized prior pushes latent dimensions toward <span class="keyword">independence</span></li>
+                        <li class="fragment">Ideally one dimension controls one factor: pose, colour, thickness</li>
+                        <li class="fragment"><strong>Cost:</strong> higher \( \beta \) means worse reconstruction</li>
+                    </ul>
+                    <div class="placeholder" style="border:1px dashed #999;padding:18px;border-radius:8px;">
+                        <em>[Figure: Latent Traversal]</em><br />
+                        <strong>Description:</strong> Varying one latent dimension at a time while holding the rest fixed.<br />
+                        <strong>Image prompt:</strong> A grid: each row varies a single latent dimension across seven values, showing one attribute changing per row.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Posterior Collapse</h2>
+                    <div class="question-box">
+                        $$ q_\phi(z \mid x) \approx p(z) \quad \Longrightarrow \quad \text{the latent carries no information about } x $$
+                    </div>
+                    <ul>
+                        <li class="fragment">The KL term reaches zero and the decoder ignores \( z \)</li>
+                        <li class="fragment">Happens when the decoder is powerful enough to model \( x \) alone</li>
+                        <li class="fragment">Especially common with autoregressive decoders</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Mitigations</h2>
+                    <ul>
+                        <li class="fragment"><strong>KL annealing:</strong> ramp \( \beta \) up from 0 during training</li>
+                        <li class="fragment"><strong>Free bits:</strong> allow a KL budget per dimension without penalty</li>
+                        <li class="fragment"><strong>Weaken the decoder</strong> so it genuinely needs the latent</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">2.</span><br />
+                        VQ-VAE
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Why Discrete Latents?</h2>
+                    <ul>
+                        <li class="fragment">Continuous latents are prone to collapse and over-smoothing</li>
+                        <li class="fragment">Discrete codes match the structure of language-model machinery</li>
+                        <li class="fragment">And they give us the <span class="keyword">tokenizer</span> promised in Lecture 05</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Vector Quantization</h2>
+                    <div class="question-box">
+                        $$ z_q = e_k, \qquad k = \arg\min_j \| z_e(x) - e_j \|_2 $$
+                    </div>
+                    <ul>
+                        <li class="fragment">Encode to a continuous \( z_e(x) \), then snap to the nearest <span class="keyword">codebook</span> entry</li>
+                        <li class="fragment">The codebook \( \{e_1,\ldots,e_K\} \) is learned</li>
+                        <li class="fragment">The output is an <span class="keyword">index</span> — a discrete token</li>
+                    </ul>
+                    <div class="placeholder" style="border:1px dashed #999;padding:18px;border-radius:8px;">
+                        <em>[Figure: Vector Quantization]</em><br />
+                        <strong>Description:</strong> Continuous encoder outputs snapped to their nearest codebook vectors.<br />
+                        <strong>Image prompt:</strong> A 2D scatter of encoder outputs with codebook vectors marked as stars and arrows snapping each point to its nearest star.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>The Gradient Problem</h2>
+                    <div class="question-box">
+                        \( \arg\min \) has zero gradient almost everywhere — the encoder would never learn.
+                    </div>
+                    <ul>
+                        <li class="fragment"><strong>Straight-through estimator:</strong> copy the decoder gradient past the quantiser</li>
+                        <li class="fragment">Treat quantization as the identity during the backward pass</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The VQ-VAE Loss</h2>
+                    <div class="question-box">
+                        $$ \mathcal{L} = \underbrace{\log p(x \mid z_q)}_{\text{reconstruction}} + \underbrace{\|\operatorname{sg}[z_e] - e\|^2}_{\text{codebook}} + \beta \underbrace{\|z_e - \operatorname{sg}[e]\|^2}_{\text{commitment}} $$
+                    </div>
+                    <ul>
+                        <li class="fragment"><strong>Codebook loss:</strong> move entries toward the encoder outputs</li>
+                        <li class="fragment"><strong>Commitment loss:</strong> stop the encoder drifting away from the codebook</li>
+                        <li class="fragment">\( \operatorname{sg}[\cdot] \) is the stop-gradient operator</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Codebook Collapse</h2>
+                    <ul>
+                        <li class="fragment">Only a fraction of entries ever get used</li>
+                        <li class="fragment">Fixes: EMA updates, codebook restarts, lower code dimension</li>
+                        <li class="fragment">Utilisation is the metric to watch when training a tokenizer</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">3.</span><br />
+                        Hierarchical Models & VQGAN
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Hierarchical Latents</h2>
+                    <ul>
+                        <li class="fragment">One latent level struggles to hold both global and local structure</li>
+                        <li class="fragment"><strong>VQ-VAE-2:</strong> a top level for layout, a bottom level for detail</li>
+                        <li class="fragment">Each level is modelled by its own prior</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Learning the Prior</h2>
+                    <ul>
+                        <li class="fragment">A trained VQ-VAE has a <span class="keyword">mismatched</span> prior: uniform over codes</li>
+                        <li class="fragment">Fit a second model — a PixelCNN or Transformer — over the code grid</li>
+                        <li class="fragment">This is exactly the two-stage recipe from Lecture 05</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>VQGAN</h2>
+                    <ul>
+                        <li class="fragment">Add a <span class="keyword">perceptual loss</span> and a patch discriminator to stage 1</li>
+                        <li class="fragment">Much sharper reconstructions at a high compression rate</li>
+                        <li class="fragment">The tokenizer behind Transformer-based image generation</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">4.</span><br />
+                        The Bridge to Modern Generation
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>The Bridge, Stated Plainly</h2>
+                    <div class="question-box">
+                        The same encoder–decoder idea feeds <span class="keyword">both</span> halves of the modern stack.
+                    </div>
+                    <ul>
+                        <li class="fragment"><strong>VQ-VAE → discrete tokens →</strong> autoregressive Transformers (Lecture 05)</li>
+                        <li class="fragment"><strong>VAE → continuous latent →</strong> latent diffusion (Lecture 14)</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Two Roads from One Idea</h2>
+                    <ul>
+                        <li class="fragment">Discrete route: quantize, then model tokens with cross-entropy</li>
+                        <li class="fragment">Continuous route: keep a smooth latent, then run diffusion inside it</li>
+                        <li class="fragment">Both exist to avoid generating in raw pixel space</li>
+                    </ul>
+                    <div class="placeholder" style="border:1px dashed #999;padding:18px;border-radius:8px;">
+                        <em>[Figure: Two Roads from the Latent Space]</em><br />
+                        <strong>Description:</strong> One shared encoder feeding a discrete token path and a continuous latent path.<br />
+                        <strong>Image prompt:</strong> A branching diagram: image into encoder, then two branches labelled discrete tokens to Transformer, and continuous latent to diffusion.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Representation as Infrastructure</h2>
+                    <ul>
+                        <li class="fragment">These models are rarely the final generator any more</li>
+                        <li class="fragment">They are the <span class="keyword">compression layer</span> everything else builds on</li>
+                        <li class="fragment">Good generation depends on a good representation</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Summary</h2>
+                    <ul>
+                        <li class="fragment"><span class="keyword">β-VAE</span> trades reconstruction for disentanglement</li>
+                        <li class="fragment"><span class="keyword">Posterior collapse</span> happens when the decoder ignores the latent</li>
+                        <li class="fragment"><span class="keyword">VQ-VAE</span> discretises the latent with a learned codebook</li>
+                        <li class="fragment">The straight-through estimator makes quantization trainable</li>
+                        <li class="fragment">VQ-VAE feeds Transformers; the continuous VAE feeds latent diffusion</li>
+                    </ul>
+                </section>
+            </section>
+            <div class="footer">
+                Generative AI: Advanced VAEs & Learned Visual Representations
+            </div>
+        </div>
+    </div>
+    <script src="revealjs/dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            controlsLayout: "edges",
+            slideNumber: true,
+            hashOneBasedIndex: true,
+            hash: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX],
+        });
+    </script>
+</body>
+
+</html>

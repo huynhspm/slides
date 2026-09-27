@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/png" href="../../favicon.png">
+    <title>Morphological Operations</title>
+
+    <link rel="stylesheet" href="revealjs/dist/reset.css" />
+    <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+    <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+    <link rel="stylesheet" href="slide-style.css" />
+</head>
+
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <section>
+                    <h1>Computer Vision</h1>
+                    <h3>Morphological Operations</h3>
+                    <p>IAI · UET · VNU</p>
+                    <p>Presenter: Trinh Ngoc Huynh</p>
+                    <p>Email: <a href="mailto:huynhtn@vnu.edu.vn">huynhtn@vnu.edu.vn</a></p>
+                </section>
+
+                <section>
+                    <h2>Content</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; font-size: 0.7em;">
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #b15a2b;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #b15a2b; min-width: 40px; text-align: center;">1</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Foundations</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Sets, structuring
+                                    elements, reflection & translation</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #2a7ae2; min-width: 40px; text-align: center;">2</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Erosion & Dilation</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">The two fundamental
+                                    operations</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #27ae60; min-width: 40px; text-align: center;">3</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Opening & Closing</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Compound operations and
+                                    their properties</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #e67e22; min-width: 40px; text-align: center;">4</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Applications</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Boundaries, hit-or-miss,
+                                    gradient, skeletons</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">1.</span><br />
+                        Foundations
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>What is Morphology?</h2>
+
+                    <div class="question-box fragment" style="font-size: 0.72em; margin-top: 8px;">
+                        <p style="margin: 0;">
+                            <strong style="color: #b15a2b;">Morphology:</strong>
+                            A set of operations that process images based on <span class="keyword">shape</span>,
+                            using <span class="keyword">set theory</span> on the pixels.
+                        </p>
+                    </div>
+
+                    <ul style="font-size: 0.7em; margin-top: 16px;">
+                        <li class="fragment" style="margin-bottom: 8px;">A binary image is treated as a <span
+                                class="keyword">set</span> of foreground pixel coordinates in 2D integer space</li>
+                        <li class="fragment" style="margin-bottom: 8px;">Extracts structures: boundaries, skeletons,
+                            convex hulls</li>
+                        <li class="fragment">Enables filtering, thinning, thickening, and pruning of shapes</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Structuring Element</h2>
+
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                        <div class="fragment" style="flex: 1; font-size: 0.66em;">
+                            <p style="color: #555;">
+                                A small <span class="keyword">structuring element</span> (SE) probes the image. Its
+                                shape and origin define how the operation behaves.
+                            </p>
+                            <ul style="margin-top: 10px;">
+                                <li style="margin-bottom: 6px;">Can be a square, cross, disk, line…</li>
+                                <li style="margin-bottom: 6px;">Represented as a set, a graphic, or a small array</li>
+                                <li>The <em>origin</em> (dot) marks the anchor pixel</li>
+                            </ul>
+                        </div>
+                        <div class="placeholder fragment"
+                            style="flex: 1; border:1px dashed #999; padding:14px; border-radius:8px; font-size: 0.56em;">
+                            <em>[Figure placeholder]</em><br />
+                            <strong>Description:</strong> A structuring element shown three ways — as a set of
+                            coordinates, a shaded shape, and a digital 0/1 grid — with the origin marked.<br />
+                            <strong>Image prompt:</strong> A cross-shaped SE displayed as coordinate set, gray
+                            shape, and a small binary grid with a dot at the origin.
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Reflection & Translation</h2>
+
+                    <div style="display: flex; gap: 14px; margin-top: 16px; font-size: 0.64em;">
+                        <div class="fragment"
+                            style="flex: 1; background: #eef5fc; padding: 14px 18px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <strong style="color: #2a7ae2;">Reflection $\hat{B}$</strong>
+                            <p style="margin: 6px 0 0 0; color: #555;">Rotate the SE $180°$ about its origin.</p>
+                            <p style="text-align: center; margin: 8px 0 0 0;">
+                                $$\hat{B} = \{-b \mid b \in B\}$$
+                            </p>
+                        </div>
+                        <div class="fragment"
+                            style="flex: 1; background: #eafaf1; padding: 14px 18px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <strong style="color: #27ae60;">Translation $(B)_z$</strong>
+                            <p style="margin: 6px 0 0 0; color: #555;">Slide the SE to position $z$.</p>
+                            <p style="text-align: center; margin: 8px 0 0 0;">
+                                $$(B)_z = \{b + z \mid b \in B\}$$
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="fragment"
+                        style="margin-top: 16px; font-size: 0.64em; padding: 14px 20px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                        <p style="margin: 0;">
+                            <strong style="color: #b8860b;">Key Idea:</strong>
+                            Every morphological operation slides the SE over the image and applies a <span
+                                class="keyword">set operation</span> at each position.
+                        </p>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">2.</span><br />
+                        Erosion & Dilation
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Erosion</h2>
+
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                        <div class="fragment" style="flex: 1; font-size: 0.64em;">
+                            <div
+                                style="background: #f8f9fa; padding: 12px 16px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                                <p style="text-align: center; margin: 0;">
+                                    $$A \ominus B = \{z \mid (B)_z \subseteq A\}$$
+                                </p>
+                            </div>
+                            <p style="color: #555; margin-top: 10px;">Keep positions where the SE fits <span
+                                    class="keyword">entirely</span> inside the object.</p>
+                            <ul style="margin-top: 8px;">
+                                <li style="margin-bottom: 4px;"><span class="keyword">Shrinks</span> / thins objects</li>
+                                <li>Removes small details &amp; thin protrusions</li>
+                            </ul>
+                        </div>
+                        <div class="placeholder fragment"
+                            style="flex: 1; border:1px dashed #999; padding:14px; border-radius:8px; font-size: 0.56em;">
+                            <em>[Figure placeholder]</em><br />
+                            <strong>Description:</strong> A binary shape before and after erosion, shrunk inward by
+                            the SE radius.<br />
+                            <strong>Image prompt:</strong> A white blob on black, then eroded to a smaller blob,
+                            with the SE shown.
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Dilation</h2>
+
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                        <div class="fragment" style="flex: 1; font-size: 0.64em;">
+                            <div
+                                style="background: #f8f9fa; padding: 12px 16px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                                <p style="text-align: center; margin: 0;">
+                                    $$A \oplus B = \{z \mid (\hat{B})_z \cap A \neq \varnothing\}$$
+                                </p>
+                            </div>
+                            <p style="color: #555; margin-top: 10px;">Keep positions where the reflected SE <span
+                                    class="keyword">touches</span> the object.</p>
+                            <ul style="margin-top: 8px;">
+                                <li style="margin-bottom: 4px;"><span class="keyword">Grows</span> / thickens objects</li>
+                                <li>Fills small holes &amp; gaps</li>
+                            </ul>
+                        </div>
+                        <div class="placeholder fragment"
+                            style="flex: 1; border:1px dashed #999; padding:14px; border-radius:8px; font-size: 0.56em;">
+                            <em>[Figure placeholder]</em><br />
+                            <strong>Description:</strong> A binary shape before and after dilation, expanded outward
+                            by the SE.<br />
+                            <strong>Image prompt:</strong> A white blob on black, then dilated to a larger blob with
+                            small holes filled.
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Duality of Erosion & Dilation</h2>
+
+                    <div style="font-size: 0.68em;">
+                        <p class="fragment" style="color: #555;">Erosion and dilation are <span class="keyword">duals</span>
+                            with respect to complement and reflection:</p>
+
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 14px 18px; border-radius: 10px; border-left: 4px solid #9727ae; margin: 12px 0;">
+                            <p style="text-align: center; margin: 0;">
+                                $$(A \ominus B)^c = A^c \oplus \hat{B}$$
+                            </p>
+                        </div>
+
+                        <div class="fragment"
+                            style="margin-top: 10px; padding: 12px 18px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                            <p style="margin: 0;">
+                                <strong style="color: #b8860b;">Key Idea:</strong>
+                                Eroding the foreground is the same as dilating the background — one operation
+                                implies the other.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">3.</span><br />
+                        Opening & Closing
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Opening</h2>
+
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                        <div class="fragment" style="flex: 1; font-size: 0.64em;">
+                            <div
+                                style="background: #f8f9fa; padding: 12px 16px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                                <p style="text-align: center; margin: 0;">
+                                    $$A \circ B = (A \ominus B) \oplus B$$
+                                </p>
+                            </div>
+                            <p style="color: #555; margin-top: 10px;">Erosion <em>then</em> dilation.</p>
+                            <ul style="margin-top: 8px;">
+                                <li style="margin-bottom: 4px;">Removes small objects &amp; thin protrusions</li>
+                                <li style="margin-bottom: 4px;">Smooths contours from the <span class="keyword">outside</span></li>
+                                <li>Preserves overall object size</li>
+                            </ul>
+                        </div>
+                        <div class="placeholder fragment"
+                            style="flex: 1; border:1px dashed #999; padding:14px; border-radius:8px; font-size: 0.56em;">
+                            <em>[Figure placeholder]</em><br />
+                            <strong>Description:</strong> A noisy shape with thin spikes cleaned up by opening.<br />
+                            <strong>Image prompt:</strong> A blob with thin spikes/specks, then opened to remove
+                            them while keeping the main body.
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Closing</h2>
+
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                        <div class="fragment" style="flex: 1; font-size: 0.64em;">
+                            <div
+                                style="background: #f8f9fa; padding: 12px 16px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                                <p style="text-align: center; margin: 0;">
+                                    $$A \bullet B = (A \oplus B) \ominus B$$
+                                </p>
+                            </div>
+                            <p style="color: #555; margin-top: 10px;">Dilation <em>then</em> erosion.</p>
+                            <ul style="margin-top: 8px;">
+                                <li style="margin-bottom: 4px;">Fills small holes &amp; gaps</li>
+                                <li style="margin-bottom: 4px;">Smooths contours from the <span class="keyword">inside</span></li>
+                                <li>Connects nearby objects</li>
+                            </ul>
+                        </div>
+                        <div class="placeholder fragment"
+                            style="flex: 1; border:1px dashed #999; padding:14px; border-radius:8px; font-size: 0.56em;">
+                            <em>[Figure placeholder]</em><br />
+                            <strong>Description:</strong> A shape with small holes and gaps filled in by closing.<br />
+                            <strong>Image prompt:</strong> A blob with pinholes and a narrow gap, then closed to
+                            fill them.
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Properties</h2>
+
+                    <table
+                        style="width: 100%; table-layout: fixed; border-collapse: collapse; margin-top: 18px; font-size: 0.64em;">
+                        <thead>
+                            <tr>
+                                <th
+                                    style="background: #2a7ae2; color: #fff; padding: 12px 16px; text-align: left; border-radius: 10px 0 0 0;">
+                                    Opening</th>
+                                <th
+                                    style="background: #27ae60; color: #fff; padding: 12px 16px; text-align: left; border-radius: 0 10px 0 0;">
+                                    Closing</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="fragment">
+                                <td style="padding: 10px 16px; border-bottom: 1px solid #eee; vertical-align: top;">
+                                    Removes bright specks on dark background</td>
+                                <td style="padding: 10px 16px; border-bottom: 1px solid #eee; vertical-align: top;">
+                                    Fills dark holes on bright objects</td>
+                            </tr>
+                            <tr class="fragment">
+                                <td style="padding: 10px 16px; vertical-align: top;">
+                                    <span class="keyword">Idempotent</span>: $(A \circ B) \circ B = A \circ B$</td>
+                                <td style="padding: 10px 16px; vertical-align: top;">
+                                    <span class="keyword">Idempotent</span>: $(A \bullet B) \bullet B = A \bullet B$</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">4.</span><br />
+                        Applications
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Boundary Extraction</h2>
+
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                        <div class="fragment" style="flex: 1; font-size: 0.66em;">
+                            <p style="color: #555;">Subtract an eroded copy from the original to get the outline:</p>
+                            <div
+                                style="background: #f8f9fa; padding: 12px 16px; border-radius: 10px; border-left: 4px solid #2a7ae2; margin-top: 10px;">
+                                <p style="text-align: center; margin: 0;">
+                                    $$\beta(A) = A - (A \ominus B)$$
+                                </p>
+                            </div>
+                            <p style="color: #555; margin-top: 10px;">The <span class="keyword">morphological
+                                    gradient</span> $(A \oplus B) - (A \ominus B)$ highlights edges similarly.</p>
+                        </div>
+                        <div class="placeholder fragment"
+                            style="flex: 1; border:1px dashed #999; padding:14px; border-radius:8px; font-size: 0.56em;">
+                            <em>[Figure placeholder]</em><br />
+                            <strong>Description:</strong> A filled shape and its extracted 1-pixel-wide boundary.<br />
+                            <strong>Image prompt:</strong> A solid white shape next to its outline-only version.
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Hit-or-Miss & Skeletons</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px; font-size: 0.62em;">
+                        <div class="fragment"
+                            style="background: #eef5fc; padding: 12px 18px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <strong style="color: #2a7ae2;">Hit-or-Miss Transform</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Detects exact shape patterns using a pair of
+                                SEs (foreground + background) — the basis of template matching in binary images.</p>
+                        </div>
+                        <div class="fragment"
+                            style="background: #eafaf1; padding: 12px 18px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <strong style="color: #27ae60;">Skeletonization</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Thins a shape to a 1-pixel-wide medial axis —
+                                a compact representation for recognition.</p>
+                        </div>
+                        <div class="fragment"
+                            style="background: #f6ecfa; padding: 12px 18px; border-radius: 10px; border-left: 4px solid #9727ae;">
+                            <strong style="color: #9727ae;">Thinning, Thickening, Pruning</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Iterative refinements built from hit-or-miss —
+                                clean up skeletons and remove spurs.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Real-World Uses</h2>
+
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 16px; font-size: 0.6em;">
+                        <div class="fragment" style="background: #f8f9fa; padding: 12px 16px; border-radius: 8px; border-left: 3px solid #b15a2b;">
+                            <strong style="color: #b15a2b;">Barcode detection</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Closing joins bars into a solid region.</p>
+                        </div>
+                        <div class="fragment" style="background: #f8f9fa; padding: 12px 16px; border-radius: 8px; border-left: 3px solid #2a7ae2;">
+                            <strong style="color: #2a7ae2;">Document cleanup</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Opening removes speckle noise from scans.</p>
+                        </div>
+                        <div class="fragment" style="background: #f8f9fa; padding: 12px 16px; border-radius: 8px; border-left: 3px solid #27ae60;">
+                            <strong style="color: #27ae60;">Medical imaging</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Isolate and measure cells or vessels.</p>
+                        </div>
+                        <div class="fragment" style="background: #f8f9fa; padding: 12px 16px; border-radius: 8px; border-left: 3px solid #e67e22;">
+                            <strong style="color: #d35400;">Fingerprints</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Thinning ridges before matching.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Summary</h2>
+
+                    <ul style="font-size: 0.72em; margin-top: 16px;">
+                        <li class="fragment" style="margin-bottom: 10px;">Morphology processes <span class="keyword">shape</span>
+                            using set operations with a <span class="keyword">structuring element</span>.</li>
+                        <li class="fragment" style="margin-bottom: 10px;"><span class="keyword">Erosion</span> shrinks,
+                            <span class="keyword">dilation</span> grows — and they are duals.</li>
+                        <li class="fragment" style="margin-bottom: 10px;"><span class="keyword">Opening</span> removes
+                            specks; <span class="keyword">closing</span> fills holes — both are idempotent.</li>
+                        <li class="fragment" style="margin-bottom: 10px;">Derived tools: boundary extraction,
+                            gradient, hit-or-miss, skeletons.</li>
+                        <li class="fragment">Widely used for cleanup, detection, and shape analysis in binary
+                            images.</li>
+                    </ul>
+                </section>
+            </section>
+
+            <div class="footer">
+                Computer Vision: Morphological Operations
+            </div>
+        </div>
+    </div>
+    <script src="revealjs/dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            controlsLayout: "edges",
+            slideNumber: true,
+            hashOneBasedIndex: true,
+            hash: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX],
+        });
+    </script>
+</body>
+
+</html>

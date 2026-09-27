@@ -9,6 +9,13 @@
   <title>IAI</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="index-style.css">
+  <script>
+    (function () {
+      var saved = localStorage.getItem("theme");
+      var theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
 </head>
 
 <body>
@@ -20,12 +27,17 @@
         <a class="secondary-link" href="../../">
           <span class="back-arrow">◀</span> Back to main
         </a>
+        <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle light/dark theme">
+          <span class="theme-toggle-icon theme-toggle-icon--sun">☀️</span>
+          <span class="theme-toggle-icon theme-toggle-icon--moon">🌙</span>
+        </button>
       </div>
       <div class="hero-logo">
-        <img src="assets/iai.png" alt="IAI Logo" height="100">
+        <img src="assets/img/iai.png" alt="IAI Logo" height="84">
       </div>
       <h1>IAI — UET</h1>
-      <p class="hero-text">Research presentations at the Intelligent Artificial Intelligence Lab, UET.</p>
+      <p class="hero-period">👤 Dr. Tran Quoc Long</p>
+      <p class="hero-text">Research presentations at the Institute for Artificial Intelligence, VNU-UET.</p>
     </section>
 
     <!-- ─── STATS ─── -->
@@ -33,6 +45,16 @@
       <div class="stat-item">
         <span class="stat-number">3</span>
         <span class="stat-label">Presentations</span>
+      </div>
+      <div class="stat-divider" aria-hidden="true"></div>
+      <div class="stat-item">
+        <span class="stat-number">3</span>
+        <span class="stat-label">PDF</span>
+      </div>
+      <div class="stat-divider" aria-hidden="true"></div>
+      <div class="stat-item">
+        <span class="stat-number">0</span>
+        <span class="stat-label">HTML</span>
       </div>
     </section>
 
@@ -45,27 +67,28 @@
               <tr>
                 <th>#</th>
                 <th>Title</th>
-                <th>Year</th>
+                <th>Date</th>
+                <th>Materials</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td>1</td>
-                <td><a href="assets/pdf/AQF-2022.pdf" target="_blank" rel="noopener">Air Quality Forecasting
-                    Challenge</a></td>
+                <td>Air Quality Forecasting Challenge</td>
                 <td>2022</td>
+                <td><a href="assets/pdf/AQF-2022.pdf" target="_blank" rel="noopener">PDF</a></td>
               </tr>
               <tr>
                 <td>2</td>
-                <td><a href="assets/pdf/NCKH-2023.pdf" target="_blank" rel="noopener">Multi-Object Multi-Camera Tracking
-                    System</a></td>
+                <td>Multi-Object Multi-Camera Tracking System</td>
                 <td>2023</td>
+                <td><a href="assets/pdf/NCKH-2023.pdf" target="_blank" rel="noopener">PDF</a></td>
               </tr>
               <tr>
                 <td>3</td>
-                <td><a href="assets/pdf/NCKH-2024.pdf" target="_blank" rel="noopener">Diffusion Models in Latent Space
-                    for Medical Image Segmentation</a></td>
+                <td>Diffusion Models in Latent Space for Medical Image Segmentation</td>
                 <td>2024</td>
+                <td><a href="assets/pdf/NCKH-2024.pdf" target="_blank" rel="noopener">PDF</a></td>
               </tr>
             </tbody>
           </table>
@@ -81,6 +104,18 @@
       </p>
     </footer>
   </main>
+
+  <script>
+    (function () {
+      var toggle = document.getElementById("theme-toggle");
+      toggle.addEventListener("click", function () {
+        var current = document.documentElement.getAttribute("data-theme");
+        var next = current === "dark" ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", next);
+        localStorage.setItem("theme", next);
+      });
+    })();
+  </script>
 </body>
 
 </html>

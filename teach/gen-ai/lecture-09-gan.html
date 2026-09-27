@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/png" href="../../favicon.png">
+    <title>Generative Adversarial Networks</title>
+
+    <link rel="stylesheet" href="revealjs/dist/reset.css" />
+    <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+    <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+    <link rel="stylesheet" href="slide-style.css" />
+</head>
+
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <section>
+                    <h1>Generative AI</h1>
+                    <h3>Generative Adversarial Networks</h3>
+                    <p>IAI · UET · VNU</p>
+                    <p>Presenter: Trinh Ngoc Huynh</p>
+                    <p>Email: <a href="mailto:huynhtn@vnu.edu.vn">huynhtn@vnu.edu.vn</a></p>
+                </section>
+
+                <section>
+                    <h2>Content</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; font-size: 0.7em;">
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #b15a2b;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #b15a2b; min-width: 40px; text-align: center;">1</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Implicit Generation</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">The generator, the discriminator and the minimax game</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #2a7ae2; min-width: 40px; text-align: center;">2</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">The Theory</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">The optimal discriminator and Jensen-Shannon divergence</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #27ae60; min-width: 40px; text-align: center;">3</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">DCGAN and Latent Structure</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Making adversarial training work in practice</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #e67e22; min-width: 40px; text-align: center;">4</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Failure Modes</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Mode collapse, instability, and why GANs still win on sharpness</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">1.</span><br />
+                        Implicit Generation
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Dropping the Likelihood</h2>
+                    <div class="question-box">
+                        What if we never write down \( p_\theta(x) \) at all, and only learn to <span class="keyword">sample</span>?
+                    </div>
+                    <ul>
+                        <li class="fragment">Every model so far needed a tractable density or a bound</li>
+                        <li class="fragment">That requirement constrains the architecture</li>
+                        <li class="fragment">An <span class="keyword">implicit</span> model keeps only the sampler</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Generator</h2>
+                    <div class="question-box">
+                        $$ z \sim p(z), \qquad x = G_\theta(z) $$
+                    </div>
+                    <ul>
+                        <li class="fragment">An unrestricted neural network — no invertibility, no factorization</li>
+                        <li class="fragment">It defines a distribution we can sample but cannot evaluate</li>
+                        <li class="fragment">So we need a training signal that does not require a density</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Discriminator</h2>
+                    <ul>
+                        <li class="fragment">A classifier \( D_\psi(x) \in [0,1] \): real or generated?</li>
+                        <li class="fragment">It supplies the learning signal for the generator</li>
+                        <li class="fragment">The generator wins by making the discriminator fail</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Adversarial Game</h2>
+                    <div class="question-box">
+                        $$ \min_G \max_D \quad \mathbb{E}_{p_{\text{data}}}[\log D(x)] + \mathbb{E}_{p(z)}[\log(1 - D(G(z)))] $$
+                    </div>
+                    <ul>
+                        <li class="fragment">\( D \) maximises: separate real from fake</li>
+                        <li class="fragment">\( G \) minimises: fool the discriminator</li>
+                        <li class="fragment">A <span class="keyword">two-player minimax</span> game, not a single loss</li>
+                    </ul>
+                    <div class="placeholder" style="border:1px dashed #999;padding:18px;border-radius:8px;">
+                        <em>[Figure: GAN Architecture]</em><br />
+                        <strong>Description:</strong> Noise into a generator, real and fake images into a discriminator.<br />
+                        <strong>Image prompt:</strong> Diagram: noise vector z into generator producing a fake image; real image and fake image both entering a discriminator that outputs real or fake.
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">2.</span><br />
+                        The Theory
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>The Optimal Discriminator</h2>
+                    <div class="question-box">
+                        $$ D^\star(x) = \frac{p_{\text{data}}(x)}{p_{\text{data}}(x) + p_g(x)} $$
+                    </div>
+                    <ul>
+                        <li class="fragment">Obtained by maximising the objective pointwise in \( D \)</li>
+                        <li class="fragment">It equals \( 1/2 \) everywhere exactly when \( p_g = p_{\text{data}} \)</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Implied Divergence</h2>
+                    <div class="question-box">
+                        $$ \text{With } D^\star \text{ fixed:} \quad \min_G \quad 2\,D_{\mathrm{JS}}(p_{\text{data}} \,\|\, p_g) - \log 4 $$
+                    </div>
+                    <ul>
+                        <li class="fragment">GAN training minimises the <span class="keyword">Jensen–Shannon</span> divergence</li>
+                        <li class="fragment">Symmetric, unlike the KL of maximum likelihood</li>
+                        <li class="fragment">The global optimum is \( p_g = p_{\text{data}} \)</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Why the Theory Is Not Enough</h2>
+                    <ul>
+                        <li class="fragment">The result assumes \( D \) is trained to optimality at every step</li>
+                        <li class="fragment">In practice both networks take alternating small steps</li>
+                        <li class="fragment">JS divergence saturates when the two distributions barely overlap</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Non-Saturating Loss</h2>
+                    <div class="question-box">
+                        $$ \max_G \quad \mathbb{E}_{p(z)}[\log D(G(z))] $$
+                    </div>
+                    <ul>
+                        <li class="fragment">The original generator loss has vanishing gradients early on</li>
+                        <li class="fragment">This variant flips the objective to keep gradients strong</li>
+                        <li class="fragment">Used in essentially every practical implementation</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">3.</span><br />
+                        DCGAN and Latent Structure
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>DCGAN</h2>
+                    <ul>
+                        <li class="fragment">Strided and transposed convolutions instead of pooling</li>
+                        <li class="fragment">Batch normalisation in both networks</li>
+                        <li class="fragment">ReLU in the generator, LeakyReLU in the discriminator</li>
+                        <li class="fragment">The first architecture recipe that trained reliably</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Latent Space</h2>
+                    <ul>
+                        <li class="fragment">Interpolating \( z \) gives smooth semantic transitions</li>
+                        <li class="fragment">Vector arithmetic works: <em>man with glasses − man + woman</em></li>
+                        <li class="fragment">Structure emerges without ever being supervised</li>
+                    </ul>
+                    <div class="placeholder" style="border:1px dashed #999;padding:18px;border-radius:8px;">
+                        <em>[Figure: Latent Vector Arithmetic]</em><br />
+                        <strong>Description:</strong> Semantic attribute arithmetic performed in the GAN latent space.<br />
+                        <strong>Image prompt:</strong> Three groups of face images with plus and minus signs between them, producing a result image on the right.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Training Dynamics</h2>
+                    <ul>
+                        <li class="fragment">The two losses are <span class="keyword">not</span> a joint objective being minimised</li>
+                        <li class="fragment">A falling generator loss does not mean better samples</li>
+                        <li class="fragment">Equilibrium, not convergence, is what we want</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">4.</span><br />
+                        Failure Modes
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Mode Collapse</h2>
+                    <div class="question-box">
+                        The generator maps many latents to the <span class="keyword">same few outputs</span> — high quality, no diversity.
+                    </div>
+                    <ul>
+                        <li class="fragment">Fooling \( D \) with one perfect sample is a valid local strategy</li>
+                        <li class="fragment">Nothing in the objective explicitly rewards coverage</li>
+                    </ul>
+                    <div class="placeholder" style="border:1px dashed #999;padding:18px;border-radius:8px;">
+                        <em>[Figure: Mode Collapse]</em><br />
+                        <strong>Description:</strong> A generator covering only some modes of a multimodal target.<br />
+                        <strong>Image prompt:</strong> Two panels over an eight-mode ring of Gaussians: left shows samples on all eight modes, right shows samples clustered on only two.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Training Instability</h2>
+                    <ul>
+                        <li class="fragment">Oscillation: the two networks chase each other endlessly</li>
+                        <li class="fragment">Vanishing gradients when the discriminator gets too strong</li>
+                        <li class="fragment">Sensitive to learning rates and architecture choices</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Why GANs Work at All</h2>
+                    <ul>
+                        <li class="fragment">The discriminator provides a <span class="keyword">learned</span> loss function</li>
+                        <li class="fragment">It focuses on whatever currently gives the fake away</li>
+                        <li class="fragment">That is a far better perceptual signal than pixel-wise \( \ell_2 \)</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Summary</h2>
+                    <ul>
+                        <li class="fragment">GANs are <span class="keyword">implicit</span>: they sample without a density</li>
+                        <li class="fragment">Training is a two-player minimax game, not one loss</li>
+                        <li class="fragment">The optimal discriminator implies minimising <span class="keyword">JS divergence</span></li>
+                        <li class="fragment">A learned loss gives sharp samples that likelihood methods miss</li>
+                        <li class="fragment"><span class="keyword">Mode collapse</span> and instability are the price</li>
+                    </ul>
+                </section>
+            </section>
+            <div class="footer">
+                Generative AI: Generative Adversarial Networks
+            </div>
+        </div>
+    </div>
+    <script src="revealjs/dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            controlsLayout: "edges",
+            slideNumber: true,
+            hashOneBasedIndex: true,
+            hash: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX],
+        });
+    </script>
+</body>
+
+</html>

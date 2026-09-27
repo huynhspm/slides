@@ -19,6 +19,745 @@
     <div class="reveal">
         <div class="slides">
 
+            <section>
+                <section>
+                    <h1>Machine Learning</h1>
+                    <h3>Dimensionality Reduction (Singular Value Decomposition)</h3>
+                    <p>IAI · UET · VNU</p>
+                    <p>Presenter: Trinh Ngoc Huynh</p>
+                    <p>Email: <a href="mailto:huynhtn@vnu.edu.vn">huynhtn@vnu.edu.vn</a></p>
+                </section>
+
+                <section>
+                    <h2>Content</h2>
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; font-size: 0.7em;">
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border: 1px solid #b15a2b66; border-left: 4px solid #b15a2b;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #b15a2b; min-width: 40px; text-align: center;">1</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Intuition</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">A matrix as a geometric transformation</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border: 1px solid #2a7ae266; border-left: 4px solid #2a7ae2;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #2a7ae2; min-width: 40px; text-align: center;">2</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Problem</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Definition, derivation and the link to PCA</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border: 1px solid #27ae6066; border-left: 4px solid #27ae60;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #27ae60; min-width: 40px; text-align: center;">3</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Algorithm</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Computing and truncating the SVD</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border: 1px solid #e67e2266; border-left: 4px solid #e67e22;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #e67e22; min-width: 40px; text-align: center;">4</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Applications</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Compression, recommendation, text and least squares</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border: 1px solid #8e44ad66; border-left: 4px solid #8e44ad;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #8e44ad; min-width: 40px; text-align: center;">5</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Limitations</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">When SVD falls short</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">1.</span><br />
+                        Intuition
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>A Matrix Transforms Space</h2>
+                    <p class="lead">Multiply every point \( x \) on the unit circle by a matrix \( A = \begin{bmatrix} 3 & 0 \\ 4 & 5 \end{bmatrix} \):</p>
+                    <div style="text-align: center; margin-top: 10px;">
+                        <img src="img/lec-02/circle_to_ellipse.png" alt="The unit circle is mapped by A to an ellipse"
+                            style="max-width: 100%; max-height: 330px; object-fit: contain; margin: 0;" />
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 10px;">A matrix maps a circle to an ellipse: some directions are stretched far more than others.</p>
+                </section>
+
+                <section>
+                    <h2>Rotate, Stretch, Rotate</h2>
+                    <div style="text-align: center; margin-top: 0px;">
+                        <img src="img/lec-02/rotate_stretch_rotate.png" alt="The circle is rotated, stretched along the axes, then rotated again"
+                            style="max-width: 100%; max-height: 220px; object-fit: contain; margin: 0;" />
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr); column-gap: 10px; row-gap: 14px; align-items: stretch; margin-top: 10px; font-size: 0.66em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e67e2266; border-top: 5px solid #e67e22;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdf0e3; color: #e67e22; font-weight: 700; font-size: 0.9em;">Rotate</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( V^T \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">align the input with the special directions</p>
+                        </div>
+                        <div class="fragment" style="align-self: center; font-size: 1.6em; font-weight: 700; color: #bbb;">&rarr;</div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #27ae6066; border-top: 5px solid #27ae60;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e1f5e9; color: #27ae60; font-weight: 700; font-size: 0.9em;">Stretch</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( \Sigma \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">scale each axis by \( \sigma_i \)</p>
+                        </div>
+                        <div class="fragment" style="align-self: center; font-size: 1.6em; font-weight: 700; color: #bbb;">&rarr;</div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e67e2266; border-top: 5px solid #e67e22;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdf0e3; color: #e67e22; font-weight: 700; font-size: 0.9em;">Rotate</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( U \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">place the result in the output space</p>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 14px;">Every matrix, of any shape, is a rotation, a stretch, and a rotation.</p>
+                </section>
+
+                <section>
+                    <h2>The Problem SVD Solves</h2>
+                    <div class="question-box" style="text-align: center; font-size: 0.8em;">
+                        For <strong>any</strong> matrix \( A \), which input directions does it stretch the most, and by how much?
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); column-gap: 10px; row-gap: 14px; align-items: stretch; margin-top: 24px; font-size: 0.72em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e67e2266; border-top: 5px solid #e67e22;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdf0e3; color: #e67e22; font-weight: 700; font-size: 0.9em;">Eigendecomposition</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( C = W \Lambda W^T \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">needs a <strong>square, symmetric</strong> matrix (e.g. the covariance in PCA)</p>
+                        </div>
+                        <div class="fragment" style="align-self: center; font-size: 1.6em; font-weight: 700; color: #bbb;">&rarr;</div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #27ae6066; border-top: 5px solid #27ae60;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e1f5e9; color: #27ae60; font-weight: 700; font-size: 0.9em;">SVD</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( A = U \Sigma V^T \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">works for <strong>any</strong> \( m \times n \) matrix, including the raw data matrix \( X \)</p>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 24px;">SVD generalises eigendecomposition to every matrix.</p>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">2.</span><br />
+                        Problem
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Definition</h2>
+                    <p class="lead">Every real matrix \( A \in \mathbb{R}^{m \times n} \) can be factorised as:</p>
+                    <div class="question-box" style="text-align: center; font-size: 0.9em;">
+                        $$ A = U \Sigma V^T $$
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 18px; font-size: 0.7em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e74c3c66; border-top: 5px solid #e74c3c;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdecea; color: #e74c3c; font-weight: 700; font-size: 0.9em;">U</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( m \times m \), \( U^T U = I \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;"><strong>left singular vectors</strong>: output directions</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #27ae6066; border-top: 5px solid #27ae60;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e1f5e9; color: #27ae60; font-weight: 700; font-size: 0.9em;">&Sigma;</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( \sigma_1 \ge \sigma_2 \ge \dots \ge 0 \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;"><strong>singular values</strong>: stretch factors on the diagonal</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.9em;">V</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( n \times n \), \( V^T V = I \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;"><strong>right singular vectors</strong>: input directions</p>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 18px;">The number of non-zero \( \sigma_i \) is the <span class="keyword">rank</span> of \( A \).</p>
+                </section>
+
+                <section>
+                    <h2>The First Singular Vector</h2>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 20px; font-size: 0.7em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e74c3c66; border-top: 5px solid #e74c3c;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdecea; color: #e74c3c; font-weight: 700; font-size: 0.9em;">1. Objective</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( \max_{v} \; \|Av\| \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">the direction stretched the most</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #27ae6066; border-top: 5px solid #27ae60;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e1f5e9; color: #27ae60; font-weight: 700; font-size: 0.9em;">2. Constraint</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( \|v\| = 1 \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">prevents arbitrary scaling</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.9em;">3. Squared form</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( \|Av\|^2 = v^T A^T A \, v \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">the same problem as PCA, with \( A^T A \) in place of \( C \)</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e67e2266; border-top: 5px solid #e67e22;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdf0e3; color: #e67e22; font-weight: 700; font-size: 0.9em;">4. Solution</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( A^T A \, v_1 = \sigma_1^2 \, v_1 \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">then \( u_1 = A v_1 / \sigma_1 \)</p>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 18px;">\( v_1 \) is the direction \( A \) stretches most, and \( \sigma_1 = \|A v_1\| \) is how much.</p>
+                </section>
+
+                <section>
+                    <h2>Link to Eigendecomposition</h2>
+                    <p class="lead">Substituting \( A = U \Sigma V^T \) into the two symmetric products:</p>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 20px; font-size: 0.72em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.9em;">Input side</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( A^T A = V \, \Sigma^T \Sigma \, V^T \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">\( V \) = eigenvectors of \( A^T A \)</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e74c3c66; border-top: 5px solid #e74c3c;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdecea; color: #e74c3c; font-weight: 700; font-size: 0.9em;">Output side</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( A A^T = U \, \Sigma \Sigma^T \, U^T \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">\( U \) = eigenvectors of \( A A^T \)</p>
+                        </div>
+                    </div>
+                    <div class="question-box fragment" style="text-align: center; font-size: 0.8em; margin-top: 24px;">
+                        \( \sigma_i = \sqrt{\lambda_i} \), &nbsp; where \( \lambda_i \) are the eigenvalues of \( A^T A \)
+                    </div>
+                </section>
+
+                <section>
+                    <h2>A Sum of Rank-One Layers</h2>
+                    <div class="question-box" style="text-align: center; font-size: 0.8em;">
+                        $$ A = \sum_{i=1}^{r} \sigma_i \, u_i v_i^T = \sigma_1 u_1 v_1^T + \sigma_2 u_2 v_2^T + \dots $$
+                    </div>
+                    <div class="fragment" style="text-align: center; margin-top: 16px;">
+                        <img src="img/lec-02/rank_one_layers.png" alt="The first three rank-one layers of a photo add up to a rough version of it"
+                            style="max-width: 100%; max-height: 185px; object-fit: contain; margin: 0;" />
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 12px;">Each layer is a simple pattern: the first few already capture the main structure.</p>
+                </section>
+
+                <section>
+                    <h2>SVD and PCA</h2>
+                    <p class="lead">Take the SVD of the <strong>centred</strong> data matrix \( X_c = U \Sigma V^T \). Then:</p>
+                    <div class="question-box" style="text-align: center; font-size: 0.8em;">
+                        $$ C = \tfrac{1}{N} X_c^T X_c = V \, \tfrac{\Sigma^2}{N} \, V^T $$
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 18px; font-size: 0.7em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e74c3c66; border-top: 5px solid #e74c3c;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdecea; color: #e74c3c; font-weight: 700; font-size: 0.9em;">Principal axes</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( W = V \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">right singular vectors</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #27ae6066; border-top: 5px solid #27ae60;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e1f5e9; color: #27ae60; font-weight: 700; font-size: 0.9em;">Variances</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( \lambda_i = \sigma_i^2 / N \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">squared singular values</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.9em;">Scores</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( Z = X_c V = U \Sigma \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">projected data</p>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 18px;">PCA is the SVD of the centred data matrix, without ever forming the covariance matrix.</p>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">3.</span><br />
+                        Algorithm
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Input &amp; Output</h2>
+                    <div
+                        style="display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); column-gap: 10px; row-gap: 14px; align-items: stretch; margin-top: 30px; font-size: 0.75em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.9em;">Input</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( A \in \mathbb{R}^{m \times n} \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">any matrix, and a target rank \( k \)</p>
+                        </div>
+                        <div class="fragment" style="align-self: center; font-size: 1.6em; font-weight: 700; color: #bbb;">&rarr;</div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e67e2266; border-top: 5px solid #e67e22;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdf0e3; color: #e67e22; font-weight: 700; font-size: 0.9em;">Output</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( U_k, \; \Sigma_k, \; V_k \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">the \( k \) strongest directions and their stretch factors</p>
+                        </div>
+                    </div>
+                    <p class="lead fragment" style="margin-top: 36px; text-align: center;">Running example: &nbsp; \( A = \begin{bmatrix} 3 & 0 \\ 4 & 5 \end{bmatrix} \)</p>
+                </section>
+
+                <section>
+                    <h2>Algorithm Overview</h2>
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 16px; font-size: 0.66em;">
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 16px; background: #f8f9fa; padding: 8px 20px; border-radius: 10px; border: 1px solid #27ae6066; border-left: 4px solid #27ae60;">
+                            <div
+                                style="min-width: 34px; height: 34px; background: #27ae60; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">
+                                1</div>
+                            <div style="flex: 1;">
+                                <strong style="color: #2c3e50;">Gram matrix</strong>
+                                <div style="color: #666; font-size: 0.9em;">\( A^T A \)</div>
+                            </div>
+                            <span style="color: #888; font-size: 0.85em;">measure stretching</span>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 16px; background: #f8f9fa; padding: 8px 20px; border-radius: 10px; border: 1px solid #27ae6066; border-left: 4px solid #27ae60;">
+                            <div
+                                style="min-width: 34px; height: 34px; background: #27ae60; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">
+                                2</div>
+                            <div style="flex: 1;">
+                                <strong style="color: #2c3e50;">Eigendecomposition</strong>
+                                <div style="color: #666; font-size: 0.9em;">\( A^T A = V \Lambda V^T, \;\; \sigma_i = \sqrt{\lambda_i} \)</div>
+                            </div>
+                            <span style="color: #888; font-size: 0.85em;">input directions</span>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 16px; background: #f8f9fa; padding: 8px 20px; border-radius: 10px; border: 1px solid #27ae6066; border-left: 4px solid #27ae60;">
+                            <div
+                                style="min-width: 34px; height: 34px; background: #27ae60; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">
+                                3</div>
+                            <div style="flex: 1;">
+                                <strong style="color: #2c3e50;">Left vectors</strong>
+                                <div style="color: #666; font-size: 0.9em;">\( u_i = A v_i / \sigma_i \)</div>
+                            </div>
+                            <span style="color: #888; font-size: 0.85em;">output directions</span>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 16px; background: #f8f9fa; padding: 8px 20px; border-radius: 10px; border: 1px solid #27ae6066; border-left: 4px solid #27ae60;">
+                            <div
+                                style="min-width: 34px; height: 34px; background: #27ae60; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">
+                                4</div>
+                            <div style="flex: 1;">
+                                <strong style="color: #2c3e50;">Truncate</strong>
+                                <div style="color: #666; font-size: 0.9em;">\( A_k = U_k \Sigma_k V_k^T \)</div>
+                            </div>
+                            <span style="color: #888; font-size: 0.85em;">keep top \( k \)</span>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 16px;">Gram &rarr; Decompose &rarr; Map &rarr; Truncate</p>
+                </section>
+
+                <section>
+                    <h2>Step 1: Gram Matrix</h2>
+                    <div style="display: flex; gap: 6px; margin: 4px 0 14px;"><div style="flex: 1; height: 6px; background: #27ae60; border-radius: 3px;"></div><div style="flex: 1; height: 6px; background: #ddd; border-radius: 3px;"></div><div style="flex: 1; height: 6px; background: #ddd; border-radius: 3px;"></div><div style="flex: 1; height: 6px; background: #ddd; border-radius: 3px;"></div></div>
+                    <div class="question-box" style="text-align: center; font-size: 0.7em;">
+                        $$ A^T A $$
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 12px; font-size: 0.68em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.9em;">What?</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">Multiply \( A \) by its transpose: an \( n \times n \) symmetric matrix</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e67e2266; border-top: 5px solid #e67e22;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdf0e3; color: #e67e22; font-weight: 700; font-size: 0.9em;">Why?</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">\( \|Av\|^2 = v^T A^T A v \): it measures how much \( A \) stretches each direction</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 12px; font-size: 0.7em;">
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 18px; background: #f8f9fa; padding: 10px 20px; border-radius: 10px; border: 1px solid #8e44ad66; border-left: 4px solid #8e44ad;">
+                            <strong style="color: #8e44ad; width: 110px; flex-shrink: 0;">Example</strong>
+                            <div style="color: #2c3e50;">\( A^T A = \begin{bmatrix} 25 & 20 \\ 20 & 25 \end{bmatrix} \)</div>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 16px;">\( A^T A \) is symmetric, so it has orthogonal eigenvectors.</p>
+                </section>
+
+                <section>
+                    <h2>Step 2: Eigendecomposition</h2>
+                    <div style="display: flex; gap: 6px; margin: 4px 0 14px;"><div style="flex: 1; height: 6px; background: #27ae60; border-radius: 3px;"></div><div style="flex: 1; height: 6px; background: #27ae60; border-radius: 3px;"></div><div style="flex: 1; height: 6px; background: #ddd; border-radius: 3px;"></div><div style="flex: 1; height: 6px; background: #ddd; border-radius: 3px;"></div></div>
+                    <div class="question-box" style="text-align: center; font-size: 0.7em;">
+                        $$ A^T A = V \Lambda V^T, \qquad \sigma_i = \sqrt{\lambda_i} $$
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 12px; font-size: 0.68em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.9em;">What?</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">Eigenvectors give the input directions \( v_i \)</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e67e2266; border-top: 5px solid #e67e22;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdf0e3; color: #e67e22; font-weight: 700; font-size: 0.9em;">Why?</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">Eigenvalues are the squared stretch factors</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 12px; font-size: 0.7em;">
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 18px; background: #f8f9fa; padding: 10px 20px; border-radius: 10px; border: 1px solid #8e44ad66; border-left: 4px solid #8e44ad;">
+                            <strong style="color: #8e44ad; width: 110px; flex-shrink: 0;">Example</strong>
+                            <div style="color: #2c3e50;">\( \lambda = 45, 5 \Rightarrow \sigma = 3\sqrt{5}, \sqrt{5} \)<br />\( v_1 = \tfrac{1}{\sqrt{2}}[1, 1], \; v_2 = \tfrac{1}{\sqrt{2}}[1, -1] \)</div>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 16px;">Sort by \( \sigma_i \), largest first.</p>
+                </section>
+
+                <section>
+                    <h2>Step 3: Left Singular Vectors</h2>
+                    <div style="display: flex; gap: 6px; margin: 4px 0 14px;"><div style="flex: 1; height: 6px; background: #27ae60; border-radius: 3px;"></div><div style="flex: 1; height: 6px; background: #27ae60; border-radius: 3px;"></div><div style="flex: 1; height: 6px; background: #27ae60; border-radius: 3px;"></div><div style="flex: 1; height: 6px; background: #ddd; border-radius: 3px;"></div></div>
+                    <div class="question-box" style="text-align: center; font-size: 0.7em;">
+                        $$ u_i = \frac{A v_i}{\sigma_i} $$
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 12px; font-size: 0.68em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.9em;">What?</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">Map each input direction through \( A \) and normalise</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e67e2266; border-top: 5px solid #e67e22;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdf0e3; color: #e67e22; font-weight: 700; font-size: 0.9em;">Why?</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">\( A v_i \) points along \( u_i \) with length exactly \( \sigma_i \)</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 12px; font-size: 0.7em;">
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 18px; background: #f8f9fa; padding: 10px 20px; border-radius: 10px; border: 1px solid #8e44ad66; border-left: 4px solid #8e44ad;">
+                            <strong style="color: #8e44ad; width: 110px; flex-shrink: 0;">Example</strong>
+                            <div style="color: #2c3e50;">\( u_1 = \tfrac{1}{\sqrt{10}}[1, 3], \; u_2 = \tfrac{1}{\sqrt{10}}[3, -1] \)</div>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 16px;">Now \( A = U \Sigma V^T \) holds exactly.</p>
+                </section>
+
+                <section>
+                    <h2>Step 4: Truncate</h2>
+                    <div style="display: flex; gap: 6px; margin: 4px 0 14px;"><div style="flex: 1; height: 6px; background: #27ae60; border-radius: 3px;"></div><div style="flex: 1; height: 6px; background: #27ae60; border-radius: 3px;"></div><div style="flex: 1; height: 6px; background: #27ae60; border-radius: 3px;"></div><div style="flex: 1; height: 6px; background: #27ae60; border-radius: 3px;"></div></div>
+                    <div class="question-box" style="text-align: center; font-size: 0.7em;">
+                        $$ A_k = U_k \Sigma_k V_k^T = \sum_{i=1}^{k} \sigma_i u_i v_i^T $$
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 12px; font-size: 0.68em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.9em;">What?</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">Keep only the \( k \) largest singular values</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e67e2266; border-top: 5px solid #e67e22;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdf0e3; color: #e67e22; font-weight: 700; font-size: 0.9em;">Why?</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">Small \( \sigma_i \) carry little information (often noise)</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 12px; font-size: 0.7em;">
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 18px; background: #f8f9fa; padding: 10px 20px; border-radius: 10px; border: 1px solid #8e44ad66; border-left: 4px solid #8e44ad;">
+                            <strong style="color: #8e44ad; width: 110px; flex-shrink: 0;">Example</strong>
+                            <div style="color: #2c3e50;">\( A_1 = \begin{bmatrix} 1.5 & 1.5 \\ 4.5 & 4.5 \end{bmatrix}, \; \|A - A_1\|_F = \sqrt{5} = \sigma_2 \)</div>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 16px;">The error of dropping a layer is exactly its singular value.</p>
+                </section>
+
+                <section>
+                    <h2>Eckart&ndash;Young Theorem</h2>
+                    <p class="lead">The truncated SVD \( A_k \) is the best rank-\( k \) approximation of \( A \):</p>
+                    <div class="question-box" style="text-align: center; font-size: 0.75em;">
+                        $$ \min_{\operatorname{rank}(B) \le k} \|A - B\|_F = \|A - A_k\|_F = \sqrt{\sigma_{k+1}^2 + \dots + \sigma_r^2} $$
+                    </div>
+                    <div class="fragment" style="text-align: center; margin-top: 8px;">
+                        <img src="img/lec-02/singular_values.png" alt="Singular values decay quickly; about 57 of 512 keep 99% of the energy"
+                            style="max-width: 100%; max-height: 180px; object-fit: contain; margin: 0;" />
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 10px;">Choose \( k \) from the <span class="keyword">energy</span> \( \sum_{i \le k} \sigma_i^2 / \sum_i \sigma_i^2 \) kept, e.g. 99%.</p>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">4.</span><br />
+                        Applications
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Image Compression</h2>
+                    <p class="lead">A grayscale image is a matrix: store \( k(m + n + 1) \) numbers instead of \( m \times n \).</p>
+                    <div style="text-align: center; margin-top: 6px;">
+                        <img src="img/lec-02/image_compression.png" alt="The photo rebuilt from 5, 20 and 50 singular values"
+                            style="max-width: 100%; max-height: 300px; object-fit: contain; margin: 0;" />
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 10px;">\( k = 50 \) keeps 98.8% of the energy with only 18% of the storage.</p>
+                </section>
+
+                <section>
+                    <h2>Recommender Systems</h2>
+                    <p class="lead">Ratings \( R \) (users &times; movies) are explained by a few hidden <em>tastes</em>:</p>
+                    <div class="question-box" style="text-align: center; font-size: 0.8em;">
+                        $$ R \approx U_k \Sigma_k V_k^T, \qquad \hat{r}_{ij} = \textstyle\sum_{l=1}^{k} u_{il} \, \sigma_l \, v_{jl} $$
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 16px; font-size: 0.7em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e74c3c66; border-top: 5px solid #e74c3c;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdecea; color: #e74c3c; font-weight: 700; font-size: 0.9em;">Users</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( U_k \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">how much each user likes each hidden factor</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #27ae6066; border-top: 5px solid #27ae60;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e1f5e9; color: #27ae60; font-weight: 700; font-size: 0.9em;">Factors</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( \Sigma_k \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">e.g. action vs romance, old vs new</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.9em;">Movies</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( V_k \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">how much each movie has each factor</p>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 12px;">Latent-factor models of this kind won the Netflix Prize (2009).</p>
+                </section>
+
+                <section>
+                    <h2>Latent Semantic Analysis</h2>
+                    <p class="lead">Term&ndash;document matrix: rows are words, columns are documents, entries are counts.</p>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 20px; font-size: 0.72em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e74c3c66; border-top: 5px solid #e74c3c;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdecea; color: #e74c3c; font-weight: 700; font-size: 0.9em;">Terms</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( U_k \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">words embedded in topic space</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #27ae6066; border-top: 5px solid #27ae60;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e1f5e9; color: #27ae60; font-weight: 700; font-size: 0.9em;">Topics</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( \Sigma_k \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">strength of each topic</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.9em;">Documents</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( V_k \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">documents embedded in topic space</p>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 22px;">&ldquo;car&rdquo; and &ldquo;automobile&rdquo; land close together: they appear in similar documents.</p>
+                </section>
+
+                <section>
+                    <h2>Least Squares via SVD</h2>
+                    <p class="lead">Solve \( \min_x \|Ax - b\| \), even when \( A \) is not square or not invertible:</p>
+                    <div class="question-box" style="text-align: center; font-size: 0.78em;">
+                        $$ x^* = A^{+} b, \qquad A^{+} = V \Sigma^{+} U^T, \quad \Sigma^{+}_{ii} = 1 / \sigma_i \;(\sigma_i > 0) $$
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 18px; font-size: 0.72em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #27ae6066; border-top: 5px solid #27ae60;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e1f5e9; color: #27ae60; font-weight: 700; font-size: 0.9em;">Stable</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">works for rank-deficient and ill-conditioned systems</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e67e2266; border-top: 5px solid #e67e22;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdf0e3; color: #e67e22; font-weight: 700; font-size: 0.9em;">Regularisation</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">tiny \( \sigma_i \) blow up \( 1/\sigma_i \): drop them (truncated SVD)</p>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 18px;">Numerical libraries use SVD as the most reliable way to solve least squares.</p>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">5.</span><br />
+                        Limitations
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Computational Cost</h2>
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 16px; font-size: 0.7em;">
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 18px; background: #f8f9fa; padding: 10px 20px; border-radius: 10px; border: 1px solid #e74c3c66; border-left: 4px solid #e74c3c;">
+                            <strong style="color: #e74c3c; width: 100px; flex-shrink: 0;">Problem</strong>
+                            <div style="color: #2c3e50;">A full SVD costs \( O(m n \min(m, n)) \): too slow for a \( 10^6 \times 10^5 \) matrix.</div>
+                        </div>
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 16px; font-size: 0.7em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e67e2266; border-top: 5px solid #e67e22;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdf0e3; color: #e67e22; font-weight: 700; font-size: 0.9em;">Big data</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">web-scale ratings or text matrices do not fit in memory</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e67e2266; border-top: 5px solid #e67e22;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdf0e3; color: #e67e22; font-weight: 700; font-size: 0.9em;">Wasted work</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">we usually need only the top \( k \ll n \) components</p>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 18px;"><strong>Alternatives:</strong> randomized SVD, iterative solvers (Lanczos) that compute only the top \( k \)</p>
+                </section>
+
+                <section>
+                    <h2>Linear Structure Only</h2>
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 16px; font-size: 0.7em;">
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 18px; background: #f8f9fa; padding: 10px 20px; border-radius: 10px; border: 1px solid #e67e2266; border-left: 4px solid #e67e22;">
+                            <strong style="color: #e67e22; width: 100px; flex-shrink: 0;">Problem</strong>
+                            <div style="color: #2c3e50;">SVD finds the best <strong>linear</strong> (low-rank) structure; curved data needs more components.</div>
+                        </div>
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 16px; font-size: 0.7em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e67e2266; border-top: 5px solid #e67e22;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdf0e3; color: #e67e22; font-weight: 700; font-size: 0.9em;">Curved manifolds</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">a 1-D curve in 2-D is not low-rank</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e67e2266; border-top: 5px solid #e67e22;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdf0e3; color: #e67e22; font-weight: 700; font-size: 0.9em;">Interactions</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">multiplicative effects are not captured by a sum of layers</p>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 18px;"><strong>Alternatives:</strong> kernel methods, autoencoders</p>
+                </section>
+
+                <section>
+                    <h2>Missing Values</h2>
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 16px; font-size: 0.7em;">
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 18px; background: #f8f9fa; padding: 10px 20px; border-radius: 10px; border: 1px solid #e74c3c66; border-left: 4px solid #e74c3c;">
+                            <strong style="color: #e74c3c; width: 100px; flex-shrink: 0;">Problem</strong>
+                            <div style="color: #2c3e50;">SVD needs a <strong>complete</strong> matrix, but real rating matrices are mostly empty.</div>
+                        </div>
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 16px; font-size: 0.7em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e67e2266; border-top: 5px solid #e67e22;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdf0e3; color: #e67e22; font-weight: 700; font-size: 0.9em;">Sparsity</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">over 99% of user&ndash;movie ratings are unknown</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e67e2266; border-top: 5px solid #e67e22;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdf0e3; color: #e67e22; font-weight: 700; font-size: 0.9em;">Filling with 0</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">treats &ldquo;unrated&rdquo; as &ldquo;disliked&rdquo;</p>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 18px;"><strong>Alternatives:</strong> matrix factorisation fitted only on observed entries (ALS, SGD)</p>
+                </section>
+
+                <section>
+                    <h2>Hard to Interpret</h2>
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 16px; font-size: 0.7em;">
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 18px; background: #f8f9fa; padding: 10px 20px; border-radius: 10px; border: 1px solid #e67e2266; border-left: 4px solid #e67e22;">
+                            <strong style="color: #e67e22; width: 100px; flex-shrink: 0;">Problem</strong>
+                            <div style="color: #2c3e50;">Singular vectors are <strong>dense and mixed-sign</strong>: every feature contributes to every component.</div>
+                        </div>
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 16px; font-size: 0.7em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e67e2266; border-top: 5px solid #e67e22;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdf0e3; color: #e67e22; font-weight: 700; font-size: 0.9em;">Negative parts</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">a &ldquo;topic&rdquo; with negative word weights has no clear meaning</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e67e2266; border-top: 5px solid #e67e22;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdf0e3; color: #e67e22; font-weight: 700; font-size: 0.9em;">No sparsity</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">hard to point to the few features that matter</p>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 18px;"><strong>Alternatives:</strong> non-negative matrix factorisation (NMF), sparse PCA</p>
+                </section>
+
+                <section>
+                    <h2>Limitations at a Glance</h2>
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 20px; font-size: 0.72em;">
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 18px; background: #f8f9fa; padding: 10px 20px; border-radius: 10px; border: 1px solid #e74c3c66; border-left: 4px solid #e74c3c;">
+                            <strong style="color: #e74c3c; width: 200px; flex-shrink: 0;">Cost</strong>
+                            <div style="color: #2c3e50;">&rarr; randomized / iterative SVD</div>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 18px; background: #f8f9fa; padding: 10px 20px; border-radius: 10px; border: 1px solid #e67e2266; border-left: 4px solid #e67e22;">
+                            <strong style="color: #e67e22; width: 200px; flex-shrink: 0;">Linear only</strong>
+                            <div style="color: #2c3e50;">&rarr; kernel methods, autoencoders</div>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 18px; background: #f8f9fa; padding: 10px 20px; border-radius: 10px; border: 1px solid #e74c3c66; border-left: 4px solid #e74c3c;">
+                            <strong style="color: #e74c3c; width: 200px; flex-shrink: 0;">Missing values</strong>
+                            <div style="color: #2c3e50;">&rarr; matrix factorisation on observed entries</div>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 18px; background: #f8f9fa; padding: 10px 20px; border-radius: 10px; border: 1px solid #e67e2266; border-left: 4px solid #e67e22;">
+                            <strong style="color: #e67e22; width: 200px; flex-shrink: 0;">Interpretation</strong>
+                            <div style="color: #2c3e50;">&rarr; NMF, sparse PCA</div>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 22px;">SVD is the workhorse of linear algebra in ML: know when its assumptions break.</p>
+                </section>
+            </section>
+
+            <section>
+
+                <section>
+                    <h2>Summary</h2>
+                    <div class="question-box" style="text-align: center; font-size: 0.8em;">
+                        $$ A = U \Sigma V^T = \sum_{i} \sigma_i \, u_i v_i^T $$
+                    </div>
+                    <ul style="font-size: 0.68em; margin-top: 16px; display: flex; flex-direction: column; gap: 6px;">
+                        <li class="fragment">Any matrix is a <span class="keyword">rotation, a stretch and a rotation</span></li>
+                        <li class="fragment">\( V \), \( \sigma_i \), \( U \) come from the eigendecompositions of \( A^T A \) and \( A A^T \)</li>
+                        <li class="fragment">Truncating to rank \( k \) gives the <span class="keyword">best low-rank approximation</span> (Eckart&ndash;Young)</li>
+                        <li class="fragment">PCA is the SVD of the centred data; SVD also powers compression, recommendation and least squares</li>
+                    </ul>
+                    <p class="takeaway fragment" style="margin-top: 14px;">Next lecture: <span class="keyword">Partial Least Squares Regression</span></p>
+                </section>
+            </section>
+
             <div class="footer">
                 Machine Learning §02: Dimensionality Reduction (SVD)
             </div>

@@ -1,0 +1,1224 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/png" href="../../favicon.png">
+    <title>Introduction</title>
+
+    <link rel="stylesheet" href="revealjs/dist/reset.css" />
+    <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+    <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+    <link rel="stylesheet" href="slide-style.css" />
+</head>
+
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <section>
+                    <h1>Generative AI</h1>
+                    <h3>Introduction</h3>
+                    <p>IAI · UET · VNU</p>
+                    <p>Presenter: Trinh Ngoc Huynh</p>
+                    <p>Email: <a href="mailto:huynhtn@vnu.edu.vn">huynhtn@vnu.edu.vn</a></p>
+                </section>
+
+                <section>
+                    <h2>Content</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; font-size: 0.7em;">
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border: 1px solid #b15a2b66; border-left: 4px solid #b15a2b;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #b15a2b; min-width: 40px; text-align: center;">1</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Generative Model</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Definition, what we can generate, and the rise of GenAI</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border: 1px solid #2a7ae266; border-left: 4px solid #2a7ae2;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #2a7ae2; min-width: 40px; text-align: center;">2</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Discriminative vs Generative</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Modelling \( p(y\mid x) \) versus \( p(x) \), \( p(x,y) \) and \( p(x\mid c) \)</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border: 1px solid #27ae6066; border-left: 4px solid #27ae60;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #27ae60; min-width: 40px; text-align: center;">3</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Learning &amp; Sampling</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Fitting \( p_\theta(x) \) to \( p_{\text{data}}(x) \), likelihood and sampling</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border: 1px solid #e67e2266; border-left: 4px solid #e67e22;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #e67e22; min-width: 40px; text-align: center;">4</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Why Is It Hard?</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">An unknown distribution, complex data, and competing trade-offs</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border: 1px solid #8e44ad66; border-left: 4px solid #8e44ad;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #8e44ad; min-width: 40px; text-align: center;">5</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Models &amp; Applications</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Evolution, model landscape, and applications</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">1.</span><br />
+                        Generative Model
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Definition</h2>
+                    <div class="question-box" style="font-size: 0.75em; margin-top: 30px">
+                        <strong>Generative model:</strong> a model that learns or represents a
+                        <span class="keyword">probability distribution over data</span>,
+                        allowing us to generate new samples from that distribution.
+                    </div>
+                    <ul class="fragment"
+                        style="font-size: 0.8em; margin-top: 30px; display: flex; flex-direction: column; gap: 15px;">
+                        <li>
+                            It captures the patterns and structure of the data distribution of observed data points.
+                        </li>
+                        <li>
+                            Generating new samples is a consequence of learning this underlying structure.
+                        </li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Modeling Pipeline</h2>
+                    <img src="img/lec01/observed_data_to_new_samples.png"
+                        alt="Observed data points, the density learned from them, and new samples drawn from it"
+                        style="width: 100%; max-width: 1000px; display: block; margin: 0 auto;" />
+                </section>
+
+                <section>
+                    <h2>What Can We Generate?</h2>
+
+                    <div
+                        style="display: grid; grid-template-columns: repeat(3, 1fr); column-gap: 20px; row-gap: 30px; margin-top: 30px; font-size: 0.7em;">
+
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 12px 16px; border-radius: 10px; border: 1px solid #b15a2b66; border-left: 4px solid #b15a2b;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 1.5em; line-height: 1;">📝</span>
+                                <strong style="color: #b15a2b; font-size: 1.2em;">Text</strong>
+                            </div>
+                            <p style="margin: 6px 0 0 0; color: #666; font-size: 0.8em;">ChatGPT, Claude, Gemini, Grok
+                            </p>
+                            <p style="margin: 5px 0 0 0; color: #aaa; font-size: 0.7em; font-style: italic;">
+                                Autoregressive Transformers</p>
+                        </div>
+
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 12px 16px; border-radius: 10px; border: 1px solid #2a7ae266; border-left: 4px solid #2a7ae2;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 1.5em; line-height: 1;">🖼️</span>
+                                <strong style="color: #2a7ae2; font-size: 1.2em;">Image</strong>
+                            </div>
+                            <p style="margin: 6px 0 0 0; color: #666; font-size: 0.8em;">DALL·E, Midjourney, Stable
+                                Diffusion</p>
+                            <p style="margin: 5px 0 0 0; color: #aaa; font-size: 0.7em; font-style: italic;">Latent
+                                diffusion</p>
+                        </div>
+
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 12px 16px; border-radius: 10px; border: 1px solid #27ae6066; border-left: 4px solid #27ae60;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 1.5em; line-height: 1;">🔊</span>
+                                <strong style="color: #27ae60; font-size: 1.2em;">Audio</strong>
+                            </div>
+                            <p style="margin: 6px 0 0 0; color: #666; font-size: 0.8em;">Voice synthesis, music
+                                generation</p>
+                            <p style="margin: 5px 0 0 0; color: #aaa; font-size: 0.7em; font-style: italic;">Diffusion,
+                                autoregressive</p>
+                        </div>
+
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 12px 16px; border-radius: 10px; border: 1px solid #e67e2266; border-left: 4px solid #e67e22;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 1.5em; line-height: 1;">🎬</span>
+                                <strong style="color: #e67e22; font-size: 1.2em;">Video</strong>
+                            </div>
+                            <p style="margin: 6px 0 0 0; color: #666; font-size: 0.8em;">Sora, Veo, Runway</p>
+                            <p style="margin: 5px 0 0 0; color: #aaa; font-size: 0.7em; font-style: italic;">Diffusion
+                                Transformers</p>
+                        </div>
+
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 12px 16px; border-radius: 10px; border: 1px solid #8e44ad66; border-left: 4px solid #8e44ad;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 1.5em; line-height: 1;">🎲</span>
+                                <strong style="color: #8e44ad; font-size: 1.2em;">3D</strong>
+                            </div>
+                            <p style="margin: 6px 0 0 0; color: #666; font-size: 0.8em;">3D models, scenes, avatars</p>
+                            <p style="margin: 5px 0 0 0; color: #aaa; font-size: 0.7em; font-style: italic;">Score
+                                distillation, NeRF</p>
+                        </div>
+
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 12px 16px; border-radius: 10px; border: 1px solid #16a08566; border-left: 4px solid #16a085;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 1.5em; line-height: 1;">💻</span>
+                                <strong style="color: #16a085; font-size: 1.2em;">Code</strong>
+                            </div>
+                            <p style="margin: 6px 0 0 0; color: #666; font-size: 0.8em;">GitHub Copilot, Cursor</p>
+                            <p style="margin: 5px 0 0 0; color: #aaa; font-size: 0.7em; font-style: italic;">
+                                Autoregressive Transformers</p>
+                        </div>
+
+                    </div>
+                </section>
+
+                <section>
+                    <h2>The Rise of GenAI</h2>
+                    <div class="lead">
+                        Generative modelling has existed for decades, so why did Generative AI only take off after 2020?
+                    </div>
+                    <ul style="font-size: 0.65em; margin-top: 16px;">
+                        <li class="fragment"><strong>Classical (before 2014):</strong> GMMs, HMMs, graphical models,
+                            Boltzmann machines: solid theory, but small data and simple distributions</li>
+                        <li class="fragment"><strong>Deep generative models (2014&ndash;2019):</strong> VAE, GAN,
+                            PixelCNN, WaveNet: realistic samples, but mostly inside research labs</li>
+                        <li class="fragment"><strong>Turning point (2020):</strong> diffusion models (DDPM) beat GANs
+                            with stable training; GPT-3 shows the power of scaling</li>
+                        <li class="fragment"><strong>Boom (2022&ndash;2023):</strong> DALL&middot;E 2, Stable Diffusion,
+                            ChatGPT: generation becomes a product used by millions</li>
+                        <li class="fragment"><strong>Agentic era (2024&ndash;):</strong> reasoning models and agents
+                            that plan, use tools, and write code: from generating content to taking actions</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>What Made GenAI Take Off?</h2>
+                    <p class="lead">The core ideas are old, the breakthrough came from
+                        scaling them:
+                    </p>
+                    <div
+                        style="display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; column-gap: 12px; align-items: stretch; margin-top: 16px; font-size: 0.68em;">
+
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e74c3c66; border-top: 5px solid #e74c3c;">
+                            <span style="font-size: 1.7em; line-height: 1;">🧠</span>
+                            <strong style="color: #e74c3c; font-size: 1.25em; margin-top: 6px;">Models</strong>
+                            <span
+                                style="margin-top: 6px; padding: 2px 10px; border-radius: 999px; background: #fdecea; color: #e74c3c; font-weight: 700; font-size: 0.8em; white-space: nowrap;">10<sup>6</sup>
+                                &rarr; 10<sup>11</sup>+ parameters</span>
+                            <p style="margin: 8px 0 0 0; color: #555; font-size: 0.8em; line-height: 1.35;">Transformers
+                                and diffusion models scale smoothly</p>
+                            <p
+                                style="margin: auto 0 0 0; padding-top: 8px; width: 100%; border-top: 1px dashed #ddd; color: #999; font-size: 0.7em; font-style: italic;">
+                                Scaling laws: more parameters &rarr; better samples</p>
+                        </div>
+                        <div class="fragment"
+                            style="align-self: center; font-size: 2em; font-weight: 700; color: #bbb;">&times;</div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #27ae6066; border-top: 5px solid #27ae60;">
+                            <span style="font-size: 1.7em; line-height: 1;">🗂️</span>
+                            <strong style="color: #27ae60; font-size: 1.25em; margin-top: 6px;">Data</strong>
+                            <span
+                                style="margin-top: 6px; padding: 2px 10px; border-radius: 999px; background: #e1f5e9; color: #27ae60; font-weight: 700; font-size: 0.8em; white-space: nowrap;">10<sup>12</sup>
+                                tokens &middot; 10<sup>9</sup> images</span>
+                            <p style="margin: 8px 0 0 0; color: #555; font-size: 0.8em; line-height: 1.35;">Web-scale
+                                text corpora and image&ndash;text pairs (LAION-5B)</p>
+                            <p
+                                style="margin: auto 0 0 0; padding-top: 8px; width: 100%; border-top: 1px dashed #ddd; color: #999; font-size: 0.7em; font-style: italic;">
+                                Self-supervised: no manual labels needed</p>
+                        </div>
+                        <div class="fragment"
+                            style="align-self: center; font-size: 2em; font-weight: 700; color: #bbb;">&times;</div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span style="font-size: 1.7em; line-height: 1;">⚡</span>
+                            <strong style="color: #2a7ae2; font-size: 1.25em; margin-top: 6px;">Compute</strong>
+                            <span
+                                style="margin-top: 6px; padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.8em; white-space: nowrap;">1000s
+                                of GPUs &middot; weeks</span>
+                            <p style="margin: 8px 0 0 0; color: #555; font-size: 0.8em; line-height: 1.35;">Large
+                                accelerator clusters with distributed training</p>
+                            <p
+                                style="margin: auto 0 0 0; padding-top: 8px; width: 100%; border-top: 1px dashed #ddd; color: #999; font-size: 0.7em; font-style: italic;">
+                                Hardware + distributed training make it feasible</p>
+                        </div>
+                    </div>
+                    <div class="takeaway fragment">Beyond scale, accessibility mattered: open-source
+                        releases and user-friendly products turned research models into everyday tools.</div>
+                </section>
+
+                <section>
+                    <h2>The Central Question</h2>
+                    <p class="lead">The rest of the course asks how these models are
+                        built:</p>
+                    <div class="question-box" style="text-align: center; font-size: 0.9em">
+                        <strong>How can we represent, learn, and sample from complex data
+                            distributions?</strong>
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; column-gap: 12px; align-items: stretch; margin-top: 20px; font-size: 0.72em;">
+
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px; border-radius: 12px; border: 1px solid #e74c3c66; border-top: 5px solid #e74c3c;">
+                            <span
+                                style="width: 1.8em; height: 1.8em; line-height: 1.8em; border-radius: 50%; background: #fdecea; color: #e74c3c; font-weight: 700;">1</span>
+                            <strong style="color: #e74c3c; font-size: 1.25em; margin-top: 6px;">Represent</strong>
+                            <div style="margin-top: 6px; font-size: 1.05em; white-space: nowrap;">\( p_\theta(x) \)
+                            </div>
+                            <p style="margin: 8px 0 0 0; color: #555; font-size: 0.8em; line-height: 1.35;">How is the
+                                distribution described?</p>
+                        </div>
+                        <div class="fragment"
+                            style="align-self: center; font-size: 1.8em; font-weight: 700; color: #bbb;">&rarr;</div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px; border-radius: 12px; border: 1px solid #27ae6066; border-top: 5px solid #27ae60;">
+                            <span
+                                style="width: 1.8em; height: 1.8em; line-height: 1.8em; border-radius: 50%; background: #e1f5e9; color: #27ae60; font-weight: 700;">2</span>
+                            <strong style="color: #27ae60; font-size: 1.25em; margin-top: 6px;">Learn</strong>
+                            <div style="margin-top: 6px; font-size: 1.05em; white-space: nowrap;">\( p_\theta(x) \approx
+                                p_{\text{data}}(x) \)
+                            </div>
+                            <p style="margin: 8px 0 0 0; color: #555; font-size: 0.8em; line-height: 1.35;">How do we
+                                fit it to data?</p>
+                        </div>
+                        <div class="fragment"
+                            style="align-self: center; font-size: 1.8em; font-weight: 700; color: #bbb;">&rarr;</div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span
+                                style="width: 1.8em; height: 1.8em; line-height: 1.8em; border-radius: 50%; background: #e3eefc; color: #2a7ae2; font-weight: 700;">3</span>
+                            <strong style="color: #2a7ae2; font-size: 1.25em; margin-top: 6px;">Sample</strong>
+                            <div style="margin-top: 6px; font-size: 1.05em; white-space: nowrap;">\( \tilde{x} \sim
+                                p_\theta(x) \)</div>
+                            <p style="margin: 8px 0 0 0; color: #555; font-size: 0.8em; line-height: 1.35;">How do we
+                                draw new data from it?</p>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">2.</span><br />
+                        Discriminative vs Generative
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>The Prediction Problem</h2>
+                    <p class="lead">The most familiar task: look at an observation
+                        and
+                        predict its label.</p>
+                    <div class="question-box" style="text-align: center; font-size: 0.85em;">
+                        Given an observation \( x \), predict its label \( y \): &nbsp; \( x \xrightarrow{\;f(x)\;} y \)
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(3, 1fr); column-gap: 20px; align-items: stretch; margin-top: 30px; font-size: 0.7em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 10px 10px 8px; border-radius: 12px; border: 1px solid #e74c3c66; border-top: 5px solid #e74c3c;">
+                            <img src="img/lec01/predict_image.svg" alt="A cat photo classified as cat"
+                                style="width: 100%; margin: 0;" />
+                            <div style="margin-top: 4px; color: #2c3e50; font-size: 0.85em; white-space: nowrap;">
+                                Image &rarr; <span style="color: #e74c3c; font-weight: 700;">Cat /
+                                    Dog</span>
+                            </div>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 10px 10px 8px; border-radius: 12px; border: 1px solid #27ae6066; border-top: 5px solid #27ae60;">
+                            <img src="img/lec01/predict_text.svg" alt="A movie review classified as positive"
+                                style="width: 100%; margin: 0;" />
+                            <div style="margin-top: 4px; color: #2c3e50; font-size: 0.85em; white-space: nowrap;">
+                                Text &rarr; <span style="color: #27ae60; font-weight: 700;">Sentiment</span>
+                            </div>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 10px 10px 8px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <img src="img/lec01/predict_xray.svg" alt="A chest X-ray diagnosed as pneumonia"
+                                style="width: 100%; margin: 0;" />
+                            <div style="margin-top: 4px; color: #2c3e50; font-size: 0.85em; white-space: nowrap;">
+                                Patient data &rarr; <span style="color: #2a7ae2; font-weight: 700;">Diagnosis</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Discriminative Modeling</h2>
+                    <div class="question-box" style="text-align: center; font-size: 0.85em;">
+                        \( \boxed{p_\theta(y \mid x)} \)
+                        <br /><span style="font-size: 0.85em;">the probability of a label \( y \) given an
+                            observation \( x \)</span>
+                    </div>
+                    <div class="fragment"
+                        style="display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 24px; font-size: 0.72em;">
+                        <div
+                            style="padding: 8px 14px; border-radius: 10px; background: #f8f9fa; border: 2px solid #ddd; color: #2c3e50; font-weight: 400; text-align: center; white-space: nowrap;">
+                            🐱 Image \( x \)</div>
+                        <div style="color: #bbb; font-size: 1.4em; font-weight: 700;">&rarr;</div>
+                        <div
+                            style="padding: 8px 14px; border-radius: 10px; background: #e3eefc; border: 2px solid #2a7ae2; color: #2a7ae2; font-weight: 700; text-align: center; white-space: nowrap;">
+                            Discriminative model</div>
+                        <div style="color: #bbb; font-size: 1.4em; font-weight: 700;">&rarr;</div>
+                        <div style="text-align: left; line-height: 1.5;">\( p(\text{cat} \mid x) = 0.92 \)<br />\(
+                            p(\text{dog} \mid x) = 0.08 \)</div>
+                    </div>
+                    <ul style="font-size: 0.72em; margin-top: 24px;">
+                        <li class="fragment">Learns the <span class="keyword">decision boundary</span> between classes
+                        </li>
+                        <li class="fragment">Focuses only on the <span class="keyword">label \( y \)</span>, not the
+                            input distribution \( p(x) \)</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Generative Modeling</h2>
+                    <div class="lead" style="font-size: 0.75em">
+                        Instead of asking <em>&ldquo;What is the label?&rdquo;</em>, ask <em>&ldquo;What does the data
+                            look like?&rdquo;</em>
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(3, 1fr); column-gap: 20px; align-items: stretch; margin-top: 20px; font-size: 0.7em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px; border-radius: 12px; border: 1px solid #e74c3c66; border-top: 5px solid #e74c3c;">
+                            <span
+                                style="padding: 2px 10px; border-radius: 999px; background: #fdecea; color: #e74c3c; font-weight: 700; font-size: 0.8em;">Unconditional</span>
+                            <div style="margin-top: 8px; font-size: 1.1em; white-space: nowrap;">\( \boxed{p_\theta(x)}
+                                \)</div>
+                            <strong style="margin-top: 6px; color: #e74c3c;">The data itself</strong>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.8em; line-height: 1.35;">What do
+                                plausible observations look like?</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px; border-radius: 12px; border: 1px solid #27ae6066; border-top: 5px solid #27ae60;">
+                            <span
+                                style="padding: 2px 10px; border-radius: 999px; background: #e1f5e9; color: #27ae60; font-weight: 700; font-size: 0.8em;">Joint</span>
+                            <div style="margin-top: 8px; font-size: 1.1em; white-space: nowrap;">\( \boxed{p_\theta(x,
+                                y)} \)</div>
+                            <strong style="margin-top: 6px; color: #27ae60;">Data and labels</strong>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.8em; line-height: 1.35;">How are
+                                observations and labels distributed together?</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span
+                                style="padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.8em;">Conditional</span>
+                            <div style="margin-top: 8px; font-size: 1.1em; white-space: nowrap;">\( \boxed{p_\theta(x
+                                \mid c)} \)</div>
+                            <strong style="margin-top: 6px; color: #2a7ae2;">Data given \( c \)</strong>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.8em; line-height: 1.35;">What does
+                                the data look like given a condition?</p>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 30px;">
+                        \( p(x, y) = p(y \mid x)\, p(x) \): the joint contains both \( p(y \mid x) \) and \( p(x) \)</p>
+                </section>
+
+                <section>
+                    <h2>Conditional Generation</h2>
+                    <div class="question-box" style="text-align: center; font-size: 0.8em;">
+                        \( \boxed{\tilde{x} \sim p_\theta(x \mid c)} \)
+                        <br /><span style="font-size: 0.85em;">generate a new sample \( \tilde{x} \) given a
+                            condition \( c \)</span>
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(3, 1fr); column-gap: 20px; align-items: stretch; margin-top: 14px; font-size: 0.7em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 10px 10px 8px; border-radius: 12px; border: 1px solid #e74c3c66; border-top: 5px solid #e74c3c;">
+                            <span
+                                style="padding: 2px 10px; border-radius: 999px; background: #fdecea; color: #e74c3c; font-weight: 700; font-size: 0.85em;">Class
+                                label</span>
+                            <img src="img/lec01/gen_label.svg"
+                                alt="The class label cat is turned into a generated cat image"
+                                style="width: 100%; margin: 6px 0 0 0;" />
+                            <div style="color: #555; font-size: 0.85em; white-space: nowrap;">label &rarr; image</div>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 10px 10px 8px; border-radius: 12px; border: 1px solid #27ae6066; border-top: 5px solid #27ae60;">
+                            <span
+                                style="padding: 2px 10px; border-radius: 999px; background: #e1f5e9; color: #27ae60; font-weight: 700; font-size: 0.85em;">Text
+                                prompt</span>
+                            <img src="img/lec01/gen_text.svg"
+                                alt="The prompt a cat on a sofa is turned into an image of a cat on a sofa"
+                                style="width: 100%; margin: 6px 0 0 0;" />
+                            <div style="color: #555; font-size: 0.85em; white-space: nowrap;">text &rarr; image</div>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 10px 10px 8px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span
+                                style="padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.85em;">Sketch
+                                / map</span>
+                            <img src="img/lec01/gen_sketch.svg"
+                                alt="A line sketch of a cat is turned into a colored cat image"
+                                style="width: 100%; margin: 6px 0 0 0;" />
+                            <div style="color: #555; font-size: 0.85em; white-space: nowrap;">sketch &rarr; image</div>
+                        </div>
+                    </div>
+                    <div class="takeaway fragment"
+                        style="display: grid; grid-template-columns: auto auto 1fr; column-gap: 14px; row-gap: 4px; align-items: baseline;">
+                        <span>Classifier:</span><span>\( x \to y \)</span><span>predict a label from the data</span>
+                        <span>Conditional generator:</span><span>\( c \to x \)</span><span>create <span
+                                class="keyword">controllable</span> data from a condition</span>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Classification vs Generation</h2>
+                    <p class="lead">The same dataset of cats and dogs, two different
+                        questions:</p>
+                    <div
+                        style="display: grid; grid-template-columns: 1fr 1fr; column-gap: 24px; align-items: stretch; margin-top: 18px; font-size: 0.7em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 10px 16px 8px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span
+                                style="padding: 2px 12px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700;">Discriminative</span>
+                            <img src="img/lec01/predict_image.svg"
+                                alt="A cat image classified as cat with probability 0.92"
+                                style="width: 78%; margin: 6px 0 0 0;" />
+                            <div style="font-size: 1.1em; white-space: nowrap;">\( p(y \mid x) \) &nbsp;<span
+                                    style="color: #555; font-style: italic; font-size: 0.85em;">&ldquo;Is this a
+                                    cat?&rdquo;</span></div>
+                            <div
+                                style="margin-top: 6px; padding-top: 6px; width: 100%; border-top: 1px dashed #ddd; color: #777; font-size: 0.85em;">
+                                Learns the <strong>boundary</strong> between classes</div>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 10px 16px 8px; border-radius: 12px; border: 1px solid #8e44ad66; border-top: 5px solid #8e44ad;">
+                            <span
+                                style="padding: 2px 12px; border-radius: 999px; background: #f3e8f8; color: #8e44ad; font-weight: 700;">Generative</span>
+                            <img src="img/lec01/gen_label.svg" alt="The label cat turned into a new cat image"
+                                style="width: 78%; margin: 6px 0 0 0;" />
+                            <div style="font-size: 1.1em; white-space: nowrap;">\( p(x \mid y) \) &nbsp;<span
+                                    style="color: #555; font-style: italic; font-size: 0.85em;">&ldquo;What does a cat
+                                    look like?&rdquo;</span></div>
+                            <div
+                                style="margin-top: 6px; padding-top: 6px; width: 100%; border-top: 1px dashed #ddd; color: #777; font-size: 0.85em;">
+                                Learns the <strong>distribution</strong> of each class</div>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment">To generate
+                        realistic samples, a model must capture the <span class="keyword">structure of the data</span>,
+                        not just a boundary.</p>
+                </section>
+
+                <section>
+                    <h2>Boundary vs Distribution</h2>
+                    <div
+                        style="display: grid; grid-template-columns: 1fr 1fr; column-gap: 24px; margin-top: 10px; font-size: 0.72em;">
+                        <div style="text-align: center;">
+                            <span
+                                style="padding: 2px 12px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700;">Discriminative</span>
+                            &nbsp;\( p(y \mid x) \)
+                            <img src="img/lec01/decision_boundary.png"
+                                alt="Two-class data split by a dashed decision boundary"
+                                style="width: 92%; margin: 6px 0 0 0;" />
+                        </div>
+                        <div class="fragment" style="text-align: center;">
+                            <span
+                                style="padding: 2px 12px; border-radius: 999px; background: #f3e8f8; color: #8e44ad; font-weight: 700;">Generative</span>
+                            &nbsp;\( p(x \mid y) \)
+                            <img src="img/lec01/data_distribution.png"
+                                alt="The same data described by density contours for each class"
+                                style="width: 92%; margin: 6px 0 0 0;" />
+                        </div>
+                    </div>
+                    <p class="takeaway fragment">A boundary is enough to <strong>classify</strong>; only a distribution
+                        lets us <strong>generate</strong>.</p>
+                </section>
+
+                <section>
+                    <h2>Uses of Generative Models</h2>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(3, 1fr); column-gap: 20px; align-items: stretch; margin-top: 24px; font-size: 0.72em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px; border-radius: 12px; border: 1px solid #e74c3c66; border-top: 5px solid #e74c3c;">
+                            <span
+                                style="padding: 2px 10px; border-radius: 999px; background: #fdecea; color: #e74c3c; font-weight: 700; font-size: 0.8em;">Evaluate</span>
+                            <div style="margin-top: 8px; font-size: 1.1em; white-space: nowrap;">\( p_\theta(x) \)</div>
+                            <strong style="margin-top: 6px; color: #e74c3c;">Likelihood</strong>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.8em; line-height: 1.35;">How likely
+                                is this observation?</p>
+                            <p
+                                style="margin: auto 0 0 0; padding-top: 8px; width: 100%; border-top: 1px dashed #ddd; color: #999; font-size: 0.75em; font-style: italic;">
+                                e.g. anomaly detection</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px; border-radius: 12px; border: 1px solid #27ae6066; border-top: 5px solid #27ae60;">
+                            <span
+                                style="padding: 2px 10px; border-radius: 999px; background: #e1f5e9; color: #27ae60; font-weight: 700; font-size: 0.8em;">Sample</span>
+                            <div style="margin-top: 8px; font-size: 1.1em; white-space: nowrap;">\( \tilde{x} \sim
+                                p_\theta(x) \)</div>
+                            <strong style="margin-top: 6px; color: #27ae60;">Generation</strong>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.8em; line-height: 1.35;">Generate a
+                                new observation</p>
+                            <p
+                                style="margin: auto 0 0 0; padding-top: 8px; width: 100%; border-top: 1px dashed #ddd; color: #999; font-size: 0.75em; font-style: italic;">
+                                e.g. new images, text, audio</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span
+                                style="padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.8em;">Condition</span>
+                            <div style="margin-top: 8px; font-size: 1.1em; white-space: nowrap;">\( \tilde{x} \sim
+                                p_\theta(x \mid c) \)</div>
+                            <strong style="margin-top: 6px; color: #2a7ae2;">Control</strong>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.8em; line-height: 1.35;">Generate
+                                data given a condition</p>
+                            <p
+                                style="margin: auto 0 0 0; padding-top: 8px; width: 100%; border-top: 1px dashed #ddd; color: #999; font-size: 0.75em; font-style: italic;">
+                                e.g. text-to-image, editing</p>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment">A generative model learns \( p(x) \), so it can evaluate, create and
+                        control data.</p>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1 style="font-size: 2.25em;">
+                        <span class="text-light">3.</span><br />
+                        Learning &amp; Sampling
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>The Data Distribution</h2>
+                    <p class="lead">We have a dataset, but not the distribution that produced it:</p>
+                    <div class="question-box" style="text-align: center; font-size: 0.8em;">
+                        $$ \mathcal{D} = \{x_1, x_2, \ldots, x_N\}, \qquad x_i \sim p_{\text{data}}(x) $$
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(2, 1fr); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 20px; font-size: 0.72em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px; border-radius: 12px; border: 1px solid #e74c3c66; border-top: 5px solid #e74c3c;">
+                            <span
+                                style="padding: 2px 10px; border-radius: 999px; background: #fdecea; color: #e74c3c; font-weight: 700; font-size: 0.85em;">What
+                                we have</span>
+                            <div style="margin-top: 8px; font-size: 1.1em; white-space: nowrap;">\( \mathcal{D} \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">A finite
+                                set of samples</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px; border-radius: 12px; border: 1px solid #27ae6066; border-top: 5px solid #27ae60;">
+                            <span
+                                style="padding: 2px 10px; border-radius: 999px; background: #e1f5e9; color: #27ae60; font-weight: 700; font-size: 0.85em;">What
+                                we want</span>
+                            <div style="margin-top: 8px; font-size: 1.1em; white-space: nowrap;">\( \boxed{p_\theta(x)
+                                \approx p_{\text{data}}(x)} \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">A model of
+                                the distribution itself</p>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment">We observe samples from the data distribution, not the distribution
+                        itself.</p>
+                </section>
+
+                <section>
+                    <h2>Learning a Generative Model</h2>
+                    <p class="lead" font-size="0.7em">Given a model family \( p_\theta(x) \) with parameters \( \theta\)
+                        and a dataset \( \mathcal{D} \), which \( \theta \) should we choose?</p>
+                    <div class="question-box" style="text-align: center; font-size: 0.7em;">
+                        \( \theta^* = \arg\max_\theta \; \text{?} \)
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(2, 1fr); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 16px; font-size: 0.72em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px; border-radius: 12px; border: 1px solid #27ae6066; border-top: 5px solid #27ae60;">
+                            <span
+                                style="padding: 2px 10px; border-radius: 999px; background: #e1f5e9; color: #27ae60; font-weight: 700; font-size: 0.85em;">Likelihood</span>
+                            <div style="margin-top: 8px; font-size: 0.85em; white-space: nowrap;">\( \theta^* =
+                                \arg\max_\theta \prod_{i=1}^{N} p_\theta(x_i) \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">Probability
+                                of the whole dataset</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span
+                                style="padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.85em;">Log-likelihood</span>
+                            <div style="margin-top: 8px; font-size: 0.85em; white-space: nowrap;">\( \theta^* =
+                                \arg\max_\theta \sum_{i=1}^{N} \log p_\theta(x_i) \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">Same
+                                optimum, easier to compute</p>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment"><span class="keyword">Maximum likelihood estimation</span> (MLE):
+                        choose the \( \theta \) under which the observed data is most probable.</p>
+                </section>
+
+                <section>
+                    <h2>What Does Likelihood Mean?</h2>
+                    <p class="lead">Does the model assign high probability to the data we observe?</p>
+                    <div
+                        style="display: grid; grid-template-columns: 1fr 1fr; column-gap: 24px; margin-top: 10px; font-size: 0.72em;">
+                        <div style="text-align: center;">
+                            <span
+                                style="padding: 2px 12px; border-radius: 999px; background: #e1f5e9; color: #27ae60; font-weight: 700;">Model
+                                A</span>
+                            <img src="img/lec01/likelihood_model_good.png"
+                                alt="A density centred on the observed data points"
+                                style="width: 86%; margin: 4px 0 0 0;" />
+                            <div style="color: #27ae60; font-weight: 700;">high likelihood
+                            </div>
+                        </div>
+                        <div class="fragment" style="text-align: center;">
+                            <span
+                                style="padding: 2px 12px; border-radius: 999px; background: #fdecea; color: #e74c3c; font-weight: 700;">Model
+                                B</span>
+                            <img src="img/lec01/likelihood_model_bad.png"
+                                alt="A density far away from the observed data points"
+                                style="width: 86%; margin: 4px 0 0 0;" />
+                            <div style="color: #e74c3c; font-weight: 700;">low likelihood
+                            </div>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment">The model that puts its mass where the data lies has higher likelihood.
+                    </p>
+                </section>
+
+                <section>
+                    <h2>Learning vs Sampling</h2>
+                    <div
+                        style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 48px; font-size: 0.68em;">
+                        <div
+                            style="padding: 8px 14px; border-radius: 10px; background: #f8f9fa; border: 2px solid #ddd; color: #2c3e50; font-weight: 400; text-align: center; white-space: nowrap;">
+                            Data \( \mathcal{D} \)</div>
+                        <div style="color: #bbb; font-size: 1.4em; font-weight: 700;">&rarr;</div>
+                        <div
+                            style="padding: 8px 14px; border-radius: 10px; background: #e1f5e9; border: 2px solid #27ae60; color: #27ae60; font-weight: 700; text-align: center; white-space: nowrap;">
+                            Learn \( p_\theta(x) \)</div>
+                        <div style="color: #bbb; font-size: 1.4em; font-weight: 700;">&rarr;</div>
+                        <div
+                            style="padding: 8px 14px; border-radius: 10px; background: #e3eefc; border: 2px solid #2a7ae2; color: #2a7ae2; font-weight: 700; text-align: center; white-space: nowrap;">
+                            Sample \( \tilde{x} \sim p_\theta(x) \)</div>
+                        <div style="color: #bbb; font-size: 1.4em; font-weight: 700;">&rarr;</div>
+                        <div
+                            style="padding: 8px 14px; border-radius: 10px; background: #f8f9fa; border: 2px solid #ddd; color: #2c3e50; font-weight: 400; text-align: center; white-space: nowrap;">
+                            New data</div>
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(2, 1fr); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 48px; font-size: 0.72em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px; border-radius: 12px; border: 1px solid #27ae6066; border-top: 5px solid #27ae60;">
+                            <span
+                                style="padding: 2px 10px; border-radius: 999px; background: #e1f5e9; color: #27ae60; font-weight: 700; font-size: 0.85em;">Learning</span>
+                            <div style="margin-top: 8px; font-size: 1.1em; white-space: nowrap;">\( p_\theta(x) \approx
+                                p_{\text{data}}(x) \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">How do we
+                                fit \( p_\theta(x) \) to the data?</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span
+                                style="padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.85em;">Sampling</span>
+                            <div style="margin-top: 8px; font-size: 1.1em; white-space: nowrap;">\( \tilde{x} \sim
+                                p_\theta(x) \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">How do we
+                                draw a new sample from it?</p>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 48px;">Learning and sampling are <span
+                            class="keyword">different
+                            problems</span>: each model family solves them in its own way.</p>
+                </section>
+
+                <section>
+                    <h2>Why Is Sampling Difficult?</h2>
+                    <p class="lead">Learning a distribution is not the same as sampling from it.</p>
+                    <div style="display: grid; grid-auto-rows: 1fr; gap: 16px; margin-top: 24px; font-size: 0.72em;">
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 18px; background: #f8f9fa; padding: 12px 20px; border-radius: 10px; border: 1px solid #e67e2266; border-left: 4px solid #e67e22;">
+                            <strong style="color: #e67e22; width: 110px; flex-shrink: 0;">Data</strong>
+                            <div style="color: #2c3e50;"><span class="keyword">High-dimensional</span> and <span
+                                    class="keyword">structured</span>: a \( 256 \times 256 \times 3 \) image has about
+                                200,000 dimensions</div>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 18px; background: #f8f9fa; padding: 12px 20px; border-radius: 10px; border: 1px solid #8e44ad66; border-left: 4px solid #8e44ad;">
+                            <strong style="color: #8e44ad; width: 110px; flex-shrink: 0;">Goal</strong>
+                            <div style="color: #2c3e50;">Samples should be &nbsp;<span
+                                    style="padding: 2px 10px; border-radius: 999px; background: #fdecea; color: #e74c3c; font-weight: 700; white-space: nowrap;">Realistic</span>
+                                <span
+                                    style="padding: 2px 10px; border-radius: 999px; background: #e1f5e9; color: #27ae60; font-weight: 700; white-space: nowrap;">Diverse</span>
+                                <span
+                                    style="padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; white-space: nowrap;">Consistent</span>
+                            </div>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 18px; background: #f8f9fa; padding: 12px 20px; border-radius: 10px; border: 1px solid #16a08566; border-left: 4px solid #16a085;">
+                            <strong style="color: #16a085; width: 110px; flex-shrink: 0;">Method</strong>
+                            <div style="color: #2c3e50;">Sampling depends strongly on <span class="keyword">how the
+                                    distribution is represented</span></div>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 24px;">Different generative models use different
+                        strategies for sampling.</p>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">4.</span><br />
+                        Why Is It Hard?
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>The Root Problem</h2>
+                    <div class="question-box" style="text-align: center; font-size: 0.95em; margin-top: 40px;">
+                        We only observe <span class="keyword">samples</span>, not the distribution itself.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>The Nature of the Data</h2>
+                    <p class="lead">Even with enough samples, the data itself is hard to model:</p>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(3, 1fr); column-gap: 20px; align-items: stretch; margin-top: 28px; font-size: 0.72em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 14px 12px; border-radius: 12px; border: 1px solid #e74c3c66; border-top: 5px solid #e74c3c;">
+                            <span style="font-size: 1.6em; line-height: 1;">📐</span>
+                            <strong
+                                style="margin-top: 8px; color: #e74c3c; font-size: 1.15em;">High-dimensional</strong>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">images,
+                                audio, video, text</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 14px 12px; border-radius: 12px; border: 1px solid #27ae6066; border-top: 5px solid #27ae60;">
+                            <span style="font-size: 1.6em; line-height: 1;">🏔️</span>
+                            <strong style="margin-top: 8px; color: #27ae60; font-size: 1.15em;">Multimodal</strong>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">complex
+                                distributions, many separate modes</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 14px 12px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span style="font-size: 1.6em; line-height: 1;">🔗</span>
+                            <strong style="margin-top: 8px; color: #2a7ae2; font-size: 1.15em;">Dependencies</strong>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">strong,
+                                across dimensions and scales</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Competing Objectives</h2>
+                    <p class="lead" style="font-size: 0.75em">What we want from a model does not always point in the
+                        same
+                        direction:</p>
+                    <div
+                        style="display: grid; grid-template-columns: 1fr; row-gap: 18px; margin-top: 28px; font-size: 0.75em;">
+                        <div class="fragment"
+                            style="display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; column-gap: 14px; background: #f8f9fa; padding: 14px 18px; border-radius: 12px; border: 1px solid #e74c3c66; border-top: 5px solid #e74c3c;">
+                            <span style="text-align: right; color: #e74c3c; font-weight: 700;">Quality</span>
+                            <span style="color: #bbb; font-weight: 700; font-size: 1.3em;">&harr;</span>
+                            <span style="text-align: left; color: #e74c3c; font-weight: 700;">Diversity</span>
+                        </div>
+                        <div class="fragment"
+                            style="display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; column-gap: 14px; background: #f8f9fa; padding: 14px 18px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span style="text-align: right; color: #2a7ae2; font-weight: 700;">Statistical fit</span>
+                            <span style="color: #bbb; font-weight: 700; font-size: 1.3em;">&harr;</span>
+                            <span style="text-align: left; color: #2a7ae2; font-weight: 700;">Perceived sample
+                                quality</span>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 28px;">A model that assigns high probability to the
+                        observed data does not necessarily produce the samples humans prefer.</p>
+                </section>
+
+                <section>
+                    <h2>Practical Constraints</h2>
+                    <p class="lead">Even a good model must be usable in practice:</p>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(3, 1fr); column-gap: 20px; align-items: stretch; margin-top: 28px; font-size: 0.72em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 14px 12px; border-radius: 12px; border: 1px solid #e74c3c66; border-top: 5px solid #e74c3c;">
+                            <span style="font-size: 1.6em; line-height: 1;">⏱️</span>
+                            <strong style="margin-top: 8px; color: #e74c3c; font-size: 1.15em;">Sampling speed</strong>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">some models
+                                need many steps per sample</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 14px 12px; border-radius: 12px; border: 1px solid #27ae6066; border-top: 5px solid #27ae60;">
+                            <span style="font-size: 1.6em; line-height: 1;">⚡</span>
+                            <strong style="margin-top: 8px; color: #27ae60; font-size: 1.15em;">Compute</strong>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">large
+                                models, memory and long training runs</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 14px 12px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span style="font-size: 1.6em; line-height: 1;">📏</span>
+                            <strong style="margin-top: 8px; color: #2a7ae2; font-size: 1.15em;">Evaluation</strong>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">no single
+                                metric captures sample quality</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Why So Many Model Families?</h2>
+                    <div class="question-box fragment" style="text-align: center; font-size: 0.75em;">
+                        Each one makes different <span class="keyword">modelling and computational trade-offs</span>.
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: 1fr auto 1fr; column-gap: 16px; row-gap: 10px; align-items: center; margin-top: 24px; font-size: 0.7em;">
+                        <div class="fragment" style="display: contents;">
+                            <span style="text-align: right;">Tractable likelihood</span>
+                            <span style="color: #bbb; font-weight: 700;">&harr;</span>
+                            <span style="text-align: left;">Flexible generation</span>
+                        </div>
+                        <div class="fragment" style="display: contents;">
+                            <span style="text-align: right;">Training stability</span>
+                            <span style="color: #bbb; font-weight: 700;">&harr;</span>
+                            <span style="text-align: left;">Model expressiveness</span>
+                        </div>
+                        <div class="fragment" style="display: contents;">
+                            <span style="text-align: right;">Sample quality</span>
+                            <span style="color: #bbb; font-weight: 700;">&harr;</span>
+                            <span style="text-align: left;">Diversity</span>
+                        </div>
+                        <div class="fragment" style="display: contents;">
+                            <span style="text-align: right;">Generation quality</span>
+                            <span style="color: #bbb; font-weight: 700;">&harr;</span>
+                            <span style="text-align: left;">Sampling speed</span>
+                        </div>
+                        <div class="fragment" style="display: contents;">
+                            <span style="text-align: right;">Explicit density modelling</span>
+                            <span style="color: #bbb; font-weight: 700;">&harr;</span>
+                            <span style="text-align: left;">Implicit generation</span>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 24px;">Different model families make different
+                        choices to address these challenges.</p>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1 style="font-size: 2em;">
+                        <span class="text-light">5.</span><br />
+                        Models &amp; Applications
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Evolution</h2>
+                    <p class="lead">Generative modelling grew through four stages:</p>
+                    <div
+                        style="display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr); column-gap: 8px; align-items: stretch; margin-top: 24px; font-size: 0.68em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 10px 8px; border-radius: 12px; border: 1px solid #e74c3c66; border-top: 5px solid #e74c3c;">
+                            <span
+                                style="padding: 2px 8px; border-radius: 999px; background: #fdecea; color: #e74c3c; font-weight: 700; font-size: 0.9em;">Classical</span>
+                            <div style="margin-top: 8px; color: #555; line-height: 1.6; white-space: nowrap;">
+                                <div>GMMs</div>
+                                <div>HMMs</div>
+                                <div>Bayes nets</div>
+                            </div>
+                        </div>
+                        <div class="fragment"
+                            style="align-self: center; font-size: 1.5em; font-weight: 700; color: #bbb;">&rarr;</div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 10px 8px; border-radius: 12px; border: 1px solid #27ae6066; border-top: 5px solid #27ae60;">
+                            <span
+                                style="padding: 2px 8px; border-radius: 999px; background: #e1f5e9; color: #27ae60; font-weight: 700; font-size: 0.9em;">Deep</span>
+                            <div style="margin-top: 8px; color: #555; line-height: 1.6; white-space: nowrap;">
+                                <div>Autoregressive</div>
+                                <div>VAEs</div>
+                                <div>GANs</div>
+                                <div>Flows</div>
+                            </div>
+                        </div>
+                        <div class="fragment"
+                            style="align-self: center; font-size: 1.5em; font-weight: 700; color: #bbb;">&rarr;</div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 10px 8px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span
+                                style="padding: 2px 8px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.9em;">Modern</span>
+                            <div style="margin-top: 8px; color: #555; line-height: 1.6; white-space: nowrap;">
+                                <div>Diffusion</div>
+                                <div>Flow matching</div>
+                                <div>Rectified flow</div>
+                            </div>
+                        </div>
+                        <div class="fragment"
+                            style="align-self: center; font-size: 1.5em; font-weight: 700; color: #bbb;">&rarr;</div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 10px 8px; border-radius: 12px; border: 1px solid #e67e2266; border-top: 5px solid #e67e22;">
+                            <span
+                                style="padding: 2px 8px; border-radius: 999px; background: #fdf0e3; color: #e67e22; font-weight: 700; font-size: 0.9em;">Foundation</span>
+                            <div style="margin-top: 8px; color: #555; line-height: 1.6; white-space: nowrap;">
+                                <div>LLMs</div>
+                                <div>VLMs</div>
+                                <div>Multimodal</div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 24px;">Each stage introduced a new modelling idea,
+                        not just a new architecture.</p>
+                </section>
+
+                <section>
+                    <h2>Model Landscape</h2>
+                    <table
+                        style="width: 100%; margin-top: 16px; font-size: 0.66em; border-collapse: separate; border-spacing: 0 4px;">
+                        <thead>
+                            <tr style="color: #2c3e50;">
+                                <th style="padding: 4px 12px; text-align: left;">Family</th>
+                                <th style="padding: 4px 12px; text-align: left;">Core idea</th>
+                                <th style="padding: 4px 12px; text-align: center;">Lectures</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="fragment">
+                                <td
+                                    style="padding: 5px 12px; border-left: 4px solid #e74c3c; color: #e74c3c; font-weight: 700;">
+                                    Autoregressive</td>
+                                <td style="padding: 5px 12px;">Factorize \( p(x) \) into conditionals</td>
+                                <td style="padding: 5px 12px; text-align: center; color: #777;">04&ndash;05</td>
+                            </tr>
+                            <tr class="fragment">
+                                <td
+                                    style="padding: 5px 12px; border-left: 4px solid #27ae60; color: #27ae60; font-weight: 700;">
+                                    VAE / latent models</td>
+                                <td style="padding: 5px 12px;">Learn latent representations</td>
+                                <td style="padding: 5px 12px; text-align: center; color: #777;">03, 06&ndash;07</td>
+                            </tr>
+                            <tr class="fragment">
+                                <td
+                                    style="padding: 5px 12px; border-left: 4px solid #2a7ae2; color: #2a7ae2; font-weight: 700;">
+                                    Normalizing flows</td>
+                                <td style="padding: 5px 12px;">Invertible transformations</td>
+                                <td style="padding: 5px 12px; text-align: center; color: #777;">08</td>
+                            </tr>
+                            <tr class="fragment">
+                                <td
+                                    style="padding: 5px 12px; border-left: 4px solid #e67e22; color: #e67e22; font-weight: 700;">
+                                    GANs</td>
+                                <td style="padding: 5px 12px;">Adversarial learning</td>
+                                <td style="padding: 5px 12px; text-align: center; color: #777;">09&ndash;10</td>
+                            </tr>
+                            <tr class="fragment">
+                                <td
+                                    style="padding: 5px 12px; border-left: 4px solid #8e44ad; color: #8e44ad; font-weight: 700;">
+                                    Energy-based models</td>
+                                <td style="padding: 5px 12px;">Learn an energy function</td>
+                                <td style="padding: 5px 12px; text-align: center; color: #777;">11</td>
+                            </tr>
+                            <tr class="fragment">
+                                <td
+                                    style="padding: 5px 12px; border-left: 4px solid #16a085; color: #16a085; font-weight: 700;">
+                                    Diffusion</td>
+                                <td style="padding: 5px 12px;">Learn to reverse a noising process</td>
+                                <td style="padding: 5px 12px; text-align: center; color: #777;">12&ndash;14</td>
+                            </tr>
+                            <tr class="fragment">
+                                <td
+                                    style="padding: 5px 12px; border-left: 4px solid #34495e; color: #34495e; font-weight: 700;">
+                                    Flow matching</td>
+                                <td style="padding: 5px 12px;">Learn continuous transport</td>
+                                <td style="padding: 5px 12px; text-align: center; color: #777;">15</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="takeaway fragment" style="margin-top: 16px;">This landscape is the roadmap for the rest of
+                        the course.</p>
+                </section>
+
+                <section>
+                    <h2>Applications</h2>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(3, 1fr); column-gap: 20px; row-gap: 20px; margin-top: 24px; font-size: 0.7em;">
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 10px 14px; border-radius: 10px; border: 1px solid #e74c3c66; border-left: 4px solid #e74c3c;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 1.4em; line-height: 1;">📝</span>
+                                <strong style="color: #e74c3c; font-size: 1.1em;">Text &amp; Code</strong>
+                            </div>
+                            <ul style="margin: 6px 0 0 1.1em; padding: 0; color: #555; font-size: 0.85em; line-height: 1.45;">
+                                <li>Text generation</li>
+                                <li>Dialogue</li>
+                                <li>Code generation</li>
+                            </ul>
+                        </div>
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 10px 14px; border-radius: 10px; border: 1px solid #27ae6066; border-left: 4px solid #27ae60;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 1.4em; line-height: 1;">🖼️</span>
+                                <strong style="color: #27ae60; font-size: 1.1em;">Image</strong>
+                            </div>
+                            <ul style="margin: 6px 0 0 1.1em; padding: 0; color: #555; font-size: 0.85em; line-height: 1.45;">
+                                <li>Text-to-image</li>
+                                <li>Editing</li>
+                                <li>Inpainting</li>
+                            </ul>
+                        </div>
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 10px 14px; border-radius: 10px; border: 1px solid #2a7ae266; border-left: 4px solid #2a7ae2;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 1.4em; line-height: 1;">🔊</span>
+                                <strong style="color: #2a7ae2; font-size: 1.1em;">Audio &amp; Music</strong>
+                            </div>
+                            <ul style="margin: 6px 0 0 1.1em; padding: 0; color: #555; font-size: 0.85em; line-height: 1.45;">
+                                <li>Speech synthesis</li>
+                                <li>Music generation</li>
+                            </ul>
+                        </div>
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 10px 14px; border-radius: 10px; border: 1px solid #e67e2266; border-left: 4px solid #e67e22;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 1.4em; line-height: 1;">🎬</span>
+                                <strong style="color: #e67e22; font-size: 1.1em;">Video</strong>
+                            </div>
+                            <ul style="margin: 6px 0 0 1.1em; padding: 0; color: #555; font-size: 0.85em; line-height: 1.45;">
+                                <li>Text-to-video</li>
+                                <li>Video generation</li>
+                                <li>Video editing</li>
+                            </ul>
+                        </div>
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 10px 14px; border-radius: 10px; border: 1px solid #8e44ad66; border-left: 4px solid #8e44ad;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 1.4em; line-height: 1;">🧬</span>
+                                <strong style="color: #8e44ad; font-size: 1.1em;">3D &amp; Science</strong>
+                            </div>
+                            <ul style="margin: 6px 0 0 1.1em; padding: 0; color: #555; font-size: 0.85em; line-height: 1.45;">
+                                <li>3D generation</li>
+                                <li>Molecular discovery</li>
+                            </ul>
+                        </div>
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 10px 14px; border-radius: 10px; border: 1px solid #16a08566; border-left: 4px solid #16a085;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 1.4em; line-height: 1;">🔄</span>
+                                <strong style="color: #16a085; font-size: 1.1em;">Multimodal</strong>
+                            </div>
+                            <ul style="margin: 6px 0 0 1.1em; padding: 0; color: #555; font-size: 0.85em; line-height: 1.45;">
+                                <li>Text &harr; image</li>
+                                <li>Text &harr; audio</li>
+                                <li>Text &harr; video</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>The Big Picture</h2>
+                    <div
+                        style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 16px; font-size: 0.64em;">
+                        <div
+                            style="padding: 8px 14px; border-radius: 10px; background: #f8f9fa; border: 2px solid #2c3e50; color: #2c3e50; font-weight: 700; white-space: nowrap;">
+                            Data</div>
+                        <div style="color: #bbb; font-size: 1.3em; font-weight: 700;">&rarr;</div>
+                        <div
+                            style="padding: 8px 14px; border-radius: 10px; background: #f8f9fa; border: 2px solid #2c3e50; color: #2c3e50; font-weight: 700; white-space: nowrap;">
+                            Distribution</div>
+                        <div style="color: #bbb; font-size: 1.3em; font-weight: 700;">&rarr;</div>
+                        <div
+                            style="padding: 8px 14px; border-radius: 10px; background: #e1f5e9; border: 2px solid #27ae60; color: #27ae60; font-weight: 700; white-space: nowrap;">
+                            Learning</div>
+                        <div style="color: #bbb; font-size: 1.3em; font-weight: 700;">&rarr;</div>
+                        <div
+                            style="padding: 8px 14px; border-radius: 10px; background: #e3eefc; border: 2px solid #2a7ae2; color: #2a7ae2; font-weight: 700; white-space: nowrap;">
+                            Sampling</div>
+                        <div style="color: #bbb; font-size: 1.3em; font-weight: 700;">&rarr;</div>
+                        <div
+                            style="padding: 8px 14px; border-radius: 10px; background: #f3e8f8; border: 2px solid #8e44ad; color: #8e44ad; font-weight: 700; white-space: nowrap;">
+                            Generation</div>
+                    </div>
+                    <p class="lead" style="margin-top: 28px;">Different model families make different choices about:</p>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(3, 1fr); column-gap: 20px; align-items: stretch; margin-top: 12px; font-size: 0.72em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 10px 12px; border-radius: 12px; border: 1px solid #e74c3c66; border-top: 5px solid #e74c3c;">
+                            <strong style="color: #e74c3c; font-size: 1.15em;">Represent</strong>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em;">How to represent the
+                                distribution</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 10px 12px; border-radius: 12px; border: 1px solid #27ae6066; border-top: 5px solid #27ae60;">
+                            <strong style="color: #27ae60; font-size: 1.15em;">Learn</strong>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em;">How to learn it from data</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 10px 12px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <strong style="color: #2a7ae2; font-size: 1.15em;">Sample</strong>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em;">How to sample from it</p>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 24px;">The rest of this course explores these
+                        choices.</p>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h2>Summary</h2>
+                    <div class="question-box" style="text-align: center; font-size: 0.75em;">
+                        \( x_i \sim p_{\text{data}}(x) \;\longrightarrow\; p_\theta(x) \approx p_{\text{data}}(x)
+                        \;\longrightarrow\; \tilde{x} \sim p_\theta(x) \)
+                    </div>
+                    <ul style="font-size: 0.68em; margin-top: 14px; display: flex; flex-direction: column; gap: 6px;">
+                        <li class="fragment">A generative model learns the <span class="keyword">data distribution</span>
+                            from samples, then draws new data from it</li>
+                        <li class="fragment">Unlike \( p(y \mid x) \), modelling \( p(x) \), \( p(x, y) \) or
+                            \( p(x \mid c) \) lets us <span class="keyword">evaluate, create and control</span> data</li>
+                        <li class="fragment"><span class="keyword">Learning</span> (e.g. MLE) and <span
+                                class="keyword">sampling</span> are different problems, both hard for high-dimensional,
+                            multimodal data</li>
+                        <li class="fragment">Every model family is a different <span class="keyword">trade-off</span>
+                            in how to represent, learn and sample</li>
+                    </ul>
+                    <p class="takeaway fragment" style="margin-top: 14px;">Next lecture: <span
+                            class="keyword">Probabilistic Foundations</span></p>
+                </section>
+            </section>
+
+            <div class="footer">
+                Generative AI: Introduction
+            </div>
+        </div>
+    </div>
+    <script src="revealjs/dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            controlsLayout: "edges",
+            slideNumber: true,
+            hashOneBasedIndex: true,
+            hash: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX],
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/png" href="../../favicon.png">
+    <title>Variational Autoencoders</title>
+
+    <link rel="stylesheet" href="revealjs/dist/reset.css" />
+    <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+    <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+    <link rel="stylesheet" href="slide-style.css" />
+</head>
+
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <section>
+                    <h1>Generative AI</h1>
+                    <h3>Variational Autoencoders</h3>
+                    <p>IAI · UET · VNU</p>
+                    <p>Presenter: Trinh Ngoc Huynh</p>
+                    <p>Email: <a href="mailto:huynhtn@vnu.edu.vn">huynhtn@vnu.edu.vn</a></p>
+                </section>
+
+                <section>
+                    <h2>Content</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; font-size: 0.7em;">
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #b15a2b;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #b15a2b; min-width: 40px; text-align: center;">1</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Encoder and Decoder</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Turning the ELBO into two neural networks</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #2a7ae2; min-width: 40px; text-align: center;">2</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">The VAE Objective</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">The loss, its closed-form KL, and the reparameterization trick</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #27ae60; min-width: 40px; text-align: center;">3</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Training and Generation</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">The training loop, sampling and latent interpolation</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #e67e22; min-width: 40px; text-align: center;">4</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Strengths and Limitations</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Why VAEs are stable, and why they are blurry</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">1.</span><br />
+                        Encoder and Decoder
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>From Lecture 03 to a Model</h2>
+                    <ul>
+                        <li class="fragment">Lecture 03 gave us the ELBO as a general inference tool</li>
+                        <li class="fragment">A <span class="keyword">VAE</span> is what happens when both distributions are neural networks</li>
+                        <li class="fragment">Same bound, now with an encoder and a decoder</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Probabilistic Encoder</h2>
+                    <div class="question-box">
+                        $$ q_\phi(z \mid x) = \mathcal{N}\big(z; \mu_\phi(x), \operatorname{diag}(\sigma^2_\phi(x))\big) $$
+                    </div>
+                    <ul>
+                        <li class="fragment">A network outputs a <span class="keyword">distribution</span>, not a point</li>
+                        <li class="fragment">\( \mu_\phi(x) \) and \( \log \sigma^2_\phi(x) \) are its two heads</li>
+                        <li class="fragment">Diagonal covariance keeps it cheap</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Probabilistic Decoder</h2>
+                    <div class="question-box">
+                        $$ p_\theta(x \mid z) $$
+                    </div>
+                    <ul>
+                        <li class="fragment">Gaussian for continuous data → an \( \ell_2 \) reconstruction term</li>
+                        <li class="fragment">Bernoulli for binary data → a cross-entropy term</li>
+                        <li class="fragment">The choice of decoder <em>is</em> the choice of reconstruction loss</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Architecture</h2>
+                    <ul>
+                        <li class="fragment">\( x \rightarrow \) encoder \( \rightarrow (\mu, \sigma) \rightarrow z \rightarrow \) decoder \( \rightarrow \hat{x} \)</li>
+                        <li class="fragment">Looks like an autoencoder, but the bottleneck is <span class="keyword">stochastic</span></li>
+                        <li class="fragment">That single change is what makes it generative</li>
+                    </ul>
+                    <div class="placeholder" style="border:1px dashed #999;padding:18px;border-radius:8px;">
+                        <em>[Figure: VAE Architecture]</em><br />
+                        <strong>Description:</strong> Encoder to a Gaussian latent, a sampled z, and a decoder back to the image.<br />
+                        <strong>Image prompt:</strong> Left-to-right: image, encoder block, two vectors mu and sigma, a sampling node z, decoder block, reconstructed image.
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">2.</span><br />
+                        The VAE Objective
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>The Objective</h2>
+                    <div class="question-box">
+                        $$ \mathcal{L}(\theta,\phi;x) = \mathbb{E}_{q_\phi(z\mid x)}[\log p_\theta(x \mid z)] - D_{\mathrm{KL}}\big(q_\phi(z \mid x) \,\|\, p(z)\big) $$
+                    </div>
+                    <ul>
+                        <li class="fragment">Maximise the ELBO over <span class="keyword">both</span> \( \theta \) and \( \phi \)</li>
+                        <li class="fragment">Term 1 rebuilds the input; term 2 shapes the latent space</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The KL Has a Closed Form</h2>
+                    <div class="question-box">
+                        $$ D_{\mathrm{KL}} = \frac{1}{2}\sum_{j=1}^{J}\left(\mu_j^2 + \sigma_j^2 - \log \sigma_j^2 - 1\right) $$
+                    </div>
+                    <ul>
+                        <li class="fragment">For a Gaussian posterior and \( \mathcal{N}(0,I) \) prior</li>
+                        <li class="fragment">No sampling needed for this term — it is computed exactly</li>
+                        <li class="fragment">Only the reconstruction term needs Monte Carlo</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Sampling Problem</h2>
+                    <div class="question-box">
+                        We must backpropagate through \( z \sim q_\phi(z \mid x) \) — but <span class="keyword">sampling is not differentiable</span>.
+                    </div>
+                    <ul>
+                        <li class="fragment">The gradient path to the encoder is broken</li>
+                        <li class="fragment">Score-function estimators work but have very high variance</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Reparameterization Trick</h2>
+                    <div class="question-box">
+                        $$ z = \mu_\phi(x) + \sigma_\phi(x) \odot \epsilon, \qquad \epsilon \sim \mathcal{N}(0, I) $$
+                    </div>
+                    <ul>
+                        <li class="fragment">Move the randomness into a parameter-free variable \( \epsilon \)</li>
+                        <li class="fragment">\( z \) is now a <span class="keyword">deterministic</span> function of \( \mu, \sigma, \epsilon \)</li>
+                        <li class="fragment">Gradients flow to the encoder; variance is low</li>
+                    </ul>
+                    <div class="placeholder" style="border:1px dashed #999;padding:18px;border-radius:8px;">
+                        <em>[Figure: Reparameterization]</em><br />
+                        <strong>Description:</strong> The stochastic node moved out of the gradient path.<br />
+                        <strong>Image prompt:</strong> Two computation graphs: left has a random node between encoder and decoder blocking gradients; right has epsilon entering from the side with a clear gradient path.
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">3.</span><br />
+                        Training and Generation
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>The Training Loop</h2>
+                    <ul>
+                        <li class="fragment">Encode \( x \) to \( \mu, \sigma \)</li>
+                        <li class="fragment">Sample \( \epsilon \), form \( z = \mu + \sigma \odot \epsilon \)</li>
+                        <li class="fragment">Decode \( z \), compute reconstruction + KL</li>
+                        <li class="fragment">Backpropagate through everything, end to end</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Generation</h2>
+                    <div class="question-box">
+                        $$ z \sim \mathcal{N}(0, I), \qquad x \sim p_\theta(x \mid z) $$
+                    </div>
+                    <ul>
+                        <li class="fragment">At generation time the <span class="keyword">encoder is discarded</span></li>
+                        <li class="fragment">One forward pass — far faster than autoregressive sampling</li>
+                        <li class="fragment">The prior must match the aggregate posterior for this to work</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Latent Interpolation</h2>
+                    <ul>
+                        <li class="fragment">Interpolate \( z_\alpha = (1-\alpha)z_1 + \alpha z_2 \) and decode</li>
+                        <li class="fragment">Smooth semantic transitions indicate a well-structured latent space</li>
+                        <li class="fragment">The KL term is what makes the space continuous enough for this</li>
+                    </ul>
+                    <div class="placeholder" style="border:1px dashed #999;padding:18px;border-radius:8px;">
+                        <em>[Figure: Latent Interpolation]</em><br />
+                        <strong>Description:</strong> A row of decoded images along a straight path between two latents.<br />
+                        <strong>Image prompt:</strong> A horizontal strip of images morphing smoothly from one face to another across nine steps.
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">4.</span><br />
+                        Strengths and Limitations
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Why VAE Samples Look Blurry</h2>
+                    <ul>
+                        <li class="fragment">A Gaussian decoder makes the loss an <span class="keyword">average</span> over plausible outputs</li>
+                        <li class="fragment">Averaging sharp alternatives produces a blurry mean</li>
+                        <li class="fragment">Also: the reverse-KL direction from Lecture 02 is at work</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Strengths</h2>
+                    <ul>
+                        <li class="fragment"><span class="keyword">Stable</span> training — a single well-behaved objective</li>
+                        <li class="fragment">A meaningful, continuous latent space</li>
+                        <li class="fragment">Fast one-step sampling</li>
+                        <li class="fragment">Principled probabilistic formulation</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Limitations</h2>
+                    <ul>
+                        <li class="fragment">Blurry samples compared with GANs or diffusion</li>
+                        <li class="fragment">Only a <span class="keyword">lower bound</span> on the likelihood, not the value</li>
+                        <li class="fragment">Posterior collapse when the decoder is too strong</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Summary</h2>
+                    <ul>
+                        <li class="fragment">A VAE instantiates the ELBO with a neural encoder and decoder</li>
+                        <li class="fragment">The encoder outputs a <span class="keyword">distribution</span> \( q_\phi(z\mid x) \)</li>
+                        <li class="fragment">The <span class="keyword">reparameterization trick</span> makes sampling differentiable</li>
+                        <li class="fragment">The KL term has a closed form for Gaussian posterior and prior</li>
+                        <li class="fragment">Stable and fast, but samples are blurry — Lecture 07 addresses this</li>
+                    </ul>
+                </section>
+            </section>
+            <div class="footer">
+                Generative AI: Variational Autoencoders
+            </div>
+        </div>
+    </div>
+    <script src="revealjs/dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            controlsLayout: "edges",
+            slideNumber: true,
+            hashOneBasedIndex: true,
+            hash: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX],
+        });
+    </script>
+</body>
+
+</html>

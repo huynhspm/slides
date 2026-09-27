@@ -9,6 +9,13 @@
   <title>AIMS</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="index-style.css">
+  <script>
+    (function () {
+      var saved = localStorage.getItem("theme");
+      var theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
 </head>
 
 <body>
@@ -20,20 +27,34 @@
         <a class="secondary-link" href="../../">
           <span class="back-arrow">◀</span> Back to main
         </a>
+        <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle light/dark theme">
+          <span class="theme-toggle-icon theme-toggle-icon--sun">☀️</span>
+          <span class="theme-toggle-icon theme-toggle-icon--moon">🌙</span>
+        </button>
       </div>
       <div class="hero-logo">
-        <img src="assets/img/aims.png" alt="AIMS Logo" height="150">
+        <img src="assets/img/aims.png" alt="AIMS Logo" height="84">
       </div>
       <h1>AIMS — VUB</h1>
-      <p class="hero-text">Research presentations at the Artificial Intelligence in Medical Sciences Lab, Vrije
-        Universiteit Brussel.</p>
+      <p class="hero-period">👤 Prof. Dr. Ir. Guy Nagels</p>
+      <p class="hero-text">Research presentations at the Artificial Intelligence-supported Modelling in Clinical Sciences, VUB.</p>
     </section>
 
     <!-- ─── STATS ─── -->
     <section class="stats-row" aria-label="Quick statistics">
       <div class="stat-item">
+        <span class="stat-number">2</span>
+        <span class="stat-label">Presentations</span>
+      </div>
+      <div class="stat-divider" aria-hidden="true"></div>
+      <div class="stat-item">
         <span class="stat-number">1</span>
-        <span class="stat-label">Presentation</span>
+        <span class="stat-label">PDF</span>
+      </div>
+      <div class="stat-divider" aria-hidden="true"></div>
+      <div class="stat-item">
+        <span class="stat-number">1</span>
+        <span class="stat-label">HTML</span>
       </div>
     </section>
 
@@ -46,12 +67,22 @@
               <tr>
                 <th>#</th>
                 <th>Title</th>
+                <th>Date</th>
+                <th>Materials</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td>1</td>
-                <td><a href="assets/pdf/Introduction.pdf" target="_blank" rel="noopener">Introduction</a></td>
+                <td>Self-Introduction</td>
+                <td>Oct 07, 2025</td>
+                <td><a href="assets/pdf/Introduction.pdf" target="_blank" rel="noopener">PDF</a></td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>PhD Plan</td>
+                <td>Oct 27, 2026</td>
+                <td><a href="phd-plan.html" target="_blank" rel="noopener">HTML</a></td>
               </tr>
             </tbody>
           </table>
@@ -67,6 +98,18 @@
       </p>
     </footer>
   </main>
+
+  <script>
+    (function () {
+      var toggle = document.getElementById("theme-toggle");
+      toggle.addEventListener("click", function () {
+        var current = document.documentElement.getAttribute("data-theme");
+        var next = current === "dark" ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", next);
+        localStorage.setItem("theme", next);
+      });
+    })();
+  </script>
 </body>
 
 </html>

@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/png" href="../../favicon.png">
+    <title>Advanced GANs & Image Translation</title>
+
+    <link rel="stylesheet" href="revealjs/dist/reset.css" />
+    <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+    <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+    <link rel="stylesheet" href="slide-style.css" />
+</head>
+
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <section>
+                    <h1>Generative AI</h1>
+                    <h3>Advanced GANs & Image Translation</h3>
+                    <p>IAI · UET · VNU</p>
+                    <p>Presenter: Trinh Ngoc Huynh</p>
+                    <p>Email: <a href="mailto:huynhtn@vnu.edu.vn">huynhtn@vnu.edu.vn</a></p>
+                </section>
+
+                <section>
+                    <h2>Content</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; font-size: 0.7em;">
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #b15a2b;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #b15a2b; min-width: 40px; text-align: center;">1</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Wasserstein GANs</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Fixing the divergence that made training fragile</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #2a7ae2; min-width: 40px; text-align: center;">2</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Conditional and Style-Based GANs</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Control, progressive growing and StyleGAN</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #27ae60; min-width: 40px; text-align: center;">3</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Image-to-Image Translation</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">pix2pix, CycleGAN and cycle consistency</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #e67e22; min-width: 40px; text-align: center;">4</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Stabilisation and Legacy</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Practical techniques and where GANs stand now</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">1.</span><br />
+                        Wasserstein GANs
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>The Diagnosis</h2>
+                    <ul>
+                        <li class="fragment">JS divergence <span class="keyword">saturates</span> when supports barely overlap</li>
+                        <li class="fragment">Two image distributions on low-dimensional manifolds rarely overlap</li>
+                        <li class="fragment">A perfect discriminator gives the generator <em>zero</em> gradient</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Wasserstein Distance</h2>
+                    <div class="question-box">
+                        $$ W(p, q) = \inf_{\gamma \in \Pi(p,q)} \mathbb{E}_{(x,y)\sim\gamma}\big[\|x - y\|\big] $$
+                    </div>
+                    <ul>
+                        <li class="fragment">The <span class="keyword">earth mover's</span> distance: least cost to move one pile onto the other</li>
+                        <li class="fragment">Finite and informative even with disjoint supports</li>
+                        <li class="fragment">Its gradient keeps pointing the right way</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Kantorovich Duality</h2>
+                    <div class="question-box">
+                        $$ W(p,q) = \sup_{\|f\|_L \le 1} \quad \mathbb{E}_{p}[f(x)] - \mathbb{E}_{q}[f(x)] $$
+                    </div>
+                    <ul>
+                        <li class="fragment">The infimum becomes a supremum over <span class="keyword">1-Lipschitz</span> functions</li>
+                        <li class="fragment">The critic \( f \) replaces the discriminator</li>
+                        <li class="fragment">It outputs a real score, not a probability</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>WGAN and WGAN-GP</h2>
+                    <ul>
+                        <li class="fragment"><strong>WGAN:</strong> enforce Lipschitzness by clipping weights — crude</li>
+                        <li class="fragment"><strong>WGAN-GP:</strong> penalise the gradient norm instead</li>
+                        <li class="fragment">$$ \lambda \, \mathbb{E}\big[(\|\nabla_{\hat{x}} D(\hat{x})\|_2 - 1)^2\big] $$</li>
+                        <li class="fragment">The critic loss now correlates with sample quality</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">2.</span><br />
+                        Conditional and Style-Based GANs
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Conditional GANs</h2>
+                    <div class="question-box">
+                        $$ \min_G \max_D \quad \mathbb{E}[\log D(x, c)] + \mathbb{E}[\log(1 - D(G(z, c), c))] $$
+                    </div>
+                    <ul>
+                        <li class="fragment">Feed the condition \( c \) to <span class="keyword">both</span> networks</li>
+                        <li class="fragment">The discriminator judges whether the pair is consistent</li>
+                        <li class="fragment">The route to class-conditional and text-conditional generation</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Progressive Growing</h2>
+                    <ul>
+                        <li class="fragment">Start at \( 4\times4 \) and add layers as training proceeds</li>
+                        <li class="fragment">Each resolution stabilises before the next is introduced</li>
+                        <li class="fragment">The first method to reach megapixel faces</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>StyleGAN</h2>
+                    <ul>
+                        <li class="fragment">Map \( z \) into an intermediate space \( \mathcal{W} \) before use</li>
+                        <li class="fragment">Inject style at <span class="keyword">every</span> resolution via AdaIN</li>
+                        <li class="fragment">Add per-layer noise for stochastic detail</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Why the Style Space Matters</h2>
+                    <ul>
+                        <li class="fragment">\( \mathcal{W} \) is less <span class="keyword">entangled</span> than the Gaussian prior</li>
+                        <li class="fragment">Coarse layers control pose, fine layers control texture</li>
+                        <li class="fragment">This is what made semantic image editing practical</li>
+                    </ul>
+                    <div class="placeholder" style="border:1px dashed #999;padding:18px;border-radius:8px;">
+                        <em>[Figure: Style Mixing]</em><br />
+                        <strong>Description:</strong> Coarse and fine styles taken from two different source images.<br />
+                        <strong>Image prompt:</strong> A grid: source A images along the top, source B down the side, and results combining pose from one with colour and texture from the other.
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">3.</span><br />
+                        Image-to-Image Translation
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Image-to-Image Translation</h2>
+                    <div class="question-box">
+                        Learn a mapping between two image domains rather than from noise.
+                    </div>
+                    <ul>
+                        <li class="fragment">Sketch → photo, day → night, segmentation map → scene</li>
+                        <li class="fragment">The condition is now an entire image</li>
+                        <li class="fragment">A conditional GAN where \( c \) is spatially structured</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>pix2pix</h2>
+                    <ul>
+                        <li class="fragment">Requires <span class="keyword">paired</span> training data</li>
+                        <li class="fragment">U-Net generator preserves spatial detail via skip connections</li>
+                        <li class="fragment">PatchGAN discriminator judges local patches, not whole images</li>
+                        <li class="fragment">Adversarial loss combined with an \( \ell_1 \) reconstruction term</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Pairing Problem</h2>
+                    <ul>
+                        <li class="fragment">Aligned pairs are expensive or impossible to collect</li>
+                        <li class="fragment">There is no photo of the same scene painted by Monet</li>
+                        <li class="fragment">We need translation from <span class="keyword">unpaired</span> collections</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>CycleGAN</h2>
+                    <div class="question-box">
+                        $$ \mathcal{L}_{\text{cyc}} = \mathbb{E}\big[\|F(G(x)) - x\|_1\big] + \mathbb{E}\big[\|G(F(y)) - y\|_1\big] $$
+                    </div>
+                    <ul>
+                        <li class="fragment">Two generators \( G: X \to Y \) and \( F: Y \to X \)</li>
+                        <li class="fragment"><span class="keyword">Cycle consistency</span>: translating there and back must return the original</li>
+                        <li class="fragment">This constraint replaces the missing pairs</li>
+                    </ul>
+                    <div class="placeholder" style="border:1px dashed #999;padding:18px;border-radius:8px;">
+                        <em>[Figure: Cycle Consistency]</em><br />
+                        <strong>Description:</strong> An image translated to the other domain and back to itself.<br />
+                        <strong>Image prompt:</strong> A loop diagram: horse image through G to zebra, then through F back to horse, with a reconstruction-loss arrow closing the cycle.
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">4.</span><br />
+                        Stabilisation and Legacy
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Stabilisation Techniques</h2>
+                    <ul>
+                        <li class="fragment"><strong>Spectral normalisation</strong> — constrain the discriminator's Lipschitz constant</li>
+                        <li class="fragment"><strong>Two time-scale update rule</strong> — different learning rates for \( G \) and \( D \)</li>
+                        <li class="fragment"><strong>Self-attention</strong> — capture long-range structure</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Fighting Mode Collapse</h2>
+                    <ul>
+                        <li class="fragment"><strong>Minibatch discrimination:</strong> let \( D \) see batch-level diversity</li>
+                        <li class="fragment"><strong>Unrolled GANs:</strong> let \( G \) anticipate \( D \)'s response</li>
+                        <li class="fragment"><strong>Packing:</strong> feed several samples to \( D \) at once</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Where GANs Stand Today</h2>
+                    <ul>
+                        <li class="fragment">Still the fastest: <span class="keyword">one</span> forward pass per sample</li>
+                        <li class="fragment">Still excellent within a narrow domain such as faces</li>
+                        <li class="fragment">Diffusion overtook them on diversity and on text-to-image</li>
+                        <li class="fragment">The adversarial loss survives inside VQGAN and in distillation</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Summary</h2>
+                    <ul>
+                        <li class="fragment"><span class="keyword">Wasserstein</span> distance fixes the saturating-gradient problem</li>
+                        <li class="fragment">WGAN-GP enforces the Lipschitz constraint with a gradient penalty</li>
+                        <li class="fragment"><span class="keyword">Conditional GANs</span> feed the condition to both networks</li>
+                        <li class="fragment"><span class="keyword">StyleGAN</span> introduces a disentangled style space</li>
+                        <li class="fragment"><span class="keyword">CycleGAN</span> uses cycle consistency to avoid needing paired data</li>
+                    </ul>
+                </section>
+            </section>
+            <div class="footer">
+                Generative AI: Advanced GANs & Image Translation
+            </div>
+        </div>
+    </div>
+    <script src="revealjs/dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            controlsLayout: "edges",
+            slideNumber: true,
+            hashOneBasedIndex: true,
+            hash: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX],
+        });
+    </script>
+</body>
+
+</html>

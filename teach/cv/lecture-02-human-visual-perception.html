@@ -1,0 +1,536 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/png" href="../../favicon.png">
+    <title>Human Visual Perception</title>
+
+    <link rel="stylesheet" href="revealjs/dist/reset.css" />
+    <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+    <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+    <link rel="stylesheet" href="slide-style.css" />
+</head>
+
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <section>
+                    <h1>Computer Vision</h1>
+                    <h3>Human Visual Perception</h3>
+                    <p>IAI · UET · VNU</p>
+                    <p>Presenter: Trinh Ngoc Huynh</p>
+                    <p>Email: <a href="mailto:huynhtn@vnu.edu.vn">huynhtn@vnu.edu.vn</a></p>
+                </section>
+
+                <section>
+                    <h2>Content</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; font-size: 0.7em;">
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #b15a2b;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #b15a2b; min-width: 40px; text-align: center;">1</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Light & the Visible Spectrum</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">What light is and what we
+                                    can see</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #2a7ae2; min-width: 40px; text-align: center;">2</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Structure of the Human Eye</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Anatomy, rods &amp; cones,
+                                    image formation</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #27ae60; min-width: 40px; text-align: center;">3</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Brightness Perception</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Adaptation, Weber's law,
+                                    discrimination</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #e67e22; min-width: 40px; text-align: center;">4</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Perceptual Phenomena</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Mach bands, simultaneous
+                                    contrast, illusions</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">1.</span><br />
+                        Light & the Visible Spectrum
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Why Start with the Eye?</h2>
+
+                    <div class="question-box fragment" style="font-size: 0.75em; margin-top: 10px;">
+                        <p style="margin: 0;">
+                            <strong style="color: #b15a2b;">Motivation:</strong>
+                            Images are ultimately made for — or inspired by — the <span class="keyword">human
+                                visual system</span>. Understanding how we perceive light guides how we
+                            capture, process, and evaluate images.
+                        </p>
+                    </div>
+
+                    <ul style="font-size: 0.72em; margin-top: 20px;">
+                        <li class="fragment" style="margin-bottom: 8px;">Perception defines what "good quality"
+                            means for an image</li>
+                        <li class="fragment" style="margin-bottom: 8px;">Many algorithms mimic the eye (e.g. gamma
+                            correction, color spaces)</li>
+                        <li class="fragment">Perceptual limits tell us what information we can safely discard (e.g.
+                            in compression)</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Light & the Electromagnetic Spectrum</h2>
+
+                    <ul style="font-size: 0.7em; margin-top: 10px;">
+                        <li class="fragment" style="margin-bottom: 8px;">Light is <span class="keyword">electromagnetic
+                                radiation</span>, described by wavelength $\lambda$ or as photons</li>
+                        <li class="fragment" style="margin-bottom: 8px;">The <span class="keyword">visible
+                                spectrum</span> spans only $\approx 0.43\,\mu m$ to $0.79\,\mu m$ — a tiny slice of
+                            the full spectrum</li>
+                        <li class="fragment">Split into six regions: violet, blue, green, yellow, orange, red</li>
+                    </ul>
+
+                    <div class="placeholder fragment"
+                        style="border:1px dashed #999; padding:14px; border-radius:8px; margin-top: 16px; font-size: 0.6em;">
+                        <em>[Figure placeholder]</em><br />
+                        <strong>Description:</strong> The electromagnetic spectrum from gamma rays to radio waves,
+                        with the tiny visible band zoomed in to show violet→red.<br />
+                        <strong>Image prompt:</strong> A horizontal EM spectrum bar (gamma, X-ray, UV, visible,
+                        infrared, microwave, radio) with the visible portion magnified into a rainbow strip
+                        labeled with wavelengths.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Color, Intensity & Brightness</h2>
+
+                    <div style="display: flex; gap: 14px; margin-top: 16px; font-size: 0.62em;">
+                        <div class="fragment"
+                            style="flex: 1; background: #eef5fc; padding: 12px 16px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <strong style="color: #2a7ae2;">Radiance</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Total energy from a source, in watts (W).</p>
+                        </div>
+                        <div class="fragment"
+                            style="flex: 1; background: #eafaf1; padding: 12px 16px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <strong style="color: #27ae60;">Luminance</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Light intensity perceived from the source
+                                surface.</p>
+                        </div>
+                        <div class="fragment"
+                            style="flex: 1; background: #fffaf0; padding: 12px 16px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <strong style="color: #d35400;">Brightness</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Subjective perception of light by the human
+                                eye.</p>
+                        </div>
+                    </div>
+
+                    <div class="fragment"
+                        style="margin-top: 18px; font-size: 0.64em; padding: 14px 20px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                        <p style="margin: 0;">
+                            <strong style="color: #b8860b;">Key Idea:</strong>
+                            An infrared source has high radiance but near-zero brightness — the eye simply cannot
+                            perceive it. <span class="keyword">Monochromatic</span> light has a single attribute:
+                            intensity (a.k.a. <span class="keyword">gray level</span>).
+                        </p>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">2.</span><br />
+                        Structure of the Human Eye
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Anatomy of the Eye</h2>
+
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                        <div style="flex: 1; font-size: 0.62em;">
+                            <ul>
+                                <li class="fragment" style="margin-bottom: 6px;"><span class="keyword">Cornea &amp;
+                                        sclera</span> — tough transparent outer cover</li>
+                                <li class="fragment" style="margin-bottom: 6px;"><span class="keyword">Choroid</span> —
+                                    blood vessels; dark layer limiting stray light</li>
+                                <li class="fragment" style="margin-bottom: 6px;"><span class="keyword">Iris &amp;
+                                        pupil</span> — control light entering (2–8 mm)</li>
+                                <li class="fragment" style="margin-bottom: 6px;"><span class="keyword">Lens</span> —
+                                    flexible; focuses light, absorbs UV/IR</li>
+                                <li class="fragment"><span class="keyword">Retina</span> — inner surface where the
+                                    image forms</li>
+                            </ul>
+                        </div>
+                        <div class="placeholder fragment"
+                            style="flex: 1; border:1px dashed #999; padding:14px; border-radius:8px; font-size: 0.58em;">
+                            <em>[Figure placeholder]</em><br />
+                            <strong>Description:</strong> Cross-section of the human eye labeling cornea, iris,
+                            pupil, lens, choroid, retina, fovea, and blind spot.<br />
+                            <strong>Image prompt:</strong> A labeled anatomical cross-section diagram of the human
+                            eye (≈20 mm diameter), highlighting the light path onto the retina.
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Photoreceptors: Rods & Cones</h2>
+
+                    <table
+                        style="width: 100%; table-layout: fixed; border-collapse: collapse; margin-top: 16px; font-size: 0.65em;">
+                        <thead>
+                            <tr>
+                                <th
+                                    style="background: #2a7ae2; color: #fff; padding: 12px 16px; text-align: left; border-radius: 10px 0 0 0;">
+                                    Cones</th>
+                                <th
+                                    style="background: #b15a2b; color: #fff; padding: 12px 16px; text-align: left; border-radius: 0 10px 0 0;">
+                                    Rods</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="fragment">
+                                <td style="padding: 10px 16px; border-bottom: 1px solid #eee; vertical-align: top;">
+                                    6–7 million, in the central <span class="keyword">fovea</span></td>
+                                <td style="padding: 10px 16px; border-bottom: 1px solid #eee; vertical-align: top;">
+                                    75–150 million, spread across the retina</td>
+                            </tr>
+                            <tr class="fragment">
+                                <td style="padding: 10px 16px; border-bottom: 1px solid #eee; vertical-align: top;">
+                                    Sensitive to <span class="keyword">color</span> &amp; fine detail</td>
+                                <td style="padding: 10px 16px; border-bottom: 1px solid #eee; vertical-align: top;">
+                                    Sensitive to <span class="keyword">dim light</span>, no color</td>
+                            </tr>
+                            <tr class="fragment">
+                                <td style="padding: 10px 16px; vertical-align: top;"><span class="keyword">Photopic</span>
+                                    (bright / day) vision</td>
+                                <td style="padding: 10px 16px; vertical-align: top;"><span class="keyword">Scotopic</span>
+                                    (dim / night) vision</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <p class="fragment" style="font-size: 0.6em; color: #888; margin-top: 14px; text-align: center;">
+                        In dim light only rods fire — a colorful flower is seen in shades of gray.
+                    </p>
+                </section>
+
+                <section>
+                    <h2>Color Vision: Three Cone Types</h2>
+
+                    <div style="display: flex; gap: 14px; margin-top: 16px; font-size: 0.64em;">
+                        <div class="fragment"
+                            style="flex: 1; background: #f6ecfa; padding: 14px 16px; border-radius: 10px; text-align: center;">
+                            <strong style="color: #9727ae;">S cones</strong>
+                            <p style="margin: 6px 0 0 0; color: #555;">400–500 nm<br />violet → blue</p>
+                        </div>
+                        <div class="fragment"
+                            style="flex: 1; background: #eafaf1; padding: 14px 16px; border-radius: 10px; text-align: center;">
+                            <strong style="color: #27ae60;">M cones</strong>
+                            <p style="margin: 6px 0 0 0; color: #555;">500–600 nm<br />green</p>
+                        </div>
+                        <div class="fragment"
+                            style="flex: 1; background: #fdeeee; padding: 14px 16px; border-radius: 10px; text-align: center;">
+                            <strong style="color: #c0392b;">L cones</strong>
+                            <p style="margin: 6px 0 0 0; color: #555;">600–700 nm<br />red</p>
+                        </div>
+                    </div>
+
+                    <div class="fragment"
+                        style="margin-top: 18px; font-size: 0.64em; padding: 14px 20px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                        <p style="margin: 0;">
+                            <strong style="color: #b8860b;">Key Idea:</strong>
+                            Combining the responses of S, M, and L cones lets us perceive the full range of colors —
+                            the basis of <span class="keyword">trichromatic</span> vision.
+                        </p>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Image Formation & Focusing</h2>
+
+                    <ul style="font-size: 0.7em; margin-top: 10px;">
+                        <li class="fragment" style="margin-bottom: 8px;">Unlike a rigid glass lens, the eye's lens is
+                            <span class="keyword">flexible</span></li>
+                        <li class="fragment" style="margin-bottom: 8px;">Ciliary muscles <span class="keyword">flatten</span>
+                            the lens for distant objects, <span class="keyword">thicken</span> it for near objects —
+                            called <span class="keyword">accommodation</span></li>
+                        <li class="fragment">The lens-to-fovea distance varies from ~17 mm (far) to ~14 mm (near)</li>
+                    </ul>
+
+                    <div class="placeholder fragment"
+                        style="border:1px dashed #999; padding:14px; border-radius:8px; margin-top: 16px; font-size: 0.6em;">
+                        <em>[Figure placeholder]</em><br />
+                        <strong>Description:</strong> How the flexible lens focuses light from near vs. far objects
+                        onto the retina by changing its curvature.<br />
+                        <strong>Image prompt:</strong> Two side-by-side eye diagrams showing a flattened lens
+                        focusing a distant object and a thickened lens focusing a near object onto the fovea.
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">3.</span><br />
+                        Brightness Perception
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Brightness Adaptation</h2>
+
+                    <ul style="font-size: 0.7em; margin-top: 10px;">
+                        <li class="fragment" style="margin-bottom: 8px;">The eye perceives an enormous range of
+                            intensities — from dim threshold to glare</li>
+                        <li class="fragment" style="margin-bottom: 8px;">But <span class="keyword">not all at
+                                once</span>: it adapts to a current <span class="keyword">adaptation level</span>
+                            $B_a$</li>
+                        <li class="fragment" style="margin-bottom: 8px;">Subjective brightness is a <span
+                                class="keyword">logarithmic</span> function of light intensity</li>
+                        <li class="fragment">This is why, after the lights go out, the eye needs time to adjust
+                            before it can see</li>
+                    </ul>
+
+                    <div class="placeholder fragment"
+                        style="border:1px dashed #999; padding:12px; border-radius:8px; margin-top: 14px; font-size: 0.58em;">
+                        <em>[Figure placeholder]</em><br />
+                        <strong>Description:</strong> Subjective brightness vs. log intensity, showing the wide
+                        adaptation curve and a small local adaptation curve through $B_a$.<br />
+                        <strong>Image prompt:</strong> A plot of subjective brightness against log light intensity
+                        with the long overall adaptation range and a short branch curve passing through the
+                        adaptation level $B_a$.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Intensity Discrimination — Weber's Law</h2>
+
+                    <div class="question-box fragment" style="font-size: 0.7em; margin-top: 8px;">
+                        <p style="margin: 0;">
+                            <strong style="color: #b15a2b;">Experiment:</strong>
+                            On a uniform background of intensity $I$, we add $\Delta I$ to a central patch. The
+                            smallest $\Delta I_c$ the eye can detect defines the <span class="keyword">Weber
+                                ratio</span>.
+                        </p>
+                    </div>
+
+                    <div class="fragment"
+                        style="background: #f8f9fa; padding: 14px 20px; border-radius: 10px; border-left: 4px solid #2a7ae2; margin-top: 16px; font-size: 0.72em;">
+                        <p style="text-align: center; font-size: 1.3em; margin: 0;">
+                            $$\text{Weber ratio} = \frac{\Delta I_c}{I}$$
+                        </p>
+                    </div>
+
+                    <div style="display: flex; gap: 14px; margin-top: 16px; font-size: 0.6em;">
+                        <div class="fragment"
+                            style="flex: 1; background: #eafaf1; padding: 10px 14px; border-radius: 8px;">
+                            <strong style="color: #27ae60;">Small ratio</strong> → good discrimination
+                        </div>
+                        <div class="fragment"
+                            style="flex: 1; background: #fdeeee; padding: 10px 14px; border-radius: 8px;">
+                            <strong style="color: #c0392b;">Large ratio</strong> → poor discrimination
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Discrimination Depends on Background</h2>
+
+                    <ul style="font-size: 0.7em; margin-top: 10px;">
+                        <li class="fragment" style="margin-bottom: 8px;">Discrimination is <span class="keyword">poor
+                                in dim light</span> and improves as background brightness rises</li>
+                        <li class="fragment" style="margin-bottom: 8px;">Cones (photopic) discriminate <span
+                                class="keyword">better</span> than rods (scotopic)</li>
+                        <li class="fragment">Practical meaning: the eye is more sensitive to relative than to
+                            absolute intensity changes</li>
+                    </ul>
+
+                    <div class="placeholder fragment"
+                        style="border:1px dashed #999; padding:12px; border-radius:8px; margin-top: 14px; font-size: 0.58em;">
+                        <em>[Figure placeholder]</em><br />
+                        <strong>Description:</strong> Weber ratio ($\log \Delta I_c / I$) vs. $\log I$, with two
+                        curves for rod (scotopic) and cone (photopic) vision.<br />
+                        <strong>Image prompt:</strong> A plot showing the Weber ratio decreasing as background
+                        intensity increases, with two branches labeled "rods" and "cones".
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">4.</span><br />
+                        Perceptual Phenomena
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Perception ≠ Physical Intensity</h2>
+
+                    <div class="question-box fragment" style="font-size: 0.75em; margin-top: 10px;">
+                        <p style="margin: 0;">
+                            <strong style="color: #b15a2b;">Insight:</strong>
+                            Perceived brightness depends not only on an object's intensity, but also on its
+                            <span class="keyword">spatial context</span> and <span class="keyword">edges</span>.
+                        </p>
+                    </div>
+
+                    <p class="fragment" style="font-size: 0.72em; margin-top: 20px; color: #555;">
+                        Two famous demonstrations reveal this gap between the physical signal and what we see:
+                        <strong>Mach bands</strong> and <strong>simultaneous contrast</strong>.
+                    </p>
+                </section>
+
+                <section>
+                    <h2>Mach Bands</h2>
+
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                        <div class="fragment" style="flex: 1; font-size: 0.68em;">
+                            <p style="color: #555;">
+                                At the boundary between two uniform intensity regions, the eye perceives the edge as
+                                <span class="keyword">brighter</span> on the light side and <span
+                                    class="keyword">darker</span> on the dark side — even though intensity is
+                                constant within each stripe.
+                            </p>
+                            <p style="color: #555; margin-top: 10px;">
+                                This <em>edge enhancement</em> is caused by <span class="keyword">lateral
+                                    inhibition</span> in the retina.
+                            </p>
+                        </div>
+                        <div class="placeholder fragment"
+                            style="flex: 1; border:1px dashed #999; padding:14px; border-radius:8px; font-size: 0.58em;">
+                            <em>[Figure placeholder]</em><br />
+                            <strong>Description:</strong> A staircase of uniform gray stripes, with the actual vs.
+                            perceived intensity profiles overlaid, showing overshoot/undershoot at each edge.<br />
+                            <strong>Image prompt:</strong> A row of gray bands going dark→light, plus a graph of
+                            actual (flat steps) vs. perceived (with bright/dark spikes at edges) brightness.
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Simultaneous Contrast</h2>
+
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                        <div class="fragment" style="flex: 1; font-size: 0.68em;">
+                            <p style="color: #555;">
+                                A region's perceived brightness depends on its <span class="keyword">surrounding
+                                    background</span>.
+                            </p>
+                            <p style="color: #555; margin-top: 10px;">
+                                Identical gray squares appear <strong>lighter on a dark background</strong> and
+                                <strong>darker on a light background</strong> — though their physical intensity is
+                                the same.
+                            </p>
+                        </div>
+                        <div class="placeholder fragment"
+                            style="flex: 1; border:1px dashed #999; padding:14px; border-radius:8px; font-size: 0.58em;">
+                            <em>[Figure placeholder]</em><br />
+                            <strong>Description:</strong> Identical inner gray squares placed on progressively
+                            different backgrounds, appearing to differ in brightness.<br />
+                            <strong>Image prompt:</strong> Several panels each with the same middle-gray square on
+                            backgrounds ranging from black to white, showing the perceived brightness shift.
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Optical Illusions</h2>
+
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                        <div class="fragment" style="flex: 1; font-size: 0.68em;">
+                            <p style="color: #555;">
+                                The visual system fills in, completes, and sometimes <span class="keyword">invents</span>
+                                information that is not physically present.
+                            </p>
+                            <p style="color: #555; margin-top: 10px;">
+                                Illusions remind us that the eye is an <em>active interpreter</em>, not a passive
+                                camera.
+                            </p>
+                        </div>
+                        <div class="placeholder fragment"
+                            style="flex: 1; border:1px dashed #999; padding:14px; border-radius:8px; font-size: 0.58em;">
+                            <em>[Figure placeholder]</em><br />
+                            <strong>Description:</strong> A classic geometric optical illusion (e.g. illusory
+                            contours, equal lines that look unequal).<br />
+                            <strong>Image prompt:</strong> A well-known optical illusion such as the Kanizsa
+                            triangle or the Müller-Lyer arrows demonstrating perceived vs. actual geometry.
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Summary</h2>
+
+                    <ul style="font-size: 0.72em; margin-top: 16px;">
+                        <li class="fragment" style="margin-bottom: 10px;">Vision responds to the tiny <span
+                                class="keyword">visible band</span> of the electromagnetic spectrum.</li>
+                        <li class="fragment" style="margin-bottom: 10px;">The eye focuses light onto the retina;
+                            <span class="keyword">cones</span> give color/detail (photopic), <span
+                                class="keyword">rods</span> give dim-light vision (scotopic).</li>
+                        <li class="fragment" style="margin-bottom: 10px;">Brightness perception is <span
+                                class="keyword">logarithmic</span> and <span class="keyword">adaptive</span>;
+                            Weber's law governs discrimination.</li>
+                        <li class="fragment" style="margin-bottom: 10px;">Mach bands and simultaneous contrast show
+                            perception depends on <span class="keyword">context</span>, not just intensity.</li>
+                        <li class="fragment">These insights shape enhancement, color, and compression algorithms.</li>
+                    </ul>
+                </section>
+            </section>
+
+            <div class="footer">
+                Computer Vision: Human Visual Perception
+            </div>
+        </div>
+    </div>
+    <script src="revealjs/dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            controlsLayout: "edges",
+            slideNumber: true,
+            hashOneBasedIndex: true,
+            hash: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX],
+        });
+    </script>
+</body>
+
+</html>

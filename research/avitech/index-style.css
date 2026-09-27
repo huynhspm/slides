@@ -1,16 +1,44 @@
 :root {
-	--font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+	--font-sans:
+		system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 		"Noto Sans", "Helvetica Neue", Arial, sans-serif;
-	--bg: #f6eee6;
-	--panel: rgba(255, 255, 255, 0.88);
-	--panel-solid: rgba(255, 255, 255, 0.94);
-	--text: #18222d;
-	--muted: #6d635b;
-	--accent: #b15a2b;
-	--accent-dark: #7a3418;
-	--line: rgba(24, 34, 45, 0.12);
-	--line-strong: rgba(24, 34, 45, 0.18);
-	--shadow: 0 18px 40px rgba(56, 34, 24, 0.08);
+}
+
+/* ─── Light theme (default) — Research accent ─── */
+:root,
+:root[data-theme="light"] {
+	--bg: #e7f0f2;
+	--bg-glow-1: rgba(0, 137, 163, 0.14);
+	--bg-glow-2: rgba(130, 80, 196, 0.08);
+	--panel: rgba(19, 15, 26, 0.03);
+	--panel-solid: #ffffff;
+	--text: #18151f;
+	--muted: #6b6675;
+	--line: rgba(19, 15, 26, 0.1);
+	--line-strong: rgba(19, 15, 26, 0.16);
+	--shadow: 0 18px 40px rgba(19, 15, 26, 0.08);
+
+	--accent: #0089a3;
+	--accent-strong: #006e84;
+	--hero-base: #eef6f7;
+}
+
+/* ─── Dark theme (Dracula-refined) — Research accent ─── */
+:root[data-theme="dark"] {
+	--bg: #282a36;
+	--bg-glow-1: rgba(24, 154, 173, 0.12);
+	--bg-glow-2: rgba(157, 101, 232, 0.08);
+	--panel: rgba(255, 255, 255, 0.04);
+	--panel-solid: #2f3244;
+	--text: #f8f8f2;
+	--muted: #9aa0c3;
+	--line: rgba(255, 255, 255, 0.08);
+	--line-strong: rgba(255, 255, 255, 0.14);
+	--shadow: 0 18px 40px rgba(0, 0, 0, 0.4);
+
+	--accent: #3fb8cc;
+	--accent-strong: #189aad;
+	--hero-base: var(--panel-solid);
 }
 
 * {
@@ -26,23 +54,20 @@ body {
 	margin: 0;
 	color: var(--text);
 	font-family: var(--font-sans);
-	background: radial-gradient(
-			circle at top left,
-			rgba(177, 90, 43, 0.16),
-			transparent 30%
-		),
-		radial-gradient(
-			circle at bottom right,
-			rgba(116, 82, 56, 0.14),
-			transparent 32%
-		),
-		linear-gradient(180deg, #faf4ee 0%, #efe4d7 100%);
+	background:
+		radial-gradient(circle at top left, var(--bg-glow-1), transparent 32%),
+		radial-gradient(circle at bottom right, var(--bg-glow-2), transparent 32%),
+		var(--bg);
 	min-height: 100vh;
+	transition:
+		background-color 200ms ease,
+		color 200ms ease;
 }
 
 a {
-	color: var(--accent-dark);
+	color: var(--accent-strong);
 }
+
 a:hover {
 	color: var(--accent);
 }
@@ -63,13 +88,19 @@ a:hover {
 	border: 1px solid var(--line);
 	border-radius: 28px;
 	padding: 48px 40px 36px;
-	background: linear-gradient(
-		135deg,
-		rgba(255, 255, 255, 0.95) 0%,
-		rgba(255, 255, 255, 0.82) 100%
-	);
-	box-shadow: 0 24px 48px rgba(56, 34, 24, 0.1);
-	backdrop-filter: blur(10px);
+	background:
+		radial-gradient(
+			circle at 15% 20%,
+			color-mix(in srgb, var(--accent) 30%, transparent),
+			transparent 60%
+		),
+		radial-gradient(
+			circle at 85% 80%,
+			color-mix(in srgb, var(--accent-strong) 22%, transparent),
+			transparent 60%
+		),
+		var(--hero-base);
+	box-shadow: var(--shadow);
 	text-align: center;
 }
 
@@ -81,20 +112,62 @@ a:hover {
 	font-weight: 800;
 }
 
+.hero-period {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	margin: 18px 0 0;
+	padding: 6px 16px;
+	border-radius: 999px;
+	border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+	background: color-mix(in srgb, var(--accent) 12%, transparent);
+	color: var(--accent-strong);
+	font-size: 1.05rem;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	font-variant-numeric: tabular-nums;
+}
+
+:root[data-theme="dark"] .hero-period {
+	color: var(--accent);
+}
+
+.hero-text {
+	max-width: 90ch;
+	text-wrap: balance;
+	margin: 16px auto 0;
+	color: color-mix(in srgb, var(--text) 78%, var(--muted));
+	font-size: 1.2rem;
+	line-height: 1.6;
+}
+
 .hero-logo {
 	position: absolute;
 	top: 20px;
 	right: 20px;
 }
 
+/* logo sits on a white card so transparent / white parts stay visible in both themes */
 .hero-logo img {
-	width: auto;
+	display: block;
+	width: 108px;
+	height: 84px;
+	object-fit: contain;
+	box-sizing: content-box;
+	padding: 10px;
+	background: #fff;
+	border-radius: 18px;
+	border: 1px solid var(--line-strong);
+	box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
 }
 
 .hero-back {
 	position: absolute;
 	top: 24px;
 	left: 28px;
+	display: flex;
+	align-items: center;
+	gap: 10px;
 }
 
 .hero-back .secondary-link {
@@ -117,16 +190,53 @@ a:hover {
 	padding: 10px 14px;
 	border-radius: 14px;
 	border: 1px solid var(--line-strong);
-	background: rgba(255, 255, 255, 0.66);
-	color: var(--accent-dark);
+	background: var(--panel);
+	color: var(--accent-strong);
 	text-decoration: none;
 	font-weight: 700;
+	transition:
+		border-color 150ms ease,
+		background 150ms ease,
+		color 150ms ease;
 }
 
 .secondary-link:hover {
-	border-color: rgba(177, 90, 43, 0.3);
-	background: rgba(255, 255, 255, 0.9);
+	border-color: var(--accent);
+	background: var(--panel-solid);
 	color: var(--accent);
+}
+
+.theme-toggle {
+	width: 44px;
+	height: 44px;
+	flex: none;
+	border-radius: 999px;
+	border: 1px solid var(--line-strong);
+	background: var(--panel);
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition:
+		border-color 150ms ease,
+		background 150ms ease,
+		transform 150ms ease;
+}
+
+.theme-toggle:hover {
+	transform: translateY(-2px);
+	border-color: var(--accent);
+}
+
+.theme-toggle-icon {
+	font-size: 1.15rem;
+	line-height: 1;
+	display: none;
+}
+
+:root[data-theme="light"] .theme-toggle-icon--sun,
+:root[data-theme="dark"] .theme-toggle-icon--moon {
+	display: block;
 }
 
 /* ─── Stats Row ─── */
@@ -153,7 +263,7 @@ a:hover {
 .stat-number {
 	font-size: 1.8rem;
 	font-weight: 800;
-	color: var(--accent-dark);
+	color: var(--text);
 	line-height: 1;
 }
 
@@ -188,7 +298,7 @@ a:hover {
 
 .slides-table thead th {
 	padding: 18px 20px;
-	background: var(--accent-dark);
+	background: var(--accent-strong);
 	color: #fff;
 	font-size: 1.05rem;
 	text-align: center;
@@ -197,7 +307,19 @@ a:hover {
 
 .slides-table thead th:first-child {
 	border-top-left-radius: 14px;
-	width: 28%;
+	width: 5%;
+}
+
+.slides-table thead th:nth-child(3) {
+	width: 18%;
+}
+
+.slides-table thead th:nth-child(4) {
+	width: 15%;
+}
+
+.slides-table td:last-child {
+	white-space: nowrap;
 }
 
 .slides-table thead th:last-child {
@@ -205,35 +327,38 @@ a:hover {
 }
 
 .slides-table tbody tr:nth-child(even) {
-	background: rgba(177, 90, 43, 0.04);
+	background: var(--panel);
 }
 
 .slides-table tbody tr:hover {
-	background: rgba(177, 90, 43, 0.08);
+	background: color-mix(in srgb, var(--accent) 8%, transparent);
 }
 
 .slides-table td {
 	padding: 16px 20px;
 	vertical-align: top;
-	border-bottom: 1px solid rgba(24, 34, 45, 0.08);
+	border-bottom: 1px solid var(--line);
 	font-size: 0.95rem;
 	line-height: 1.65;
 	text-align: center;
+	color: var(--text);
+	font-weight: 700;
 }
 
 .slides-table td a {
-	color: #8d3e1f;
+	color: var(--text);
 	font-weight: 700;
 	text-decoration: none;
 }
 
 .slides-table td a:hover {
-	color: var(--accent);
+	color: var(--text);
 	text-decoration: underline;
 }
 
 .slides-table td:first-child {
 	font-weight: 700;
+	color: var(--muted);
 }
 
 /* ─── Footer ─── */
@@ -253,7 +378,7 @@ a:hover {
 }
 
 .footer-author a {
-	color: var(--accent-dark);
+	color: var(--accent-strong);
 	text-decoration: underline;
 	text-underline-offset: 2px;
 }
@@ -267,7 +392,19 @@ a:hover {
 		padding: 28px 16px 36px;
 	}
 	.hero {
-		padding: 28px 22px 22px;
+		padding: 68px 22px 22px;
+	}
+
+	.hero-back {
+		position: static;
+		justify-content: center;
+		margin: 0 0 12px;
+	}
+
+	.hero-logo {
+		position: static;
+		display: inline-block;
+		margin: 0 0 12px;
 	}
 	.stats-row {
 		gap: 20px;

@@ -69,3 +69,87 @@
 	background: #f7efe6;
 	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
+
+/* Placeholder text to be replaced when filling in a template deck */
+.reveal .todo {
+	color: #9a9a9a;
+	font-style: italic;
+}
+
+/* Numbered contents list */
+.reveal .contents-list {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	width: 80%;
+	margin: 0 auto;
+}
+
+.reveal .contents-item {
+	display: flex;
+	align-items: center;
+	padding: 8px 30px;
+	background: linear-gradient(to right, rgba(47, 62, 122, 0.12), transparent);
+	border-radius: 8px;
+	border-left: 4px solid #2f3e7a;
+}
+
+.reveal .contents-item .num {
+	font-weight: 700;
+	color: #2f3e7a;
+	width: 60px;
+	border-right: 2px solid rgba(150, 150, 150, 0.2);
+	margin-right: 25px;
+}
+
+.reveal .contents-item .label {
+	font-size: 0.85em;
+	font-weight: 500;
+	white-space: nowrap;
+}
+
+/* Card grid (work packages, outcomes) */
+.reveal .card-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 20px;
+	font-size: 0.6em;
+}
+
+.reveal .card {
+	padding: 16px 20px;
+	border-radius: 10px;
+	border-top: 4px solid #2f3e7a;
+	background: rgba(47, 62, 122, 0.06);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.reveal .card h4 {
+	margin: 0 0 8px;
+	font-size: 1.2em;
+	color: #2f3e7a;
+	text-transform: none;
+}
+
+/* Gantt-style timeline table */
+.reveal table.gantt {
+	width: 100%;
+	font-size: 0.5em;
+	border-collapse: collapse;
+}
+
+.reveal table.gantt th,
+.reveal table.gantt td {
+	border: 1px solid rgba(150, 150, 150, 0.3);
+	padding: 6px 8px;
+	text-align: center;
+}
+
+.reveal table.gantt td:first-child {
+	text-align: left;
+	white-space: nowrap;
+}
+
+.reveal table.gantt td.on {
+	background: #2f3e7a;
+}

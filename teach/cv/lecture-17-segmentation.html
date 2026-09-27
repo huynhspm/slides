@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/png" href="../../favicon.png">
+    <title>Semantic Segmentation</title>
+
+    <link rel="stylesheet" href="revealjs/dist/reset.css" />
+    <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+    <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+    <link rel="stylesheet" href="slide-style.css" />
+</head>
+
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <section>
+                    <h1>Computer Vision</h1>
+                    <h3>Semantic Segmentation</h3>
+                    <p>IAI · UET · VNU</p>
+                    <p>Presenter: Trinh Ngoc Huynh</p>
+                    <p>Email: <a href="mailto:huynhtn@vnu.edu.vn">huynhtn@vnu.edu.vn</a></p>
+                </section>
+
+                <section>
+                    <h2>Content</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; font-size: 0.7em;">
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #b15a2b;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #b15a2b; min-width: 40px; text-align: center;">1</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">The Segmentation Problem</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Pixel labeling; semantic,
+                                    instance, panoptic</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #2a7ae2; min-width: 40px; text-align: center;">2</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Classical Methods</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Thresholding, region
+                                    growing, clustering</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #27ae60; min-width: 40px; text-align: center;">3</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Deep Segmentation</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">FCN, encoder-decoder,
+                                    U-Net</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #e67e22; min-width: 40px; text-align: center;">4</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Evaluation & Applications</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">IoU / mIoU and real-world
+                                    uses</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">1.</span><br />
+                        The Segmentation Problem
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>What is Segmentation?</h2>
+
+                    <div class="question-box fragment" style="font-size: 0.72em; margin-top: 8px;">
+                        <p style="margin: 0;">
+                            <strong style="color: #b15a2b;">Task:</strong>
+                            Assign <span class="keyword">every pixel</span> a class label — the finest-grained image
+                            understanding.
+                        </p>
+                    </div>
+
+                    <ul style="font-size: 0.7em; margin-top: 16px;">
+                        <li class="fragment" style="margin-bottom: 8px;">Classification labels the whole image;
+                            detection draws boxes; segmentation labels <span class="keyword">pixels</span></li>
+                        <li class="fragment" style="margin-bottom: 8px;">Output is a <span class="keyword">label
+                                map</span> the same size as the input</li>
+                        <li class="fragment">Essential where precise boundaries matter</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Three Flavors</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px; font-size: 0.62em;">
+                        <div class="fragment"
+                            style="background: #eef5fc; padding: 10px 18px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <strong style="color: #2a7ae2;">Semantic</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Label each pixel by class — all cars are the
+                                same "car" region.</p>
+                        </div>
+                        <div class="fragment"
+                            style="background: #eafaf1; padding: 10px 18px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <strong style="color: #27ae60;">Instance</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Separate each object — car #1, car #2, … as
+                                distinct masks.</p>
+                        </div>
+                        <div class="fragment"
+                            style="background: #fffaf0; padding: 10px 18px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <strong style="color: #d35400;">Panoptic</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Both — "stuff" (sky, road) by class + "things"
+                                (cars) by instance.</p>
+                        </div>
+                    </div>
+
+                    <div class="placeholder fragment"
+                        style="border:1px dashed #999; padding:10px; border-radius:8px; margin-top: 12px; font-size: 0.56em;">
+                        <em>[Figure placeholder]</em><br />
+                        <strong>Description:</strong> The same street scene shown under semantic, instance, and
+                        panoptic segmentation.<br />
+                        <strong>Image prompt:</strong> Three color-coded masks of one photo: semantic (class
+                        colors), instance (per-object colors), panoptic (combined).
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">2.</span><br />
+                        Classical Methods
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Threshold & Region-Based</h2>
+
+                    <div style="display: flex; gap: 14px; margin-top: 16px; font-size: 0.62em;">
+                        <div class="fragment"
+                            style="flex: 1; background: #eef5fc; padding: 12px 16px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <strong style="color: #2a7ae2;">Thresholding</strong>
+                            <p style="margin: 6px 0 0 0; color: #555;">Split by intensity — e.g. <span class="keyword">Otsu's</span>
+                                method picks the threshold automatically.</p>
+                        </div>
+                        <div class="fragment"
+                            style="flex: 1; background: #eafaf1; padding: 12px 16px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <strong style="color: #27ae60;">Region growing</strong>
+                            <p style="margin: 6px 0 0 0; color: #555;">Start from seeds and merge similar neighboring
+                                pixels.</p>
+                        </div>
+                    </div>
+
+                    <p class="fragment" style="font-size: 0.62em; color: #555; margin-top: 14px;">
+                        <strong style="color:#9727ae;">Watershed</strong> treats intensity as a terrain and floods
+                        basins — good for touching objects.
+                    </p>
+                </section>
+
+                <section>
+                    <h2>Clustering-Based</h2>
+
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                        <div class="fragment" style="flex: 1; font-size: 0.66em;">
+                            <p style="color: #555;">Group pixels by feature similarity (color, position):</p>
+                            <ul style="margin-top: 10px;">
+                                <li style="margin-bottom: 6px;"><span class="keyword">k-means</span> on color values</li>
+                                <li style="margin-bottom: 6px;"><span class="keyword">Mean-shift</span> finds density
+                                    modes</li>
+                                <li><span class="keyword">Superpixels</span> (SLIC) group into coherent patches</li>
+                            </ul>
+                        </div>
+                        <div class="placeholder fragment"
+                            style="flex: 1; border:1px dashed #999; padding:14px; border-radius:8px; font-size: 0.56em;">
+                            <em>[Figure placeholder]</em><br />
+                            <strong>Description:</strong> An image over-segmented into superpixels, and a k-means
+                            color clustering result.<br />
+                            <strong>Image prompt:</strong> A photo divided into SLIC superpixels with outlined
+                            regions.
+                        </div>
+                    </div>
+
+                    <div class="fragment"
+                        style="margin-top: 12px; font-size: 0.6em; padding: 10px 16px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                        <p style="margin: 0;">
+                            <strong style="color: #b8860b;">Key Idea:</strong>
+                            Classical methods use low-level cues only — they don't know <em>what</em> the regions
+                            are.
+                        </p>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">3.</span><br />
+                        Deep Segmentation
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Fully Convolutional Networks</h2>
+
+                    <ul style="font-size: 0.68em; margin-top: 8px;">
+                        <li class="fragment" style="margin-bottom: 8px;">Replace the classifier's dense layers with
+                            <span class="keyword">convolutions</span> → output a spatial map</li>
+                        <li class="fragment" style="margin-bottom: 8px;">Predict a class for <span class="keyword">every
+                                pixel</span> in one pass</li>
+                        <li class="fragment" style="margin-bottom: 8px;">Downsampling loses resolution → need to
+                            <span class="keyword">upsample</span> back</li>
+                        <li class="fragment">Trained with per-pixel cross-entropy loss</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Encoder–Decoder & U-Net</h2>
+
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                        <div class="fragment" style="flex: 1; font-size: 0.64em;">
+                            <p style="color: #555;">An <span class="keyword">encoder</span> compresses; a <span
+                                    class="keyword">decoder</span> upsamples back to full resolution.</p>
+                            <ul style="margin-top: 10px;">
+                                <li style="margin-bottom: 6px;"><span class="keyword">Skip connections</span> carry
+                                    fine detail from encoder to decoder</li>
+                                <li style="margin-bottom: 6px;"><span class="keyword">U-Net</span> is the classic
+                                    design — dominant in medical imaging</li>
+                                <li>Later: dilated convolutions (DeepLab), transformers</li>
+                            </ul>
+                        </div>
+                        <div class="placeholder fragment"
+                            style="flex: 1; border:1px dashed #999; padding:14px; border-radius:8px; font-size: 0.56em;">
+                            <em>[Figure placeholder]</em><br />
+                            <strong>Description:</strong> The U-Net architecture — contracting encoder, expanding
+                            decoder, and skip connections forming the "U".<br />
+                            <strong>Image prompt:</strong> The classic U-shaped diagram with skip arrows between
+                            matching encoder/decoder levels.
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">4.</span><br />
+                        Evaluation & Applications
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Metrics: IoU & mIoU</h2>
+
+                    <div style="font-size: 0.66em;">
+                        <p class="fragment" style="color: #555;">Compare predicted and true masks per class:</p>
+
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 10px 16px; border-radius: 10px; border-left: 4px solid #2a7ae2; margin: 8px 0;">
+                            <p style="text-align: center; margin: 0;">
+                                $$\text{IoU} = \frac{|P \cap G|}{|P \cup G|}$$
+                            </p>
+                        </div>
+
+                        <ul style="margin-top: 6px;">
+                            <li class="fragment" style="margin-bottom: 6px;"><span class="keyword">mIoU</span> = mean
+                                IoU averaged over all classes — the standard metric</li>
+                            <li class="fragment" style="margin-bottom: 6px;">Pixel accuracy is also reported but
+                                misleads on imbalanced classes</li>
+                            <li class="fragment">Dice coefficient is common in medical imaging</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Applications</h2>
+
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 16px; font-size: 0.6em;">
+                        <div class="fragment" style="background: #f8f9fa; padding: 12px 16px; border-radius: 8px; border-left: 3px solid #b15a2b;">
+                            <strong style="color: #b15a2b;">Autonomous driving</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Road, lane, and obstacle maps.</p>
+                        </div>
+                        <div class="fragment" style="background: #f8f9fa; padding: 12px 16px; border-radius: 8px; border-left: 3px solid #2a7ae2;">
+                            <strong style="color: #2a7ae2;">Medical imaging</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Organ &amp; tumor delineation.</p>
+                        </div>
+                        <div class="fragment" style="background: #f8f9fa; padding: 12px 16px; border-radius: 8px; border-left: 3px solid #27ae60;">
+                            <strong style="color: #27ae60;">Satellite imagery</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Land use &amp; crop mapping.</p>
+                        </div>
+                        <div class="fragment" style="background: #f8f9fa; padding: 12px 16px; border-radius: 8px; border-left: 3px solid #e67e22;">
+                            <strong style="color: #d35400;">Photo editing</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Background removal, portrait mode.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Summary</h2>
+
+                    <ul style="font-size: 0.72em; margin-top: 16px;">
+                        <li class="fragment" style="margin-bottom: 10px;">Segmentation labels <span class="keyword">every
+                                pixel</span> — semantic, instance, or panoptic.</li>
+                        <li class="fragment" style="margin-bottom: 10px;">Classical methods use low-level cues:
+                            thresholding, region growing, clustering, watershed.</li>
+                        <li class="fragment" style="margin-bottom: 10px;">Deep models (<span class="keyword">FCN</span>,
+                            <span class="keyword">U-Net</span>) predict dense maps with encoder-decoder + skip
+                            connections.</li>
+                        <li class="fragment" style="margin-bottom: 10px;">Evaluated with <span class="keyword">IoU /
+                                mIoU</span>.</li>
+                        <li class="fragment">Next: understanding motion over time — object tracking.</li>
+                    </ul>
+                </section>
+            </section>
+
+            <div class="footer">
+                Computer Vision: Semantic Segmentation
+            </div>
+        </div>
+    </div>
+    <script src="revealjs/dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            controlsLayout: "edges",
+            slideNumber: true,
+            hashOneBasedIndex: true,
+            hash: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX],
+        });
+    </script>
+</body>
+
+</html>

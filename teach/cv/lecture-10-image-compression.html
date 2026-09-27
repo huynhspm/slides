@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/png" href="../../favicon.png">
+    <title>Image Compression</title>
+
+    <link rel="stylesheet" href="revealjs/dist/reset.css" />
+    <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+    <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+    <link rel="stylesheet" href="slide-style.css" />
+</head>
+
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <section>
+                    <h1>Computer Vision</h1>
+                    <h3>Image Compression</h3>
+                    <p>IAI · UET · VNU</p>
+                    <p>Presenter: Trinh Ngoc Huynh</p>
+                    <p>Email: <a href="mailto:huynhtn@vnu.edu.vn">huynhtn@vnu.edu.vn</a></p>
+                </section>
+
+                <section>
+                    <h2>Content</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; font-size: 0.7em;">
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #b15a2b;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #b15a2b; min-width: 40px; text-align: center;">1</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Fundamentals</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Why compress, ratio, and
+                                    types of redundancy</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #2a7ae2; min-width: 40px; text-align: center;">2</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Lossless Compression</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Entropy coding: Huffman,
+                                    run-length, predictive</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #27ae60; min-width: 40px; text-align: center;">3</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Lossy & Transform Coding</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">The DCT and block-based
+                                    coding</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #e67e22; min-width: 40px; text-align: center;">4</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">The JPEG Standard</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">The full pipeline and
+                                    quality trade-offs</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">1.</span><br />
+                        Fundamentals
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Why Compress?</h2>
+
+                    <div class="question-box fragment" style="font-size: 0.72em; margin-top: 8px;">
+                        <p style="margin: 0;">
+                            <strong style="color: #b15a2b;">Goal:</strong>
+                            Represent an image with <span class="keyword">fewer bits</span> by removing redundancy —
+                            saving storage and transmission bandwidth.
+                        </p>
+                    </div>
+
+                    <div class="fragment"
+                        style="background: #f8f9fa; padding: 14px 20px; border-radius: 10px; border-left: 4px solid #2a7ae2; margin-top: 16px; font-size: 0.72em;">
+                        <p style="text-align: center; font-size: 1.2em; margin: 0;">
+                            $$\text{Compression ratio} \; C = \frac{b}{b'}$$
+                        </p>
+                        <p style="text-align: center; margin: 8px 0 0 0; color: #666; font-size: 0.85em;">
+                            $b$ = original bits, $b'$ = compressed bits
+                        </p>
+                    </div>
+
+                    <p class="fragment" style="font-size: 0.64em; color: #888; text-align: center; margin-top: 14px;">
+                        A raw 24-bit HD image is ~6 MB — compression makes it practical to store and stream.
+                    </p>
+                </section>
+
+                <section>
+                    <h2>Three Kinds of Redundancy</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px; font-size: 0.62em;">
+                        <div class="fragment"
+                            style="background: #eef5fc; padding: 12px 18px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <strong style="color: #2a7ae2;">Coding redundancy</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Using more bits than needed — fixed-length
+                                codes waste space when symbols have unequal probabilities.</p>
+                        </div>
+                        <div class="fragment"
+                            style="background: #eafaf1; padding: 12px 18px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <strong style="color: #27ae60;">Spatial (& temporal) redundancy</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Neighboring pixels are highly correlated — the
+                                same information repeats across space (and video frames).</p>
+                        </div>
+                        <div class="fragment"
+                            style="background: #fffaf0; padding: 12px 18px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <strong style="color: #d35400;">Psychovisual redundancy</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Information the human eye cannot perceive — can
+                                be discarded with little visible loss.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Lossless vs. Lossy</h2>
+
+                    <table
+                        style="width: 100%; table-layout: fixed; border-collapse: collapse; margin-top: 20px; font-size: 0.68em;">
+                        <thead>
+                            <tr>
+                                <th
+                                    style="background: #27ae60; color: #fff; padding: 12px 16px; text-align: left; border-radius: 10px 0 0 0;">
+                                    Lossless</th>
+                                <th
+                                    style="background: #b15a2b; color: #fff; padding: 12px 16px; text-align: left; border-radius: 0 10px 0 0;">
+                                    Lossy</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="fragment">
+                                <td style="padding: 12px 16px; border-bottom: 1px solid #eee; vertical-align: top;">
+                                    Exact reconstruction</td>
+                                <td style="padding: 12px 16px; border-bottom: 1px solid #eee; vertical-align: top;">
+                                    Approximate reconstruction</td>
+                            </tr>
+                            <tr class="fragment">
+                                <td style="padding: 12px 16px; border-bottom: 1px solid #eee; vertical-align: top;">
+                                    Removes coding &amp; spatial redundancy</td>
+                                <td style="padding: 12px 16px; border-bottom: 1px solid #eee; vertical-align: top;">
+                                    Also removes psychovisual redundancy</td>
+                            </tr>
+                            <tr class="fragment">
+                                <td style="padding: 12px 16px; vertical-align: top;">Modest ratios (PNG, GIF)</td>
+                                <td style="padding: 12px 16px; vertical-align: top;">High ratios (JPEG)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">2.</span><br />
+                        Lossless Compression
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Entropy & Coding</h2>
+
+                    <div style="font-size: 0.68em;">
+                        <p class="fragment" style="color: #555;"><span class="keyword">Entropy</span> is the
+                            theoretical lower bound on average bits per symbol:</p>
+
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 12px 18px; border-radius: 10px; border-left: 4px solid #2a7ae2; margin: 10px 0;">
+                            <p style="text-align: center; margin: 0;">
+                                $$H = -\sum_{k} p_k \log_2 p_k \quad \text{(bits/symbol)}$$
+                            </p>
+                        </div>
+
+                        <ul style="margin-top: 6px;">
+                            <li class="fragment" style="margin-bottom: 6px;">Assign <span class="keyword">short
+                                    codes</span> to frequent symbols, long codes to rare ones</li>
+                            <li class="fragment">These variable-length codes are called <span class="keyword">entropy
+                                    codes</span></li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Huffman Coding</h2>
+
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                        <div class="fragment" style="flex: 1; font-size: 0.66em;">
+                            <p style="color: #555;">Builds an optimal <span class="keyword">prefix code</span> by
+                                repeatedly merging the two least-probable symbols into a binary tree.</p>
+                            <ul style="margin-top: 10px;">
+                                <li style="margin-bottom: 6px;">No code is a prefix of another → uniquely decodable</li>
+                                <li style="margin-bottom: 6px;">Optimal among symbol-by-symbol codes</li>
+                                <li>Used inside JPEG, PNG, ZIP</li>
+                            </ul>
+                        </div>
+                        <div class="placeholder fragment"
+                            style="flex: 1; border:1px dashed #999; padding:14px; border-radius:8px; font-size: 0.56em;">
+                            <em>[Figure placeholder]</em><br />
+                            <strong>Description:</strong> A Huffman tree built from symbol probabilities, with the
+                            resulting variable-length codewords.<br />
+                            <strong>Image prompt:</strong> A binary Huffman tree with leaves labeled by symbol +
+                            probability, and 0/1 edges giving each codeword.
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Run-Length & Predictive Coding</h2>
+
+                    <div style="display: flex; gap: 14px; margin-top: 16px; font-size: 0.64em;">
+                        <div class="fragment"
+                            style="flex: 1; background: #eef5fc; padding: 14px 18px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <strong style="color: #2a7ae2;">Run-Length Encoding (RLE)</strong>
+                            <p style="margin: 6px 0 0 0; color: #555;">Replace runs of identical pixels with (value,
+                                count) pairs. Great for large uniform regions.</p>
+                            <p style="margin: 8px 0 0 0; color: #888; font-size: 0.9em;">AAAAABBB → (A,5)(B,3)</p>
+                        </div>
+                        <div class="fragment"
+                            style="flex: 1; background: #eafaf1; padding: 14px 18px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <strong style="color: #27ae60;">Predictive (DPCM)</strong>
+                            <p style="margin: 6px 0 0 0; color: #555;">Store the <em>difference</em> between a pixel
+                                and a prediction from its neighbors — small differences compress well.</p>
+                        </div>
+                    </div>
+
+                    <div class="fragment"
+                        style="margin-top: 14px; font-size: 0.62em; padding: 12px 18px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                        <p style="margin: 0;">
+                            <strong style="color: #b8860b;">Key Idea:</strong>
+                            These attack <em>spatial</em> redundancy; entropy coding then attacks <em>coding</em>
+                            redundancy.
+                        </p>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">3.</span><br />
+                        Lossy & Transform Coding
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Transform Coding</h2>
+
+                    <ul style="font-size: 0.7em; margin-top: 10px;">
+                        <li class="fragment" style="margin-bottom: 8px;">Transform the image into a domain where energy
+                            is <span class="keyword">concentrated</span> in a few coefficients</li>
+                        <li class="fragment" style="margin-bottom: 8px;">Most coefficients become near-zero and can be
+                            <span class="keyword">discarded</span> or coarsely quantized</li>
+                        <li class="fragment">The <span class="keyword">Discrete Cosine Transform (DCT)</span> is the
+                            workhorse — a real-valued relative of the Fourier transform</li>
+                    </ul>
+
+                    <div class="placeholder fragment"
+                        style="border:1px dashed #999; padding:12px; border-radius:8px; margin-top: 14px; font-size: 0.58em;">
+                        <em>[Figure placeholder]</em><br />
+                        <strong>Description:</strong> An 8×8 image block transformed by the DCT, showing energy
+                        packed into the top-left low-frequency coefficients.<br />
+                        <strong>Image prompt:</strong> An 8×8 pixel block and its DCT coefficient block, with large
+                        values clustered at the top-left and near-zeros elsewhere.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Block-Based Coding</h2>
+
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                        <div class="fragment" style="flex: 1; font-size: 0.66em;">
+                            <p style="color: #555;">The image is split into small blocks (typically <span
+                                    class="keyword">8×8</span>), each transformed and quantized independently.</p>
+                            <ul style="margin-top: 10px;">
+                                <li style="margin-bottom: 6px;">Keeps computation local and fast</li>
+                                <li style="margin-bottom: 6px;">Quantization discards perceptually unimportant
+                                    high frequencies</li>
+                                <li>Too much compression → visible <span class="keyword">blocking artifacts</span></li>
+                            </ul>
+                        </div>
+                        <div class="placeholder fragment"
+                            style="flex: 1; border:1px dashed #999; padding:14px; border-radius:8px; font-size: 0.56em;">
+                            <em>[Figure placeholder]</em><br />
+                            <strong>Description:</strong> A heavily compressed image showing 8×8 blocking
+                            artifacts vs. the original.<br />
+                            <strong>Image prompt:</strong> A photo at high JPEG quality vs. very low quality with
+                            obvious 8×8 block artifacts.
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">4.</span><br />
+                        The JPEG Standard
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>The JPEG Pipeline</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px; font-size: 0.58em;">
+                        <div class="fragment"
+                            style="display: flex; gap: 14px; align-items: center; background: #f8f9fa; padding: 8px 18px; border-radius: 10px; border-left: 4px solid #b15a2b;">
+                            <div style="min-width: 28px; height: 28px; background: #b15a2b; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700;">1</div>
+                            <p style="margin: 0; color: #555;"><strong>Color transform</strong> — RGB → YCbCr,
+                                subsample chroma (eye is less sensitive to color)</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; gap: 14px; align-items: center; background: #f8f9fa; padding: 8px 18px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <div style="min-width: 28px; height: 28px; background: #2a7ae2; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700;">2</div>
+                            <p style="margin: 0; color: #555;"><strong>Block DCT</strong> — split into 8×8 blocks and
+                                transform each</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; gap: 14px; align-items: center; background: #f8f9fa; padding: 8px 18px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <div style="min-width: 28px; height: 28px; background: #27ae60; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700;">3</div>
+                            <p style="margin: 0; color: #555;"><strong>Quantize</strong> — divide by a quantization
+                                table (the <em>lossy</em> step)</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; gap: 14px; align-items: center; background: #f8f9fa; padding: 8px 18px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <div style="min-width: 28px; height: 28px; background: #e67e22; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700;">4</div>
+                            <p style="margin: 0; color: #555;"><strong>Entropy code</strong> — zig-zag scan, run-length
+                                + Huffman coding</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Quality vs. Compression</h2>
+
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                        <div class="fragment" style="flex: 1; font-size: 0.66em;">
+                            <p style="color: #555;">A <span class="keyword">quality factor</span> scales the
+                                quantization table:</p>
+                            <ul style="margin-top: 10px;">
+                                <li style="margin-bottom: 6px;">High quality → gentle quantization, large files</li>
+                                <li style="margin-bottom: 6px;">Low quality → aggressive quantization, small files,
+                                    artifacts</li>
+                                <li>Quality is measured with PSNR / SSIM (Lecture 9)</li>
+                            </ul>
+                        </div>
+                        <div class="placeholder fragment"
+                            style="flex: 1; border:1px dashed #999; padding:14px; border-radius:8px; font-size: 0.56em;">
+                            <em>[Figure placeholder]</em><br />
+                            <strong>Description:</strong> The same image at JPEG quality 90, 50, and 10 with file
+                            sizes, showing growing artifacts.<br />
+                            <strong>Image prompt:</strong> Three versions of one photo labeled Q=90, Q=50, Q=10
+                            with decreasing file size and increasing blockiness.
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Summary</h2>
+
+                    <ul style="font-size: 0.72em; margin-top: 16px;">
+                        <li class="fragment" style="margin-bottom: 10px;">Compression removes <span class="keyword">coding</span>,
+                            <span class="keyword">spatial</span>, and <span class="keyword">psychovisual</span>
+                            redundancy.</li>
+                        <li class="fragment" style="margin-bottom: 10px;"><span class="keyword">Lossless</span> coding
+                            (Huffman, RLE, DPCM) reconstructs exactly; <span class="keyword">lossy</span> coding
+                            trades quality for size.</li>
+                        <li class="fragment" style="margin-bottom: 10px;"><span class="keyword">Transform coding</span>
+                            with the DCT concentrates energy so most coefficients can be dropped.</li>
+                        <li class="fragment" style="margin-bottom: 10px;"><span class="keyword">JPEG</span>: color
+                            transform → 8×8 DCT → quantize → entropy code.</li>
+                        <li class="fragment">A quality factor controls the trade-off between file size and fidelity.</li>
+                    </ul>
+                </section>
+            </section>
+
+            <div class="footer">
+                Computer Vision: Image Compression
+            </div>
+        </div>
+    </div>
+    <script src="revealjs/dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            controlsLayout: "edges",
+            slideNumber: true,
+            hashOneBasedIndex: true,
+            hash: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX],
+        });
+    </script>
+</body>
+
+</html>

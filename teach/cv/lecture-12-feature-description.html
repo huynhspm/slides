@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/png" href="../../favicon.png">
+    <title>Feature Description</title>
+
+    <link rel="stylesheet" href="revealjs/dist/reset.css" />
+    <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+    <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+    <link rel="stylesheet" href="slide-style.css" />
+</head>
+
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <section>
+                    <h1>Computer Vision</h1>
+                    <h3>Feature Description</h3>
+                    <p>IAI · UET · VNU</p>
+                    <p>Presenter: Trinh Ngoc Huynh</p>
+                    <p>Email: <a href="mailto:huynhtn@vnu.edu.vn">huynhtn@vnu.edu.vn</a></p>
+                </section>
+
+                <section>
+                    <h2>Content</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; font-size: 0.7em;">
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #b15a2b;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #b15a2b; min-width: 40px; text-align: center;">1</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">From Detection to Description</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">What a descriptor is and
+                                    why invariance matters</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #2a7ae2; min-width: 40px; text-align: center;">2</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Texture Descriptors</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">LBP, GLCM, and Gabor
+                                    filters</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #27ae60; min-width: 40px; text-align: center;">3</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Gradient Descriptors</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">HOG and the SIFT
+                                    descriptor</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #e67e22; min-width: 40px; text-align: center;">4</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Shape Descriptors</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Contours and Hu
+                                    moments</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">1.</span><br />
+                        From Detection to Description
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Detection vs. Description</h2>
+
+                    <div class="question-box fragment" style="font-size: 0.72em; margin-top: 8px;">
+                        <p style="margin: 0;">
+                            <strong style="color: #b15a2b;">Descriptor:</strong>
+                            A <span class="keyword">vector</span> that summarizes the appearance around a feature,
+                            so two features can be compared numerically.
+                        </p>
+                    </div>
+
+                    <div style="display: flex; gap: 14px; margin-top: 16px; font-size: 0.64em;">
+                        <div class="fragment"
+                            style="flex: 1; background: #eef5fc; padding: 12px 16px; border-radius: 10px; text-align: center;">
+                            <strong style="color: #2a7ae2;">Detection</strong>
+                            <p style="margin: 6px 0 0 0; color: #555;"><em>Where</em> is the feature?</p>
+                        </div>
+                        <div class="fragment"
+                            style="flex: 1; background: #eafaf1; padding: 12px 16px; border-radius: 10px; text-align: center;">
+                            <strong style="color: #27ae60;">Description</strong>
+                            <p style="margin: 6px 0 0 0; color: #555;"><em>What</em> does it look like?</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Invariance: The Key Goal</h2>
+
+                    <p class="fragment" style="font-size: 0.7em; color: #555; margin-top: 6px;">
+                        A good descriptor gives the <span class="keyword">same vector</span> for the same physical
+                        point despite changes in:
+                    </p>
+
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 12px; font-size: 0.6em;">
+                        <div class="fragment" style="background: #f8f9fa; padding: 10px 16px; border-radius: 8px; border-left: 3px solid #2a7ae2;">
+                            <strong style="color: #2a7ae2;">Illumination</strong> — brightness/contrast</div>
+                        <div class="fragment" style="background: #f8f9fa; padding: 10px 16px; border-radius: 8px; border-left: 3px solid #27ae60;">
+                            <strong style="color: #27ae60;">Scale</strong> — object size</div>
+                        <div class="fragment" style="background: #f8f9fa; padding: 10px 16px; border-radius: 8px; border-left: 3px solid #e67e22;">
+                            <strong style="color: #d35400;">Rotation</strong> — orientation</div>
+                        <div class="fragment" style="background: #f8f9fa; padding: 10px 16px; border-radius: 8px; border-left: 3px solid #9727ae;">
+                            <strong style="color: #9727ae;">Viewpoint</strong> — small perspective change</div>
+                    </div>
+
+                    <div class="fragment"
+                        style="margin-top: 14px; font-size: 0.62em; padding: 12px 18px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                        <p style="margin: 0;">
+                            <strong style="color: #b8860b;">Key Idea:</strong>
+                            Invariance is what makes matching across different images possible.
+                        </p>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">2.</span><br />
+                        Texture Descriptors
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Local Binary Patterns (LBP)</h2>
+
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                        <div class="fragment" style="flex: 1; font-size: 0.64em;">
+                            <p style="color: #555;">Threshold each neighbor against the center pixel, read the
+                                bits as a binary number:</p>
+                            <ul style="margin-top: 10px;">
+                                <li style="margin-bottom: 6px;">8 neighbors → an 8-bit code per pixel</li>
+                                <li style="margin-bottom: 6px;">Histogram of codes describes local <span
+                                        class="keyword">texture</span></li>
+                                <li>Fast, and invariant to monotonic lighting changes</li>
+                            </ul>
+                        </div>
+                        <div class="placeholder fragment"
+                            style="flex: 1; border:1px dashed #999; padding:14px; border-radius:8px; font-size: 0.56em;">
+                            <em>[Figure placeholder]</em><br />
+                            <strong>Description:</strong> A 3×3 patch thresholded against its center, producing an
+                            8-bit LBP code, then a histogram over the image.<br />
+                            <strong>Image prompt:</strong> A 3×3 grid with center value, 0/1 thresholded neighbors,
+                            the binary code, and an LBP histogram.
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Gray-Level Co-occurrence Matrix (GLCM)</h2>
+
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                        <div class="fragment" style="flex: 1; font-size: 0.64em;">
+                            <p style="color: #555;">Counts how often pairs of gray levels occur at a given offset
+                                $(\Delta x, \Delta y)$.</p>
+                            <p style="color: #555; margin-top: 8px;">From it we compute texture statistics:</p>
+                            <ul style="margin-top: 6px;">
+                                <li style="margin-bottom: 4px;"><span class="keyword">Contrast</span>, <span
+                                        class="keyword">energy</span></li>
+                                <li style="margin-bottom: 4px;"><span class="keyword">Homogeneity</span>, <span
+                                        class="keyword">correlation</span></li>
+                                <li><span class="keyword">Entropy</span></li>
+                            </ul>
+                        </div>
+                        <div class="placeholder fragment"
+                            style="flex: 1; border:1px dashed #999; padding:14px; border-radius:8px; font-size: 0.56em;">
+                            <em>[Figure placeholder]</em><br />
+                            <strong>Description:</strong> A small image and its co-occurrence matrix for a
+                            horizontal offset, with derived statistics.<br />
+                            <strong>Image prompt:</strong> A tiny gray-level image next to its GLCM heatmap and a
+                            list of contrast/energy/homogeneity values.
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Gabor Filters</h2>
+
+                    <div style="font-size: 0.66em;">
+                        <p class="fragment" style="color: #555;">A <span class="keyword">Gabor filter</span> is a
+                            sinusoid modulated by a Gaussian — tuned to a frequency and orientation:</p>
+
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 10px 16px; border-radius: 10px; border-left: 4px solid #2a7ae2; margin: 8px 0;">
+                            <p style="text-align: center; margin: 0; font-size: 0.95em;">
+                                $$g(x,y) = e^{-\frac{x'^2 + \gamma^2 y'^2}{2\sigma^2}} \cos\!\Big(2\pi\frac{x'}{\lambda}
+                                + \psi\Big)$$
+                            </p>
+                        </div>
+
+                        <ul style="margin-top: 6px;">
+                            <li class="fragment" style="margin-bottom: 6px;">A <span class="keyword">bank</span> of
+                                Gabor filters at many scales &amp; orientations captures texture</li>
+                            <li class="fragment" style="margin-bottom: 6px;">Closely models the human visual cortex</li>
+                            <li class="fragment">Responses form a rich texture descriptor</li>
+                        </ul>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">3.</span><br />
+                        Gradient Descriptors
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Histogram of Oriented Gradients (HOG)</h2>
+
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                        <div class="fragment" style="flex: 1; font-size: 0.64em;">
+                            <p style="color: #555;">Describe a region by the distribution of gradient
+                                <span class="keyword">orientations</span>:</p>
+                            <ol style="margin-top: 8px;">
+                                <li style="margin-bottom: 6px;">Compute gradients over the patch</li>
+                                <li style="margin-bottom: 6px;">Divide into cells; build an orientation histogram
+                                    per cell</li>
+                                <li style="margin-bottom: 6px;">Normalize over blocks for lighting invariance</li>
+                                <li>Concatenate into one vector</li>
+                            </ol>
+                            <p style="color: #555; margin-top: 6px;">Classic for pedestrian detection.</p>
+                        </div>
+                        <div class="placeholder fragment"
+                            style="flex: 1; border:1px dashed #999; padding:14px; border-radius:8px; font-size: 0.56em;">
+                            <em>[Figure placeholder]</em><br />
+                            <strong>Description:</strong> A person image with the HOG cell grid and oriented
+                            gradient "stars" overlaid.<br />
+                            <strong>Image prompt:</strong> A pedestrian photo with a grid of cells, each showing a
+                            star of oriented gradient magnitudes.
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>The SIFT Descriptor</h2>
+
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                        <div class="fragment" style="flex: 1; font-size: 0.64em;">
+                            <p style="color: #555;"><span class="keyword">SIFT</span> (Scale-Invariant Feature
+                                Transform) builds a robust keypoint descriptor:</p>
+                            <ul style="margin-top: 8px;">
+                                <li style="margin-bottom: 6px;">Detect at scale-space extrema (DoG)</li>
+                                <li style="margin-bottom: 6px;">Assign a <span class="keyword">dominant
+                                        orientation</span> → rotation invariance</li>
+                                <li style="margin-bottom: 6px;">4×4 cells × 8 orientations → <strong>128-D</strong>
+                                    vector</li>
+                                <li>Normalized for illumination invariance</li>
+                            </ul>
+                        </div>
+                        <div class="placeholder fragment"
+                            style="flex: 1; border:1px dashed #999; padding:14px; border-radius:8px; font-size: 0.56em;">
+                            <em>[Figure placeholder]</em><br />
+                            <strong>Description:</strong> A keypoint patch rotated to its dominant orientation, its
+                            4×4 grid of 8-bin orientation histograms forming a 128-D vector.<br />
+                            <strong>Image prompt:</strong> The classic SIFT diagram — gradient patch on left, 4×4
+                            array of orientation histograms on right.
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Descriptor Families</h2>
+
+                    <table
+                        style="width: 100%; table-layout: fixed; border-collapse: collapse; margin-top: 16px; font-size: 0.6em;">
+                        <thead>
+                            <tr>
+                                <th style="background: #b15a2b; color: #fff; padding: 10px 14px; text-align: left; border-radius: 10px 0 0 0;">Descriptor</th>
+                                <th style="background: #2a7ae2; color: #fff; padding: 10px 14px; text-align: left;">Captures</th>
+                                <th style="background: #27ae60; color: #fff; padding: 10px 14px; text-align: left; border-radius: 0 10px 0 0;">Strength</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="fragment">
+                                <td style="padding: 8px 14px; border-bottom: 1px solid #eee;"><strong>LBP</strong></td>
+                                <td style="padding: 8px 14px; border-bottom: 1px solid #eee;">Local texture</td>
+                                <td style="padding: 8px 14px; border-bottom: 1px solid #eee;">Fast, lighting-robust</td>
+                            </tr>
+                            <tr class="fragment">
+                                <td style="padding: 8px 14px; border-bottom: 1px solid #eee;"><strong>Gabor</strong></td>
+                                <td style="padding: 8px 14px; border-bottom: 1px solid #eee;">Frequency &amp; orientation</td>
+                                <td style="padding: 8px 14px; border-bottom: 1px solid #eee;">Rich texture</td>
+                            </tr>
+                            <tr class="fragment">
+                                <td style="padding: 8px 14px; border-bottom: 1px solid #eee;"><strong>HOG</strong></td>
+                                <td style="padding: 8px 14px; border-bottom: 1px solid #eee;">Gradient shape</td>
+                                <td style="padding: 8px 14px; border-bottom: 1px solid #eee;">Object detection</td>
+                            </tr>
+                            <tr class="fragment">
+                                <td style="padding: 8px 14px;"><strong>SIFT</strong></td>
+                                <td style="padding: 8px 14px;">Keypoint appearance</td>
+                                <td style="padding: 8px 14px;">Scale &amp; rotation invariant</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">4.</span><br />
+                        Shape Descriptors
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Contour & Region Descriptors</h2>
+
+                    <ul style="font-size: 0.68em; margin-top: 8px;">
+                        <li class="fragment" style="margin-bottom: 8px;"><span class="keyword">Contour-based</span>:
+                            describe the object boundary — chain codes, Fourier descriptors, signatures</li>
+                        <li class="fragment" style="margin-bottom: 8px;"><span class="keyword">Region-based</span>:
+                            describe the filled shape — area, perimeter, compactness, moments</li>
+                        <li class="fragment">Useful when <em>shape</em>, not texture, is what distinguishes objects</li>
+                    </ul>
+
+                    <div class="placeholder fragment"
+                        style="border:1px dashed #999; padding:12px; border-radius:8px; margin-top: 12px; font-size: 0.58em;">
+                        <em>[Figure placeholder]</em><br />
+                        <strong>Description:</strong> A shape with its boundary traced and a few contour-descriptor
+                        values annotated.<br />
+                        <strong>Image prompt:</strong> A silhouette with its outline highlighted and labels for
+                        area, perimeter, and compactness.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Hu Moments</h2>
+
+                    <div style="font-size: 0.68em;">
+                        <p class="fragment" style="color: #555;">Seven <span class="keyword">Hu moments</span> are
+                            combinations of normalized central moments that are invariant to:</p>
+
+                        <div style="display: flex; gap: 12px; margin-top: 10px;">
+                            <div class="fragment" style="flex: 1; background: #eef5fc; padding: 10px 14px; border-radius: 8px; text-align: center;">
+                                <strong style="color: #2a7ae2;">Translation</strong></div>
+                            <div class="fragment" style="flex: 1; background: #eafaf1; padding: 10px 14px; border-radius: 8px; text-align: center;">
+                                <strong style="color: #27ae60;">Scale</strong></div>
+                            <div class="fragment" style="flex: 1; background: #f6ecfa; padding: 10px 14px; border-radius: 8px; text-align: center;">
+                                <strong style="color: #9727ae;">Rotation</strong></div>
+                        </div>
+
+                        <div class="fragment"
+                            style="margin-top: 14px; padding: 12px 18px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                            <p style="margin: 0;">
+                                <strong style="color: #b8860b;">Key Idea:</strong>
+                                A tiny 7-number descriptor that recognizes a shape no matter where, how big, or how
+                                rotated it is.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Summary</h2>
+
+                    <ul style="font-size: 0.72em; margin-top: 16px;">
+                        <li class="fragment" style="margin-bottom: 10px;">A <span class="keyword">descriptor</span>
+                            turns a feature's local appearance into a comparable vector.</li>
+                        <li class="fragment" style="margin-bottom: 10px;"><span class="keyword">Invariance</span> to
+                            lighting, scale, and rotation is the central design goal.</li>
+                        <li class="fragment" style="margin-bottom: 10px;">Texture: <span class="keyword">LBP</span>,
+                            <span class="keyword">GLCM</span>, <span class="keyword">Gabor</span>. Gradient:
+                            <span class="keyword">HOG</span>, <span class="keyword">SIFT</span>.</li>
+                        <li class="fragment" style="margin-bottom: 10px;">Shape: contour/region descriptors and
+                            invariant <span class="keyword">Hu moments</span>.</li>
+                        <li class="fragment">Next: using descriptors to <em>match</em> features across images.</li>
+                    </ul>
+                </section>
+            </section>
+
+            <div class="footer">
+                Computer Vision: Feature Description
+            </div>
+        </div>
+    </div>
+    <script src="revealjs/dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            controlsLayout: "edges",
+            slideNumber: true,
+            hashOneBasedIndex: true,
+            hash: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX],
+        });
+    </script>
+</body>
+
+</html>

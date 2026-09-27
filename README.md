@@ -18,12 +18,12 @@ Personal slide decks for **studying**, **researching**, and **teaching** — bui
 │   └── *.md
 │
 ├── study/                       # 📚 Studying
-│   ├── bachelor/                #    Bachelor — UET  ✅ available
+│   ├── bachelor/                #    Bachelor — UET  🎓 completed
 │   │   ├── index.html
 │   │   ├── assets/
 │   │   ├── plugin/
 │   │   └── revealjs/
-│   ├── master/                  #    Master — UET  ✅ available
+│   ├── master/                  #    Master — UET  🎓 completed
 │   │   ├── index.html
 │   │   ├── statistical-ml.html
 │   │   ├── thesis.html
@@ -31,7 +31,11 @@ Personal slide decks for **studying**, **researching**, and **teaching** — bui
 │   │   ├── assets/
 │   │   ├── plugin/
 │   │   └── revealjs/
-│   └── phd/                     #    PhD — VUB (coming soon, empty)
+│   └── phd/                     #    PhD — VUB  🟢 ongoing
+│       ├── index.html
+│       ├── assets/
+│       ├── plugin/
+│       └── revealjs/
 │
 ├── research/                    # 🔍 Researching
 │   ├── iai/                     #    IAI — UET  ✅ available
@@ -67,9 +71,9 @@ Each topic folder (`study/*`, `research/*`, `teach/*`) is a self-contained Revea
 
 | Track | Status | Content |
 |-------|--------|---------|
-| **Bachelor — UET** | ✅ Available | NLP, Thesis |
-| **Master — UET** | ✅ Available | Statistical ML, Thesis, Graduation Invitation |
-| **PhD — VUB** | 🔜 Coming soon | Courses, Thesis |
+| **Bachelor — UET** | 🎓 Completed | NLP, Thesis |
+| **Master — UET** | 🎓 Completed | Statistical ML, Thesis, Graduation Invitation |
+| **PhD — VUB** | 🟢 Ongoing | Courses, Thesis (decks coming soon) |
 
 ---
 
@@ -79,7 +83,7 @@ Each topic folder (`study/*`, `research/*`, `teach/*`) is a self-contained Revea
 |-----|------------|--------|
 | **IAI — UET** | Dr. Tran Quoc Long | AQF, MTMC, LDM |
 | **AVITECH — UET** | Prof. Dr. Nguyen Linh Trung | Seminars |
-| **AIMS — VUB** | Prof. Dr. Ir. Guy Nagels | Introduction |
+| **AIMS — VUB** | Prof. Dr. Ir. Guy Nagels | Self-Introduction, PhD Plan |
 
 ---
 

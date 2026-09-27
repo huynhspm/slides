@@ -1,6 +1,6 @@
 # IAI — UET — Research Presentations
 
-Research presentations at the **Intelligent Artificial Intelligence Lab (IAI)**, University of Engineering and Technology (UET), Vietnam National University, Hanoi.
+Research presentations at the **Institute for Artificial Intelligence (IAI)**, University of Engineering and Technology (UET), Vietnam National University, Hanoi.
 
 🌐 **Live:** [https://huynhspm.github.io/slides/research/iai/](https://huynhspm.github.io/slides/research/iai/)
 
@@ -20,12 +20,13 @@ Research presentations at the **Intelligent Artificial Intelligence Lab (IAI)**,
 
 ```
 research/iai/
-├── index.html              # Topic index page
+├── index.html              # Topic index page (light/dark theme toggle)
 ├── index-style.css         # Index page styles
 ├── package.json
 ├── gulpfile.js
 ├── assets/
-│   ├── iai.png             # IAI lab logo
+│   ├── img/
+│   │   └── iai.png         # IAI lab logo
 │   └── pdf/                # Presentation PDFs
 │       ├── AQF-2022.pdf
 │       ├── NCKH-2023.pdf

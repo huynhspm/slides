@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/png" href="../../favicon.png">
+    <title>Feature Matching</title>
+
+    <link rel="stylesheet" href="revealjs/dist/reset.css" />
+    <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+    <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+    <link rel="stylesheet" href="slide-style.css" />
+</head>
+
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <section>
+                    <h1>Computer Vision</h1>
+                    <h3>Feature Matching</h3>
+                    <p>IAI · UET · VNU</p>
+                    <p>Presenter: Trinh Ngoc Huynh</p>
+                    <p>Email: <a href="mailto:huynhtn@vnu.edu.vn">huynhtn@vnu.edu.vn</a></p>
+                </section>
+
+                <section>
+                    <h2>Content</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; font-size: 0.7em;">
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #b15a2b;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #b15a2b; min-width: 40px; text-align: center;">1</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Template Matching</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">SSD, SAD, and normalized
+                                    cross-correlation</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #2a7ae2; min-width: 40px; text-align: center;">2</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Descriptor Matching</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Distances, nearest
+                                    neighbor, ratio test</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #27ae60; min-width: 40px; text-align: center;">3</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Robust Estimation</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">RANSAC & geometric
+                                    verification</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #e67e22; min-width: 40px; text-align: center;">4</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Applications</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Stitching, retrieval,
+                                    tracking</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">1.</span><br />
+                        Template Matching
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>The Matching Problem</h2>
+
+                    <div class="question-box fragment" style="font-size: 0.72em; margin-top: 8px;">
+                        <p style="margin: 0;">
+                            <strong style="color: #b15a2b;">Goal:</strong>
+                            Find where a <span class="keyword">template</span> appears in an image — or find which
+                            features in two images correspond to the same point.
+                        </p>
+                    </div>
+
+                    <ul style="font-size: 0.7em; margin-top: 16px;">
+                        <li class="fragment" style="margin-bottom: 8px;">Slide the template over the image and score
+                            the similarity at each location</li>
+                        <li class="fragment" style="margin-bottom: 8px;">The best-scoring position is the match</li>
+                        <li class="fragment">The choice of <span class="keyword">similarity measure</span> is
+                            crucial</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>SSD & SAD</h2>
+
+                    <div style="display: flex; gap: 14px; margin-top: 14px; font-size: 0.62em;">
+                        <div class="fragment"
+                            style="flex: 1; background: #eef5fc; padding: 14px 18px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <strong style="color: #2a7ae2;">SSD — Sum of Squared Differences</strong>
+                            <p style="text-align: center; margin: 8px 0 0 0;">
+                                $$\sum_{x,y}\big(I(x,y) - T(x,y)\big)^2$$
+                            </p>
+                        </div>
+                        <div class="fragment"
+                            style="flex: 1; background: #eafaf1; padding: 14px 18px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <strong style="color: #27ae60;">SAD — Sum of Absolute Differences</strong>
+                            <p style="text-align: center; margin: 8px 0 0 0;">
+                                $$\sum_{x,y}\big|I(x,y) - T(x,y)\big|$$
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="fragment"
+                        style="margin-top: 14px; font-size: 0.62em; padding: 12px 18px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                        <p style="margin: 0;">
+                            <strong style="color: #b8860b;">Key Idea:</strong>
+                            Smaller = better match. Simple and fast, but <span class="keyword">sensitive to
+                                brightness changes</span>.
+                        </p>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Normalized Cross-Correlation (NCC)</h2>
+
+                    <div style="font-size: 0.62em;">
+                        <p class="fragment" style="color: #555;">Subtract the mean and normalize — robust to
+                            brightness and contrast changes:</p>
+
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 12px 16px; border-radius: 10px; border-left: 4px solid #9727ae; margin: 8px 0;">
+                            <p style="text-align: center; margin: 0; font-size: 0.95em;">
+                                $$\text{NCC} = \frac{\sum (I - \bar{I})(T - \bar{T})}
+                                {\sqrt{\sum (I - \bar{I})^2 \sum (T - \bar{T})^2}}$$
+                            </p>
+                        </div>
+
+                        <ul style="margin-top: 6px;">
+                            <li class="fragment" style="margin-bottom: 6px;">Ranges from $-1$ to $+1$; $+1$ is a
+                                perfect match</li>
+                            <li class="fragment" style="margin-bottom: 6px;">Geometrically, the <span class="keyword">dot
+                                    product of unit vectors</span></li>
+                            <li class="fragment">Invariant to linear intensity changes — the practical default</li>
+                        </ul>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">2.</span><br />
+                        Descriptor Matching
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Matching Descriptor Vectors</h2>
+
+                    <div style="font-size: 0.66em;">
+                        <p class="fragment" style="color: #555;">Match features by the distance between their
+                            descriptor vectors:</p>
+
+                        <div style="display: flex; gap: 12px; margin-top: 10px;">
+                            <div class="fragment"
+                                style="flex: 1; background: #eef5fc; padding: 10px 14px; border-radius: 8px; text-align: center;">
+                                <strong style="color: #2a7ae2;">Euclidean ($L_2$)</strong>
+                                <p style="margin: 4px 0 0 0; color: #555;">For real-valued descriptors (SIFT, HOG)</p>
+                            </div>
+                            <div class="fragment"
+                                style="flex: 1; background: #eafaf1; padding: 10px 14px; border-radius: 8px; text-align: center;">
+                                <strong style="color: #27ae60;">Hamming</strong>
+                                <p style="margin: 4px 0 0 0; color: #555;">For binary descriptors (ORB, BRIEF)</p>
+                            </div>
+                        </div>
+
+                        <p class="fragment" style="color: #555; margin-top: 12px;">The closest descriptor is the
+                            <span class="keyword">nearest neighbor</span> — but not every nearest neighbor is a true
+                            match.</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Lowe's Ratio Test</h2>
+
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                        <div class="fragment" style="flex: 1; font-size: 0.64em;">
+                            <p style="color: #555;">Compare the nearest and second-nearest neighbor distances:</p>
+                            <div
+                                style="background: #f8f9fa; padding: 12px 16px; border-radius: 10px; border-left: 4px solid #2a7ae2; margin: 10px 0;">
+                                <p style="text-align: center; margin: 0;">
+                                    $$\frac{d_1}{d_2} < 0.8 \;\Rightarrow\; \text{accept}$$
+                                </p>
+                            </div>
+                            <p style="color: #555;">A good match is <span class="keyword">much closer</span> than the
+                                next best — ambiguous matches are rejected.</p>
+                        </div>
+                        <div class="placeholder fragment"
+                            style="flex: 1; border:1px dashed #999; padding:14px; border-radius:8px; font-size: 0.56em;">
+                            <em>[Figure placeholder]</em><br />
+                            <strong>Description:</strong> Two images with feature matches drawn as lines; ambiguous
+                            matches filtered out by the ratio test.<br />
+                            <strong>Image prompt:</strong> A pair of photos of the same object with green lines
+                            connecting matched keypoints.
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">3.</span><br />
+                        Robust Estimation
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Outliers & Geometry</h2>
+
+                    <ul style="font-size: 0.7em; margin-top: 8px;">
+                        <li class="fragment" style="margin-bottom: 8px;">Even after the ratio test, some matches are
+                            <span class="keyword">wrong</span> (outliers)</li>
+                        <li class="fragment" style="margin-bottom: 8px;">True matches must obey a consistent <span
+                                class="keyword">geometric transform</span> (e.g. a homography)</li>
+                        <li class="fragment">We need to fit that transform while ignoring outliers</li>
+                    </ul>
+
+                    <div class="fragment"
+                        style="margin-top: 14px; font-size: 0.64em; padding: 12px 18px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                        <p style="margin: 0;">
+                            <strong style="color: #b8860b;">Key Idea:</strong>
+                            Geometric consistency separates real matches from random ones.
+                        </p>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>RANSAC</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px; font-size: 0.58em;">
+                        <div class="fragment"
+                            style="display: flex; gap: 14px; align-items: center; background: #f8f9fa; padding: 8px 18px; border-radius: 10px; border-left: 4px solid #b15a2b;">
+                            <div style="min-width: 26px; height: 26px; background: #b15a2b; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700;">1</div>
+                            <p style="margin: 0; color: #555;"><strong>Sample</strong> a minimal set of matches at
+                                random</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; gap: 14px; align-items: center; background: #f8f9fa; padding: 8px 18px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <div style="min-width: 26px; height: 26px; background: #2a7ae2; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700;">2</div>
+                            <p style="margin: 0; color: #555;"><strong>Fit</strong> a candidate model (e.g. homography)</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; gap: 14px; align-items: center; background: #f8f9fa; padding: 8px 18px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <div style="min-width: 26px; height: 26px; background: #27ae60; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700;">3</div>
+                            <p style="margin: 0; color: #555;"><strong>Count inliers</strong> that agree with the model</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; gap: 14px; align-items: center; background: #f8f9fa; padding: 8px 18px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <div style="min-width: 26px; height: 26px; background: #e67e22; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700;">4</div>
+                            <p style="margin: 0; color: #555;"><strong>Repeat</strong> and keep the model with the most
+                                inliers</p>
+                        </div>
+                    </div>
+
+                    <p class="fragment" style="font-size: 0.6em; color: #888; text-align: center; margin-top: 12px;">
+                        <span class="keyword">RAN</span>dom <span class="keyword">SA</span>mple <span
+                            class="keyword">C</span>onsensus — robust to many outliers.
+                    </p>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">4.</span><br />
+                        Applications
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Where Matching is Used</h2>
+
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 16px; font-size: 0.6em;">
+                        <div class="fragment" style="background: #f8f9fa; padding: 12px 16px; border-radius: 8px; border-left: 3px solid #b15a2b;">
+                            <strong style="color: #b15a2b;">Panorama stitching</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Match &amp; align overlapping photos.</p>
+                        </div>
+                        <div class="fragment" style="background: #f8f9fa; padding: 12px 16px; border-radius: 8px; border-left: 3px solid #2a7ae2;">
+                            <strong style="color: #2a7ae2;">Image retrieval</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Find similar images in a database.</p>
+                        </div>
+                        <div class="fragment" style="background: #f8f9fa; padding: 12px 16px; border-radius: 8px; border-left: 3px solid #27ae60;">
+                            <strong style="color: #27ae60;">3D reconstruction</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Structure-from-motion, SLAM.</p>
+                        </div>
+                        <div class="fragment" style="background: #f8f9fa; padding: 12px 16px; border-radius: 8px; border-left: 3px solid #e67e22;">
+                            <strong style="color: #d35400;">Object tracking</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Follow features across frames.</p>
+                        </div>
+                    </div>
+
+                    <div class="placeholder fragment"
+                        style="border:1px dashed #999; padding:10px; border-radius:8px; margin-top: 12px; font-size: 0.56em;">
+                        <em>[Figure placeholder]</em><br />
+                        <strong>Description:</strong> Two overlapping photos matched and blended into a panorama.<br />
+                        <strong>Image prompt:</strong> Two photos with match lines, then the stitched wide
+                        panorama below.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Summary</h2>
+
+                    <ul style="font-size: 0.72em; margin-top: 16px;">
+                        <li class="fragment" style="margin-bottom: 10px;"><span class="keyword">Template matching</span>
+                            scores similarity with SSD, SAD, or brightness-robust <span class="keyword">NCC</span>.</li>
+                        <li class="fragment" style="margin-bottom: 10px;"><span class="keyword">Descriptor matching</span>
+                            uses nearest neighbor with the <span class="keyword">ratio test</span> to reject
+                            ambiguity.</li>
+                        <li class="fragment" style="margin-bottom: 10px;"><span class="keyword">RANSAC</span> fits a
+                            geometric model while discarding outliers.</li>
+                        <li class="fragment" style="margin-bottom: 10px;">Together they enable stitching, retrieval,
+                            reconstruction, and tracking.</li>
+                        <li class="fragment">Next: replacing hand-crafted features with <em>learned</em>
+                            representations.</li>
+                    </ul>
+                </section>
+            </section>
+
+            <div class="footer">
+                Computer Vision: Feature Matching
+            </div>
+        </div>
+    </div>
+    <script src="revealjs/dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            controlsLayout: "edges",
+            slideNumber: true,
+            hashOneBasedIndex: true,
+            hash: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX],
+        });
+    </script>
+</body>
+
+</html>

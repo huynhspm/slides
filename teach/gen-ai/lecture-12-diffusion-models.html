@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/png" href="../../favicon.png">
+    <title>Denoising Diffusion Models</title>
+
+    <link rel="stylesheet" href="revealjs/dist/reset.css" />
+    <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+    <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+    <link rel="stylesheet" href="slide-style.css" />
+</head>
+
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <section>
+                    <h1>Generative AI</h1>
+                    <h3>Denoising Diffusion Models</h3>
+                    <p>IAI · UET · VNU</p>
+                    <p>Presenter: Trinh Ngoc Huynh</p>
+                    <p>Email: <a href="mailto:huynhtn@vnu.edu.vn">huynhtn@vnu.edu.vn</a></p>
+                </section>
+
+                <section>
+                    <h2>Content</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; font-size: 0.7em;">
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #b15a2b;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #b15a2b; min-width: 40px; text-align: center;">1</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">The Forward Process</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Adding noise on a fixed schedule, in closed form</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #2a7ae2; min-width: 40px; text-align: center;">2</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">The Reverse Process</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">From the variational bound to noise prediction</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #27ae60; min-width: 40px; text-align: center;">3</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Parameterization</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Epsilon, x0 and v prediction, and the U-Net</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #e67e22; min-width: 40px; text-align: center;">4</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Sampling</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Ancestral sampling, its cost, and why diffusion won</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">1.</span><br />
+                        The Forward Process
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Generation as Iterative Denoising</h2>
+                    <div class="question-box">
+                        Destroying an image with noise is <span class="keyword">easy</span>. If we can learn to undo one small step of it, we can generate.
+                    </div>
+                    <ul>
+                        <li class="fragment">No adversarial game, no invertibility constraint, no sequential ordering</li>
+                        <li class="fragment">Break one impossible jump into many easy steps</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Two Processes</h2>
+                    <ul>
+                        <li class="fragment"><strong>Forward:</strong> gradually add noise until only noise remains — <span class="keyword">fixed</span>, no learning</li>
+                        <li class="fragment"><strong>Reverse:</strong> gradually remove noise to recover data — <span class="keyword">learned</span></li>
+                    </ul>
+                    <div class="placeholder" style="border:1px dashed #999;padding:18px;border-radius:8px;">
+                        <em>[Figure: Forward and Reverse Diffusion]</em><br />
+                        <strong>Description:</strong> An image degrading into noise and being reconstructed step by step.<br />
+                        <strong>Image prompt:</strong> Two horizontal rows: top shows a clear image progressively noised to static; bottom shows static progressively denoised back to an image.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>The Forward Process</h2>
+                    <div class="question-box">
+                        $$ q(x_t \mid x_{t-1}) = \mathcal{N}\big(x_t; \sqrt{1-\beta_t}\, x_{t-1}, \beta_t I\big) $$
+                    </div>
+                    <ul>
+                        <li class="fragment">A small amount of Gaussian noise at each of \( T \) steps</li>
+                        <li class="fragment">\( \beta_t \) is the <span class="keyword">noise schedule</span></li>
+                        <li class="fragment">Scaling by \( \sqrt{1-\beta_t} \) keeps the variance bounded</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Closed Form</h2>
+                    <div class="question-box">
+                        $$ q(x_t \mid x_0) = \mathcal{N}\big(x_t; \sqrt{\bar{\alpha}_t}\, x_0, (1-\bar{\alpha}_t) I\big), \qquad \bar{\alpha}_t = \prod_{s=1}^{t}(1-\beta_s) $$
+                    </div>
+                    <ul>
+                        <li class="fragment">Jump to <span class="keyword">any</span> timestep in one shot</li>
+                        <li class="fragment">No need to simulate the chain during training</li>
+                        <li class="fragment">This is what makes training cheap</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Reparameterized</h2>
+                    <div class="question-box">
+                        $$ x_t = \sqrt{\bar{\alpha}_t}\, x_0 + \sqrt{1-\bar{\alpha}_t}\, \epsilon, \qquad \epsilon \sim \mathcal{N}(0, I) $$
+                    </div>
+                    <ul>
+                        <li class="fragment">A noisy sample is just a weighted blend of data and noise</li>
+                        <li class="fragment">As \( \bar{\alpha}_t \to 0 \), \( x_T \) becomes pure noise</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Noise Schedules</h2>
+                    <ul>
+                        <li class="fragment"><strong>Linear:</strong> \( \beta_t \) increases linearly — the original choice</li>
+                        <li class="fragment"><strong>Cosine:</strong> destroys information more gradually, better for images</li>
+                        <li class="fragment">The schedule decides how model capacity is spent across timesteps</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">2.</span><br />
+                        The Reverse Process
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>The Reverse Process</h2>
+                    <div class="question-box">
+                        $$ p_\theta(x_{t-1} \mid x_t) = \mathcal{N}\big(x_{t-1}; \mu_\theta(x_t, t), \Sigma_\theta(x_t,t)\big) $$
+                    </div>
+                    <ul>
+                        <li class="fragment">If \( \beta_t \) is small, the true reverse step is <span class="keyword">also Gaussian</span></li>
+                        <li class="fragment">So we only need to predict its mean</li>
+                        <li class="fragment">One shared network handles every timestep, conditioned on \( t \)</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Tractable Posterior</h2>
+                    <div class="question-box">
+                        $$ q(x_{t-1} \mid x_t, x_0) = \mathcal{N}\big(x_{t-1}; \tilde{\mu}_t(x_t, x_0), \tilde{\beta}_t I\big) $$
+                    </div>
+                    <ul>
+                        <li class="fragment">Conditioned on \( x_0 \), the reverse step is available in closed form</li>
+                        <li class="fragment">This gives us a target for the network to match</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Variational Bound</h2>
+                    <div class="question-box">
+                        $$ \mathcal{L} = \mathbb{E}_q\Big[\sum_{t>1} D_{\mathrm{KL}}\big(q(x_{t-1}\mid x_t, x_0) \,\|\, p_\theta(x_{t-1}\mid x_t)\big)\Big] + \ldots $$
+                    </div>
+                    <ul>
+                        <li class="fragment">The same ELBO machinery from Lecture 03</li>
+                        <li class="fragment">A sum of KLs between Gaussians — each in closed form</li>
+                        <li class="fragment">A diffusion model is a deep hierarchical VAE with a fixed encoder</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Simplification</h2>
+                    <div class="question-box">
+                        $$ \mathcal{L}_{\text{simple}} = \mathbb{E}_{t, x_0, \epsilon}\Big[\big\| \epsilon - \epsilon_\theta(x_t, t) \big\|^2 \Big] $$
+                    </div>
+                    <ul>
+                        <li class="fragment">Dropping the weights reduces everything to <span class="keyword">predicting the noise</span></li>
+                        <li class="fragment">Plain mean-squared error — remarkably stable</li>
+                        <li class="fragment">And empirically it produces <em>better</em> samples than the full bound</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Training in Four Lines</h2>
+                    <ul>
+                        <li class="fragment">Sample \( x_0 \) from the data and \( t \) uniformly</li>
+                        <li class="fragment">Sample \( \epsilon \sim \mathcal{N}(0,I) \), form \( x_t \) in closed form</li>
+                        <li class="fragment">Predict \( \epsilon_\theta(x_t, t) \)</li>
+                        <li class="fragment">Take a gradient step on the squared error</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">3.</span><br />
+                        Parameterization
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Three Equivalent Targets</h2>
+                    <ul>
+                        <li class="fragment"><strong>\( \epsilon \)-prediction:</strong> predict the noise — the standard choice</li>
+                        <li class="fragment"><strong>\( x_0 \)-prediction:</strong> predict the clean image directly</li>
+                        <li class="fragment"><strong>\( v \)-prediction:</strong> a blend of the two, more stable at high noise</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Why They Are Equivalent</h2>
+                    <div class="question-box">
+                        $$ \hat{x}_0 = \frac{x_t - \sqrt{1-\bar{\alpha}_t}\,\epsilon_\theta(x_t,t)}{\sqrt{\bar{\alpha}_t}} $$
+                    </div>
+                    <ul>
+                        <li class="fragment">Given \( x_t \), each target determines the others</li>
+                        <li class="fragment">The choice changes the <span class="keyword">loss weighting</span>, not the model class</li>
+                        <li class="fragment">\( v \)-prediction reappears in distillation in Lecture 18</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Network</h2>
+                    <ul>
+                        <li class="fragment">A <span class="keyword">U-Net</span>: encoder, bottleneck, decoder with skip connections</li>
+                        <li class="fragment">Skips preserve fine detail that the bottleneck would lose</li>
+                        <li class="fragment">The timestep \( t \) enters as a sinusoidal embedding</li>
+                        <li class="fragment">Self-attention at the lower resolutions</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">4.</span><br />
+                        Sampling
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Ancestral Sampling</h2>
+                    <div class="question-box">
+                        $$ x_{t-1} = \frac{1}{\sqrt{1-\beta_t}}\left(x_t - \frac{\beta_t}{\sqrt{1-\bar{\alpha}_t}}\, \epsilon_\theta(x_t,t)\right) + \sigma_t z $$
+                    </div>
+                    <ul>
+                        <li class="fragment">Start from \( x_T \sim \mathcal{N}(0,I) \)</li>
+                        <li class="fragment">Apply this update for \( t = T, \ldots, 1 \)</li>
+                        <li class="fragment">Add fresh noise \( z \) at every step except the last</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Cost</h2>
+                    <ul>
+                        <li class="fragment">DDPM used \( T = 1000 \) — that is <span class="keyword">1000 forward passes</span> per image</li>
+                        <li class="fragment">Orders of magnitude slower than a GAN</li>
+                        <li class="fragment">Lecture 13 attacks precisely this problem</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Why Diffusion Won</h2>
+                    <ul>
+                        <li class="fragment"><strong>Stable</strong> — one regression loss, no adversarial game</li>
+                        <li class="fragment"><strong>Diverse</strong> — likelihood-based training covers the modes</li>
+                        <li class="fragment"><strong>Scalable</strong> — quality improves predictably with compute</li>
+                        <li class="fragment"><strong>Controllable</strong> — conditioning slots in naturally</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Summary</h2>
+                    <ul>
+                        <li class="fragment">The forward process adds noise on a fixed schedule and has a <span class="keyword">closed form</span></li>
+                        <li class="fragment">The reverse process is learned, one Gaussian step at a time</li>
+                        <li class="fragment">The ELBO reduces to a simple <span class="keyword">noise-prediction</span> MSE</li>
+                        <li class="fragment">\( \epsilon \)-, \( x_0 \)- and \( v \)-prediction are reparameterizations of one another</li>
+                        <li class="fragment">Sampling is stable and diverse, but takes hundreds of steps</li>
+                    </ul>
+                </section>
+            </section>
+            <div class="footer">
+                Generative AI: Denoising Diffusion Models
+            </div>
+        </div>
+    </div>
+    <script src="revealjs/dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            controlsLayout: "edges",
+            slideNumber: true,
+            hashOneBasedIndex: true,
+            hash: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX],
+        });
+    </script>
+</body>
+
+</html>

@@ -4,11 +4,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="description"
-    content="Generative AI lecture slides at IAI – UET, covering VAE, GAN, Diffusion, and Flow-based models.">
+    content="Generative AI lecture slides at IAI – UET, covering autoregressive models, VAEs, GANs, normalizing flows, diffusion, latent diffusion, DiT, and flow matching.">
   <link rel="icon" type="image/png" href="../../favicon.png">
-  <title>GenAI</title>
+  <title>Generative AI</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="index-page.css">
+  <script>
+    (function () {
+      var saved = localStorage.getItem("theme");
+      var theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
 </head>
 
 <body>
@@ -20,26 +27,45 @@
         <a class="secondary-link" href="../../">
           <span class="back-arrow">◀</span> Back to main
         </a>
+        <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle light/dark theme">
+          <span class="theme-toggle-icon theme-toggle-icon--sun">☀️</span>
+          <span class="theme-toggle-icon theme-toggle-icon--moon">🌙</span>
+        </button>
       </div>
+      <div class="hero-logo hero-logo--emoji" aria-hidden="true">🌟</div>
       <h1>Generative AI</h1>
-      <p class="hero-text">Lecture slides for the Generative AI course.</p>
+      <p class="hero-text">A theoretical foundation in Generative AI, focusing on the
+        principles and mathematical foundations of modern image generation: from classical
+        <span class="nobr">likelihood-based</span> models to today's diffusion and
+        <span class="nobr">flow-based</span> methods.
+      </p>
+      <ul class="hero-tags" aria-label="Generative modeling paradigms covered">
+        <li>Autoregressive</li>
+        <li>VAE</li>
+        <li>GAN</li>
+        <li>Normalizing Flows</li>
+        <li>Diffusion</li>
+        <li>Latent Diffusion</li>
+        <li>DiT</li>
+        <li>Flow Matching</li>
+      </ul>
     </section>
 
     <!-- ─── STATS ─── -->
     <section class="stats-row" aria-label="Quick statistics">
       <div class="stat-item">
-        <span class="stat-number">1</span>
-        <span class="stat-label">Lecture</span>
+        <span class="stat-number">18</span>
+        <span class="stat-label">Lectures</span>
       </div>
       <div class="stat-divider" aria-hidden="true"></div>
       <div class="stat-item">
-        <span class="stat-number">1</span>
-        <span class="stat-label">Topic</span>
+        <span class="stat-number">5</span>
+        <span class="stat-label">Topics</span>
       </div>
       <div class="stat-divider" aria-hidden="true"></div>
       <div class="stat-item">
-        <span class="stat-number">1</span>
-        <span class="stat-label">Slide Deck</span>
+        <span class="stat-number">18</span>
+        <span class="stat-label">Available</span>
       </div>
     </section>
 
@@ -51,15 +77,115 @@
             <thead>
               <tr>
                 <th>#</th>
-                <th>Topic</th>
-                <th>Description</th>
+                <th>Lecture</th>
+                <th>Materials</th>
               </tr>
             </thead>
             <tbody>
+              <tr class="section-row">
+                <td colspan="3">Part 1: Foundations of Generative Modeling</td>
+              </tr>
               <tr>
                 <td>1</td>
-                <td><a href="lecture-01-overview.html">Overview</a></td>
-                <td>Introduction to generative modeling — likelihood vs sampling, major model families.</td>
+                <td>Introduction</td>
+                <td><a href="lecture-01-introduction.html" target="_blank" rel="noopener">Slide</a></td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>Probabilistic Foundations</td>
+                <td><a href="lecture-02-probabilistic-foundations.html" target="_blank" rel="noopener">Slide</a></td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>Latent Variable Models &amp; Variational Inference</td>
+                <td><a href="lecture-03-latent-variable-models.html" target="_blank" rel="noopener">Slide</a></td>
+              </tr>
+              <tr class="section-row">
+                <td colspan="3">Part 2: Likelihood-Based &amp; Latent Generative Models</td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>Autoregressive Models I: From Pixels to Probability</td>
+                <td><a href="lecture-04-autoregressive-1.html" target="_blank" rel="noopener">Slide</a></td>
+              </tr>
+              <tr>
+                <td>5</td>
+                <td>Autoregressive Models II: Transformers &amp; Visual Tokens</td>
+                <td><a href="lecture-05-autoregressive-2.html" target="_blank" rel="noopener">Slide</a></td>
+              </tr>
+              <tr>
+                <td>6</td>
+                <td>Variational Autoencoders</td>
+                <td><a href="lecture-06-vae.html" target="_blank" rel="noopener">Slide</a></td>
+              </tr>
+              <tr>
+                <td>7</td>
+                <td>Advanced VAEs &amp; Learned Visual Representations</td>
+                <td><a href="lecture-07-advanced-vae.html" target="_blank" rel="noopener">Slide</a></td>
+              </tr>
+              <tr>
+                <td>8</td>
+                <td>Normalizing Flows</td>
+                <td><a href="lecture-08-normalizing-flows.html" target="_blank" rel="noopener">Slide</a></td>
+              </tr>
+              <tr class="section-row">
+                <td colspan="3">Part 3: Implicit &amp; Energy-Based Models</td>
+              </tr>
+              <tr>
+                <td>9</td>
+                <td>Generative Adversarial Networks</td>
+                <td><a href="lecture-09-gan.html" target="_blank" rel="noopener">Slide</a></td>
+              </tr>
+              <tr>
+                <td>10</td>
+                <td>Advanced GANs &amp; Image Translation</td>
+                <td><a href="lecture-10-advanced-gan.html" target="_blank" rel="noopener">Slide</a></td>
+              </tr>
+              <tr>
+                <td>11</td>
+                <td>Energy-Based Models &amp; MCMC Sampling</td>
+                <td><a href="lecture-11-energy-based-models.html" target="_blank" rel="noopener">Slide</a></td>
+              </tr>
+              <tr class="section-row">
+                <td colspan="3">Part 4: Diffusion, Score &amp; Flow Matching</td>
+              </tr>
+              <tr>
+                <td>12</td>
+                <td>Denoising Diffusion Models</td>
+                <td><a href="lecture-12-diffusion-models.html" target="_blank" rel="noopener">Slide</a></td>
+              </tr>
+              <tr>
+                <td>13</td>
+                <td>Score-Based Generation &amp; Efficient Sampling</td>
+                <td><a href="lecture-13-score-based-models.html" target="_blank" rel="noopener">Slide</a></td>
+              </tr>
+              <tr>
+                <td>14</td>
+                <td>Latent &amp; Conditional Diffusion for Image Generation</td>
+                <td><a href="lecture-14-latent-diffusion.html" target="_blank" rel="noopener">Slide</a></td>
+              </tr>
+              <tr>
+                <td>15</td>
+                <td>Flow Matching &amp; Rectified Flow</td>
+                <td><a href="lecture-15-flow-matching.html" target="_blank" rel="noopener">Slide</a></td>
+              </tr>
+              <tr class="section-row">
+                <td colspan="3">Part 5: Visual GenAI: Evaluation, Scaling &amp; Practice</td>
+              </tr>
+              <tr>
+                <td>16</td>
+                <td>Evaluation of Generative Models</td>
+                <td><a href="lecture-16-evaluation.html" target="_blank" rel="noopener">Slide</a></td>
+              </tr>
+              <tr>
+                <td>17</td>
+                <td>Large-Scale Visual Generation &amp; Multimodal Conditioning</td>
+                <td><a href="lecture-17-multimodal-generation.html" target="_blank" rel="noopener">Slide</a></td>
+              </tr>
+              <tr>
+                <td>18</td>
+                <td>Efficient, Safe &amp; Deployable Visual GenAI</td>
+                <td><a href="lecture-18-deployment-and-frontiers.html" target="_blank" rel="noopener">Slide</a></td>
               </tr>
             </tbody>
           </table>
@@ -70,11 +196,23 @@
     <!-- ─── FOOTER ─── -->
     <footer class="footer">
       <p class="footer-author">
-        Built by <strong>Trịnh Ngọc Huỳnh</strong> · Slides powered by
+        Built by <strong>Trinh Ngoc Huynh</strong> · Slides powered by
         <a href="https://revealjs.com" target="_blank" rel="noopener">Reveal.js</a>
       </p>
     </footer>
   </main>
+
+  <script>
+    (function () {
+      var toggle = document.getElementById("theme-toggle");
+      toggle.addEventListener("click", function () {
+        var current = document.documentElement.getAttribute("data-theme");
+        var next = current === "dark" ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", next);
+        localStorage.setItem("theme", next);
+      });
+    })();
+  </script>
 </body>
 
 </html>

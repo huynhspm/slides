@@ -1,6 +1,6 @@
 # AVITECH — UET — Research Presentations
 
-Research presentations at the **Advanced Vietnamese Information Technology Lab (AVITECH)**, University of Engineering and Technology (UET), Vietnam National University, Hanoi.
+Research presentations at the **Advanced Institute of Engineering and Technology (AVITECH)**, University of Engineering and Technology (UET), Vietnam National University, Hanoi.
 
 🌐 **Live:** [https://huynhspm.github.io/slides/research/avitech/](https://huynhspm.github.io/slides/research/avitech/)
 

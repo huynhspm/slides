@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/png" href="../../favicon.png">
+    <title>Normalizing Flows</title>
+
+    <link rel="stylesheet" href="revealjs/dist/reset.css" />
+    <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+    <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+    <link rel="stylesheet" href="slide-style.css" />
+</head>
+
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <section>
+                    <h1>Generative AI</h1>
+                    <h3>Normalizing Flows</h3>
+                    <p>IAI · UET · VNU</p>
+                    <p>Presenter: Trinh Ngoc Huynh</p>
+                    <p>Email: <a href="mailto:huynhtn@vnu.edu.vn">huynhtn@vnu.edu.vn</a></p>
+                </section>
+
+                <section>
+                    <h2>Content</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; font-size: 0.7em;">
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #b15a2b;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #b15a2b; min-width: 40px; text-align: center;">1</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Invertible Models</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Change of variables and the determinant bottleneck</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #2a7ae2; min-width: 40px; text-align: center;">2</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Coupling Layers</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Engineering a triangular Jacobian</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #27ae60; min-width: 40px; text-align: center;">3</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">RealNVP and Glow</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Scaling flows to images</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #e67e22; min-width: 40px; text-align: center;">4</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Trade-offs</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">What flows buy, and what they cost</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">1.</span><br />
+                        Invertible Models
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>The Goal</h2>
+                    <div class="question-box">
+                        Get an <span class="keyword">exact</span> likelihood <em>and</em> fast sampling from the same model.
+                    </div>
+                    <ul>
+                        <li class="fragment">Autoregressive: exact likelihood, but slow sampling</li>
+                        <li class="fragment">VAE: fast sampling, but only a bound</li>
+                        <li class="fragment">Flows aim for both at once</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Invertible Transformations</h2>
+                    <div class="question-box">
+                        $$ x = f_\theta(z), \qquad z = f_\theta^{-1}(x) $$
+                    </div>
+                    <ul>
+                        <li class="fragment">\( f_\theta \) must be a <span class="keyword">bijection</span></li>
+                        <li class="fragment">Both directions must be computable</li>
+                        <li class="fragment">This forces \( z \) and \( x \) to have the same dimension</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Change of Variables</h2>
+                    <div class="question-box">
+                        $$ p_x(x) = p_z\big(f^{-1}(x)\big) \left| \det \frac{\partial f^{-1}}{\partial x} \right| $$
+                    </div>
+                    <ul>
+                        <li class="fragment">Exactly the identity from Lecture 02</li>
+                        <li class="fragment">The Jacobian determinant accounts for local volume change</li>
+                        <li class="fragment">Everything is exact — no bound anywhere</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Log-Likelihood</h2>
+                    <div class="question-box">
+                        $$ \log p_x(x) = \log p_z(z) + \log \left| \det \frac{\partial f^{-1}}{\partial x} \right| $$
+                    </div>
+                    <ul>
+                        <li class="fragment">Directly maximisable by gradient descent</li>
+                        <li class="fragment">The difficulty is entirely in that <span class="keyword">determinant</span></li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Determinant Bottleneck</h2>
+                    <ul>
+                        <li class="fragment">A general \( D \times D \) determinant costs \( O(D^3) \)</li>
+                        <li class="fragment">For a \( 256\times256\times3 \) image, \( D \approx 200{,}000 \)</li>
+                        <li class="fragment">So we must <span class="keyword">design</span> transforms with cheap determinants</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">2.</span><br />
+                        Coupling Layers
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Triangular Jacobians</h2>
+                    <div class="question-box">
+                        For a triangular matrix, \( \det = \prod_i J_{ii} \) — an \( O(D) \) product of the diagonal.
+                    </div>
+                    <ul>
+                        <li class="fragment">The whole field is built on engineering this structure</li>
+                        <li class="fragment">Restrict each dimension to depend only on earlier ones</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Coupling Layers</h2>
+                    <div class="question-box">
+                        $$ y_{1:d} = x_{1:d}, \qquad y_{d+1:D} = x_{d+1:D} \odot \exp(s(x_{1:d})) + t(x_{1:d}) $$
+                    </div>
+                    <ul>
+                        <li class="fragment">Split the input; leave one half <span class="keyword">untouched</span></li>
+                        <li class="fragment">Transform the other half conditioned on the first</li>
+                        <li class="fragment">\( s \) and \( t \) can be arbitrary neural networks</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Why Coupling Works</h2>
+                    <div class="question-box">
+                        $$ \log\left|\det J\right| = \sum_j s_j(x_{1:d}) $$
+                    </div>
+                    <ul>
+                        <li class="fragment">The Jacobian is triangular <span class="keyword">by construction</span></li>
+                        <li class="fragment">The determinant is just a sum of the scale outputs</li>
+                        <li class="fragment">Inversion is a simple algebraic rearrangement</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Alternating the Split</h2>
+                    <ul>
+                        <li class="fragment">One coupling layer leaves half the input unchanged</li>
+                        <li class="fragment"><span class="keyword">Permute</span> the split between layers so everything gets transformed</li>
+                        <li class="fragment">Depth compensates for each layer's restricted form</li>
+                    </ul>
+                    <div class="placeholder" style="border:1px dashed #999;padding:18px;border-radius:8px;">
+                        <em>[Figure: Coupling Layer]</em><br />
+                        <strong>Description:</strong> Input split in two, one half conditioning an affine transform of the other.<br />
+                        <strong>Image prompt:</strong> A block diagram: input split into x1 and x2; x1 passes through unchanged and into networks s and t; x2 scaled and shifted; outputs concatenated.
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">3.</span><br />
+                        RealNVP and Glow
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>RealNVP</h2>
+                    <ul>
+                        <li class="fragment">Stacks affine coupling layers with alternating masks</li>
+                        <li class="fragment">Checkerboard and channel-wise masking patterns</li>
+                        <li class="fragment">Multi-scale architecture: factor out dimensions as depth increases</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Glow</h2>
+                    <ul>
+                        <li class="fragment">Adds <span class="keyword">invertible 1×1 convolutions</span> as learned permutations</li>
+                        <li class="fragment">Actnorm replaces batch normalisation</li>
+                        <li class="fragment">Demonstrated high-resolution faces with semantic latent editing</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Sampling</h2>
+                    <div class="question-box">
+                        $$ z \sim p_z(z), \qquad x = f_\theta(z) $$
+                    </div>
+                    <ul>
+                        <li class="fragment">A single forward pass — no sequential loop, no iteration</li>
+                        <li class="fragment">Genuinely fast at generation time</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">4.</span><br />
+                        Trade-offs
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Strengths</h2>
+                    <ul>
+                        <li class="fragment"><span class="keyword">Exact</span> likelihood — not a bound</li>
+                        <li class="fragment">Fast one-pass sampling</li>
+                        <li class="fragment">Exact latent inference by running the model backwards</li>
+                        <li class="fragment">Stable maximum-likelihood training</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Limitations</h2>
+                    <ul>
+                        <li class="fragment">The latent must have the <span class="keyword">same dimension</span> as the data</li>
+                        <li class="fragment">Invertibility restricts the architecture severely</li>
+                        <li class="fragment">Very deep stacks are needed, so memory cost is high</li>
+                        <li class="fragment">Sample quality lags GANs and diffusion</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Comparing the Three Families So Far</h2>
+                    <ul>
+                        <li class="fragment"><strong>Autoregressive:</strong> exact likelihood, slow sampling</li>
+                        <li class="fragment"><strong>VAE:</strong> bound only, fast sampling, compressed latent</li>
+                        <li class="fragment"><strong>Flows:</strong> exact likelihood, fast sampling, no compression</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Where Flows Reappear</h2>
+                    <ul>
+                        <li class="fragment">The continuous-time view leads to neural ODEs</li>
+                        <li class="fragment">That path arrives at <span class="keyword">flow matching</span> in Lecture 15</li>
+                        <li class="fragment">The transport idea outlives this particular architecture</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Summary</h2>
+                    <ul>
+                        <li class="fragment">Flows model data as an <span class="keyword">invertible</span> map from a simple density</li>
+                        <li class="fragment">The change-of-variables formula gives an exact likelihood</li>
+                        <li class="fragment">The Jacobian determinant must be cheap — hence <span class="keyword">coupling layers</span></li>
+                        <li class="fragment">RealNVP and Glow scale the idea to images</li>
+                        <li class="fragment">Exact likelihood and fast sampling, paid for with architectural rigidity</li>
+                    </ul>
+                </section>
+            </section>
+            <div class="footer">
+                Generative AI: Normalizing Flows
+            </div>
+        </div>
+    </div>
+    <script src="revealjs/dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            controlsLayout: "edges",
+            slideNumber: true,
+            hashOneBasedIndex: true,
+            hash: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX],
+        });
+    </script>
+</body>
+
+</html>

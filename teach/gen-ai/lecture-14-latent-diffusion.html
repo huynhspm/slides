@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/png" href="../../favicon.png">
+    <title>Latent & Conditional Diffusion for Image Generation</title>
+
+    <link rel="stylesheet" href="revealjs/dist/reset.css" />
+    <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+    <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+    <link rel="stylesheet" href="slide-style.css" />
+</head>
+
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <section>
+                    <h1>Generative AI</h1>
+                    <h3>Latent & Conditional Diffusion for Image Generation</h3>
+                    <p>IAI · UET · VNU</p>
+                    <p>Presenter: Trinh Ngoc Huynh</p>
+                    <p>Email: <a href="mailto:huynhtn@vnu.edu.vn">huynhtn@vnu.edu.vn</a></p>
+                </section>
+
+                <section>
+                    <h2>Content</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; font-size: 0.7em;">
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #b15a2b;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #b15a2b; min-width: 40px; text-align: center;">1</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Why Latent Space</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">The cost of pixel-space diffusion and how compression fixes it</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #2a7ae2; min-width: 40px; text-align: center;">2</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">The U-Net</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Architecture, time embedding and attention</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #27ae60; min-width: 40px; text-align: center;">3</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Text Conditioning</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Text encoders, cross-attention and Stable Diffusion</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #e67e22; min-width: 40px; text-align: center;">4</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Control</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Image-to-image, inpainting and ControlNet</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #8e44ad;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #8e44ad; min-width: 40px; text-align: center;">5</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">The Complete Picture</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">How the parts fit, and what still fails</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">1.</span><br />
+                        Why Latent Space
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>The Cost of Pixel Space</h2>
+                    <ul>
+                        <li class="fragment">A \( 512\times512\times3 \) image is <span class="keyword">786,432</span> dimensions</li>
+                        <li class="fragment">Every one of 50+ denoising steps runs at that resolution</li>
+                        <li class="fragment">Training such a model costs hundreds of GPU-days</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Most Pixels Are Not Semantic</h2>
+                    <ul>
+                        <li class="fragment">Most bits encode imperceptible high-frequency detail</li>
+                        <li class="fragment">Diffusion wastes capacity modelling texture noise</li>
+                        <li class="fragment">Separate <span class="keyword">perceptual compression</span> from semantic generation</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Latent Diffusion</h2>
+                    <div class="question-box">
+                        Run the entire diffusion process inside a <span class="keyword">compressed latent space</span> learned by an autoencoder.
+                    </div>
+                    <ul>
+                        <li class="fragment">Encode once: \( z = \mathcal{E}(x) \)</li>
+                        <li class="fragment">Diffuse and denoise in \( z \)</li>
+                        <li class="fragment">Decode once: \( \hat{x} = \mathcal{D}(z) \)</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Compression Factor</h2>
+                    <ul>
+                        <li class="fragment">\( 512\times512\times3 \rightarrow 64\times64\times4 \) is a <span class="keyword">48×</span> reduction</li>
+                        <li class="fragment">Training and sampling cost fall by a similar factor</li>
+                        <li class="fragment">This is what put text-to-image on consumer GPUs</li>
+                    </ul>
+                    <div class="placeholder" style="border:1px dashed #999;padding:18px;border-radius:8px;">
+                        <em>[Figure: Latent Diffusion Pipeline]</em><br />
+                        <strong>Description:</strong> Encoder, diffusion in latent space, and decoder back to pixels.<br />
+                        <strong>Image prompt:</strong> Left-to-right: image into VAE encoder, small latent grid, U-Net denoising loop inside the latent, then decoder back to a full image.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>The Autoencoder Matters</h2>
+                    <ul>
+                        <li class="fragment">Trained with perceptual and adversarial losses (Lecture 07)</li>
+                        <li class="fragment">Mild KL regularisation keeps the latent well-scaled</li>
+                        <li class="fragment">If the decoder cannot render it, no diffusion model can generate it</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">2.</span><br />
+                        The U-Net
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>The U-Net Backbone</h2>
+                    <ul>
+                        <li class="fragment">Downsampling encoder, bottleneck, upsampling decoder</li>
+                        <li class="fragment"><span class="keyword">Skip connections</span> carry detail across the bottleneck</li>
+                        <li class="fragment">Residual blocks at each resolution</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Time Conditioning</h2>
+                    <div class="question-box">
+                        $$ \text{emb}(t) = \big[\sin(\omega_k t), \cos(\omega_k t)\big]_{k=1}^{K} $$
+                    </div>
+                    <ul>
+                        <li class="fragment">One network serves <span class="keyword">all</span> timesteps</li>
+                        <li class="fragment">A sinusoidal embedding is projected into every residual block</li>
+                        <li class="fragment">The network learns how much noise to expect at each \( t \)</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Attention in the U-Net</h2>
+                    <ul>
+                        <li class="fragment">Self-attention at the lower resolutions</li>
+                        <li class="fragment">Convolutions alone cannot relate distant regions</li>
+                        <li class="fragment">This is also where the text conditioning will enter</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">3.</span><br />
+                        Text Conditioning
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Encoding the Prompt</h2>
+                    <ul>
+                        <li class="fragment">A frozen text encoder maps the prompt to a sequence of embeddings</li>
+                        <li class="fragment">CLIP or T5 — pretrained, not learned with the diffusion model</li>
+                        <li class="fragment">Text quality bounds image quality</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Cross-Attention</h2>
+                    <div class="question-box">
+                        $$ \text{Attention}(Q, K, V), \qquad Q = W_Q \varphi(z_t), \quad K = W_K \tau(c), \quad V = W_V \tau(c) $$
+                    </div>
+                    <ul>
+                        <li class="fragment"><strong>Queries</strong> come from the image latent</li>
+                        <li class="fragment"><strong>Keys and values</strong> come from the text embeddings</li>
+                        <li class="fragment">Every spatial position asks: <em>which words apply to me?</em></li>
+                    </ul>
+                    <div class="placeholder" style="border:1px dashed #999;padding:18px;border-radius:8px;">
+                        <em>[Figure: Cross-Attention Map]</em><br />
+                        <strong>Description:</strong> Attention weights linking prompt words to image regions.<br />
+                        <strong>Image prompt:</strong> An image with heat-map overlays, one per prompt word, showing which region each word attends to.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Where Conditioning Enters</h2>
+                    <ul>
+                        <li class="fragment">Cross-attention layers sit inside every U-Net block</li>
+                        <li class="fragment">The condition therefore influences <span class="keyword">every</span> resolution</li>
+                        <li class="fragment">Combined with classifier-free guidance from Lecture 13</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Stable Diffusion, Assembled</h2>
+                    <ul>
+                        <li class="fragment"><strong>VAE</strong> — pixels ↔ latent</li>
+                        <li class="fragment"><strong>U-Net</strong> — denoising inside the latent</li>
+                        <li class="fragment"><strong>Text encoder</strong> — prompt to embeddings</li>
+                        <li class="fragment"><strong>Cross-attention</strong> — the link between the two</li>
+                        <li class="fragment"><strong>Scheduler</strong> — the sampling trajectory</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">4.</span><br />
+                        Control
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Image-to-Image</h2>
+                    <ul>
+                        <li class="fragment">Encode the source image, then add noise only <span class="keyword">partway</span></li>
+                        <li class="fragment">Denoise from there with the new prompt</li>
+                        <li class="fragment">The noise level controls how much of the original survives</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Inpainting</h2>
+                    <div class="question-box">
+                        $$ x_{t-1} \leftarrow m \odot x_{t-1}^{\text{known}} + (1-m) \odot x_{t-1}^{\text{generated}} $$
+                    </div>
+                    <ul>
+                        <li class="fragment">At each step, overwrite the known region with the true noisy image</li>
+                        <li class="fragment">Only the masked region is genuinely generated</li>
+                        <li class="fragment">Context flows in through attention, so the fill is coherent</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Limits of Prompting</h2>
+                    <ul>
+                        <li class="fragment">Text cannot specify exact pose, layout or geometry</li>
+                        <li class="fragment">"A person sitting" cannot express <em>which</em> pose</li>
+                        <li class="fragment">We need <span class="keyword">spatial</span> conditioning</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>ControlNet</h2>
+                    <ul>
+                        <li class="fragment">Clone the U-Net encoder as a trainable copy; freeze the original</li>
+                        <li class="fragment">Connect them with <span class="keyword">zero-initialised</span> convolutions</li>
+                        <li class="fragment">Training starts as an exact no-op and adds control gradually</li>
+                        <li class="fragment">Conditions: edges, depth, pose, segmentation, scribbles</li>
+                    </ul>
+                    <div class="placeholder" style="border:1px dashed #999;padding:18px;border-radius:8px;">
+                        <em>[Figure: ControlNet Conditioning]</em><br />
+                        <strong>Description:</strong> One spatial condition driving several generated images.<br />
+                        <strong>Image prompt:</strong> A pose skeleton on the left, and three generated images on the right that all match that exact pose in different styles.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Why Zero-Initialisation Matters</h2>
+                    <ul>
+                        <li class="fragment">The frozen base model is never damaged</li>
+                        <li class="fragment">No harmful gradients at the start of training</li>
+                        <li class="fragment">Control can be trained on relatively small datasets</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">5.</span><br />
+                        The Complete Picture
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>The Full Stack</h2>
+                    <ul>
+                        <li class="fragment"><strong>Lecture 07</strong> gave the autoencoder</li>
+                        <li class="fragment"><strong>Lecture 12</strong> gave the denoising objective</li>
+                        <li class="fragment"><strong>Lecture 13</strong> gave guidance and fast sampling</li>
+                        <li class="fragment"><strong>Today</strong> assembles them into a controllable system</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Remaining Weaknesses</h2>
+                    <ul>
+                        <li class="fragment">Compositional prompts and counting still fail</li>
+                        <li class="fragment">Text rendering inside images is unreliable</li>
+                        <li class="fragment">The autoencoder caps the achievable detail</li>
+                        <li class="fragment">Still 20–50 network calls per image</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Summary</h2>
+                    <ul>
+                        <li class="fragment">Latent diffusion moves the process into a <span class="keyword">compressed</span> space</li>
+                        <li class="fragment">The <span class="keyword">U-Net</span> denoises, conditioned on time</li>
+                        <li class="fragment"><span class="keyword">Cross-attention</span> injects text at every resolution</li>
+                        <li class="fragment">Inpainting and image-to-image are sampling-time modifications</li>
+                        <li class="fragment"><span class="keyword">ControlNet</span> adds spatial control without retraining the base model</li>
+                    </ul>
+                </section>
+            </section>
+            <div class="footer">
+                Generative AI: Latent & Conditional Diffusion for Image Generation
+            </div>
+        </div>
+    </div>
+    <script src="revealjs/dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            controlsLayout: "edges",
+            slideNumber: true,
+            hashOneBasedIndex: true,
+            hash: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX],
+        });
+    </script>
+</body>
+
+</html>

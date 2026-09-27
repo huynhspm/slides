@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/png" href="../../favicon.png">
+    <title>Evaluation of Generative Models</title>
+
+    <link rel="stylesheet" href="revealjs/dist/reset.css" />
+    <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+    <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+    <link rel="stylesheet" href="slide-style.css" />
+</head>
+
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <section>
+                    <h1>Generative AI</h1>
+                    <h3>Evaluation of Generative Models</h3>
+                    <p>IAI · UET · VNU</p>
+                    <p>Presenter: Trinh Ngoc Huynh</p>
+                    <p>Email: <a href="mailto:huynhtn@vnu.edu.vn">huynhtn@vnu.edu.vn</a></p>
+                </section>
+
+                <section>
+                    <h2>Content</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; font-size: 0.7em;">
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #b15a2b;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #b15a2b; min-width: 40px; text-align: center;">1</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">The Evaluation Problem</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Why generation resists simple scoring</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #2a7ae2; min-width: 40px; text-align: center;">2</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Likelihood-Based Evaluation</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Log-likelihood, bits-per-dimension and their limits</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #27ae60; min-width: 40px; text-align: center;">3</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Sample-Based Metrics</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Inception Score, FID, precision and recall</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #e67e22; min-width: 40px; text-align: center;">4</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Alignment Metrics</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">CLIP score and the guidance trade-off</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #8e44ad;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #8e44ad; min-width: 40px; text-align: center;">5</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Human Evaluation & Protocols</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Running studies and designing a protocol</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">1.</span><br />
+                        The Evaluation Problem
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Why Evaluation Is Hard</h2>
+                    <div class="question-box">
+                        There is no ground-truth output to compare against. A generated image is not <em>wrong</em> — it is only more or less plausible.
+                    </div>
+                    <ul>
+                        <li class="fragment">Supervised learning has labels; generation does not</li>
+                        <li class="fragment">We must compare <span class="keyword">distributions</span>, not individual outputs</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>What We Actually Want</h2>
+                    <ul>
+                        <li class="fragment"><strong>Fidelity</strong> — do samples look real?</li>
+                        <li class="fragment"><strong>Diversity</strong> — do they cover the data distribution?</li>
+                        <li class="fragment"><strong>Alignment</strong> — do they match the condition?</li>
+                        <li class="fragment">No single number captures all three</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>A Warning</h2>
+                    <div class="question-box">
+                        <strong>Beautiful images ≠ a good generative model.</strong>
+                    </div>
+                    <ul>
+                        <li class="fragment">A model that memorises the training set scores perfectly on fidelity</li>
+                        <li class="fragment">A mode-collapsed GAN can produce stunning individual samples</li>
+                        <li class="fragment">Evaluation must catch both failures</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">2.</span><br />
+                        Likelihood-Based Evaluation
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Log-Likelihood</h2>
+                    <div class="question-box">
+                        $$ \log p_\theta(x) $$
+                    </div>
+                    <ul>
+                        <li class="fragment">Direct and principled — where it is available</li>
+                        <li class="fragment">Exact for autoregressive models and flows</li>
+                        <li class="fragment">Only a <span class="keyword">bound</span> for VAEs, unavailable for GANs</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Bits Per Dimension</h2>
+                    <div class="question-box">
+                        $$ \text{BPD} = \frac{-\log_2 p_\theta(x)}{D} $$
+                    </div>
+                    <ul>
+                        <li class="fragment">Normalises by dimension so resolutions can be compared</li>
+                        <li class="fragment">Interpretable as a compression rate</li>
+                        <li class="fragment">Lower is better</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Why Likelihood Is Not Enough</h2>
+                    <ul>
+                        <li class="fragment">High likelihood does not imply good samples, or the reverse</li>
+                        <li class="fragment">A model can spend likelihood on imperceptible detail</li>
+                        <li class="fragment">Most probability mass sits in a region we never perceive</li>
+                        <li class="fragment">So we need <span class="keyword">sample-based</span> metrics too</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">3.</span><br />
+                        Sample-Based Metrics
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Inception Score</h2>
+                    <div class="question-box">
+                        $$ \text{IS} = \exp\Big(\mathbb{E}_x \big[ D_{\mathrm{KL}}(p(y \mid x) \,\|\, p(y)) \big]\Big) $$
+                    </div>
+                    <ul>
+                        <li class="fragment">Rewards confident per-image class predictions and varied classes overall</li>
+                        <li class="fragment"><strong>Flaws:</strong> ignores the real data entirely, limited to ImageNet classes</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Fréchet Inception Distance</h2>
+                    <div class="question-box">
+                        $$ \text{FID} = \|\mu_r - \mu_g\|^2 + \operatorname{Tr}\big(\Sigma_r + \Sigma_g - 2(\Sigma_r\Sigma_g)^{1/2}\big) $$
+                    </div>
+                    <ul>
+                        <li class="fragment">Fit a Gaussian to Inception features of real and generated sets</li>
+                        <li class="fragment">Measure the distance between those two Gaussians</li>
+                        <li class="fragment">Lower is better; it does compare against real data</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>FID's Limitations</h2>
+                    <ul>
+                        <li class="fragment">Depends entirely on the <span class="keyword">Inception</span> feature extractor</li>
+                        <li class="fragment">Assumes Gaussian features — they are not</li>
+                        <li class="fragment">Strongly biased by sample count</li>
+                        <li class="fragment">One number cannot separate fidelity from diversity</li>
+                    </ul>
+                    <div class="placeholder" style="border:1px dashed #999;padding:18px;border-radius:8px;">
+                        <em>[Figure: FID Sample-Size Bias]</em><br />
+                        <strong>Description:</strong> FID falling as the number of generated samples grows, for a fixed model.<br />
+                        <strong>Image prompt:</strong> A line chart with sample count on the x-axis and FID on the y-axis, curve decreasing steeply then flattening.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Precision and Recall</h2>
+                    <ul>
+                        <li class="fragment"><strong>Precision</strong> — fraction of generated samples inside the real manifold (fidelity)</li>
+                        <li class="fragment"><strong>Recall</strong> — fraction of real data covered by the model (diversity)</li>
+                        <li class="fragment">Separates the two failure modes that FID conflates</li>
+                    </ul>
+                    <div class="placeholder" style="border:1px dashed #999;padding:18px;border-radius:8px;">
+                        <em>[Figure: Precision vs Recall]</em><br />
+                        <strong>Description:</strong> Generated and real manifolds overlapping in two contrasting ways.<br />
+                        <strong>Image prompt:</strong> Two panels of overlapping blobs: left shows a small generated blob inside the real one (high precision, low recall); right shows a wide blob spilling outside (low precision, high recall).
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">4.</span><br />
+                        Alignment Metrics
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Text-Image Alignment</h2>
+                    <ul>
+                        <li class="fragment">Fidelity metrics say nothing about whether the prompt was followed</li>
+                        <li class="fragment">A photorealistic dog for the prompt "a red cube" scores well on FID</li>
+                        <li class="fragment">Conditional generation needs an <span class="keyword">alignment</span> metric</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>CLIP Score</h2>
+                    <div class="question-box">
+                        $$ \text{CLIPScore} = \max\big(0, \quad \cos(E_I(x), E_T(c))\big) $$
+                    </div>
+                    <ul>
+                        <li class="fragment">Cosine similarity between image and text embeddings</li>
+                        <li class="fragment">Correlates reasonably with human judgements of relevance</li>
+                        <li class="fragment"><strong>Blind spots:</strong> counting, spatial relations, attribute binding</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Guidance Trap</h2>
+                    <ul>
+                        <li class="fragment">Raising guidance improves CLIP score and worsens FID</li>
+                        <li class="fragment">Neither number alone tells you the model got better</li>
+                        <li class="fragment">Always report <span class="keyword">both</span>, as a trade-off curve</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">5.</span><br />
+                        Human Evaluation & Protocols
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Human Evaluation</h2>
+                    <ul>
+                        <li class="fragment"><strong>Realism:</strong> is this image real or generated?</li>
+                        <li class="fragment"><strong>Preference:</strong> which of two images is better?</li>
+                        <li class="fragment"><strong>Alignment:</strong> which better matches the prompt?</li>
+                        <li class="fragment"><span class="keyword">Pairwise comparison</span> is more reliable than absolute scoring</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Doing It Properly</h2>
+                    <ul>
+                        <li class="fragment">Fixed prompts, fixed seeds, randomised presentation order</li>
+                        <li class="fragment">Several annotators per item; report inter-annotator agreement</li>
+                        <li class="fragment">Report confidence intervals, not just means</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Automatic and Human Metrics Disagree</h2>
+                    <ul>
+                        <li class="fragment">Automatic metrics are cheap, reproducible and gameable</li>
+                        <li class="fragment">Human evaluation is expensive, noisy and the actual target</li>
+                        <li class="fragment">When they conflict, the <span class="keyword">humans</span> are right</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Designing an Evaluation Protocol</h2>
+                    <ul>
+                        <li class="fragment">Choose metrics matching your three goals: fidelity, diversity, alignment</li>
+                        <li class="fragment">Fix sample count, resolution and feature extractor — then say so</li>
+                        <li class="fragment">Report the guidance-scale trade-off curve, not one point</li>
+                        <li class="fragment">Check for training-set memorisation</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Summary</h2>
+                    <ul>
+                        <li class="fragment">Generative evaluation compares <span class="keyword">distributions</span>, not single outputs</li>
+                        <li class="fragment">Likelihood is principled but unavailable for some families and misaligned with perception</li>
+                        <li class="fragment"><span class="keyword">FID</span> is standard but depends on its feature extractor and sample size</li>
+                        <li class="fragment"><span class="keyword">Precision/recall</span> separates fidelity from diversity</li>
+                        <li class="fragment">CLIP score measures alignment; human evaluation remains the ground truth</li>
+                    </ul>
+                </section>
+            </section>
+            <div class="footer">
+                Generative AI: Evaluation of Generative Models
+            </div>
+        </div>
+    </div>
+    <script src="revealjs/dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            controlsLayout: "edges",
+            slideNumber: true,
+            hashOneBasedIndex: true,
+            hash: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX],
+        });
+    </script>
+</body>
+
+</html>

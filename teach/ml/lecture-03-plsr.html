@@ -19,6 +19,798 @@
     <div class="reveal">
         <div class="slides">
 
+            <section>
+                <section>
+                    <h1>Machine Learning</h1>
+                    <h3>Dimensionality Reduction (Partial Least Squares Regression)</h3>
+                    <p>IAI · UET · VNU</p>
+                    <p>Presenter: Trinh Ngoc Huynh</p>
+                    <p>Email: <a href="mailto:huynhtn@vnu.edu.vn">huynhtn@vnu.edu.vn</a></p>
+                </section>
+
+                <section>
+                    <h2>Content</h2>
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; font-size: 0.7em;">
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border: 1px solid #b15a2b66; border-left: 4px solid #b15a2b;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #b15a2b; min-width: 40px; text-align: center;">1</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Intuition</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Why unsupervised reduction can miss the target</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border: 1px solid #2a7ae266; border-left: 4px solid #2a7ae2;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #2a7ae2; min-width: 40px; text-align: center;">2</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Problem</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Maximising covariance with the response</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border: 1px solid #27ae6066; border-left: 4px solid #27ae60;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #27ae60; min-width: 40px; text-align: center;">3</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Algorithm</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">NIPALS: weights, scores, loadings, deflation</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border: 1px solid #e67e2266; border-left: 4px solid #e67e22;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #e67e22; min-width: 40px; text-align: center;">4</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Applications</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Spectroscopy, p &gt; n data, multiple outputs</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border: 1px solid #8e44ad66; border-left: 4px solid #8e44ad;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #8e44ad; min-width: 40px; text-align: center;">5</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Limitations</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">When PLSR falls short</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">1.</span><br />
+                        Intuition
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Why Not Least Squares?</h2>
+                    <p class="lead">Predict \( y \) from \( X \in \mathbb{R}^{N \times d} \) with ordinary least squares:</p>
+                    <div class="question-box" style="text-align: center; font-size: 0.75em;">
+                        $$ \hat{\beta} = (X^T X)^{-1} X^T y $$
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 18px; font-size: 0.7em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e74c3c66; border-top: 5px solid #e74c3c;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdecea; color: #e74c3c; font-weight: 700; font-size: 0.9em;">Correlated features</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">\( X^T X \) is nearly singular: huge, unstable coefficients</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e67e2266; border-top: 5px solid #e67e22;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdf0e3; color: #e67e22; font-weight: 700; font-size: 0.9em;">More features than samples</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">\( d > N \): \( X^T X \) is not invertible at all</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.9em;">Noisy features</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">the model fits the noise and generalises poorly</p>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 18px;">We need a few informative directions instead of all \( d \) raw features.</p>
+                </section>
+
+                <section>
+                    <h2>Reduce First, Then Regress?</h2>
+                    <p class="lead">Principal Component Regression (PCR): run PCA on \( X \), then regress \( y \) on the top components.</p>
+                    <div
+                        style="display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); column-gap: 10px; row-gap: 14px; align-items: stretch; margin-top: 20px; font-size: 0.72em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e67e2266; border-top: 5px solid #e67e22;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdf0e3; color: #e67e22; font-weight: 700; font-size: 0.9em;">Step 1: PCA</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( T = X W_k \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">keep directions of <strong>maximum variance</strong> of \( X \)</p>
+                        </div>
+                        <div class="fragment" style="align-self: center; font-size: 1.6em; font-weight: 700; color: #bbb;">&rarr;</div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.9em;">Step 2: Regress</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( y \approx T q \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">least squares on \( k \) uncorrelated scores</p>
+                        </div>
+                    </div>
+                    <div class="question-box fragment" style="text-align: center; font-size: 0.75em; margin-top: 22px;">
+                        But PCA never looks at \( y \): what if the high-variance directions are useless for prediction?
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Variance Is Not Relevance</h2>
+                    <div style="text-align: center; margin-top: 0px;">
+                        <img src="img/lec-03/pca_vs_pls.png" alt="PCA picks the long axis of the data, which is uncorrelated with y; PLS picks a direction that predicts y"
+                            style="max-width: 100%; max-height: 300px; object-fit: contain; margin: 0;" />
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 10px;">PCA keeps the direction with most spread (correlation 0.06 with \( y \)); PLS finds the direction that predicts \( y \) (0.84).</p>
+                </section>
+
+                <section>
+                    <h2>The Problem PLSR Solves</h2>
+                    <div class="question-box" style="text-align: center; font-size: 0.8em;">
+                        How do we find a few directions in \( X \) that are both <strong>informative about \( X \)</strong> and <strong>predictive of \( y \)</strong>?
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 22px; font-size: 0.7em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e67e2266; border-top: 5px solid #e67e22;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdf0e3; color: #e67e22; font-weight: 700; font-size: 0.9em;">PCA</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( \max \operatorname{Var}(Xw) \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">unsupervised: only \( X \)</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.9em;">Least squares</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( \max \operatorname{Corr}(Xw, y) \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">only \( y \): unstable when features are correlated</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #27ae6066; border-top: 5px solid #27ae60;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e1f5e9; color: #27ae60; font-weight: 700; font-size: 0.9em;">PLS</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( \max \operatorname{Cov}(Xw, y) \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">balances both</p>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 20px;">\( \operatorname{Cov} = \operatorname{Corr} \times \operatorname{std}(Xw) \times \operatorname{std}(y) \): PLS rewards directions that have variance <em>and</em> predict \( y \).</p>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">2.</span><br />
+                        Problem
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Definition</h2>
+                    <p class="lead">PLSR explains \( X \) and \( y \) through shared <span class="keyword">latent scores</span> \( T \):</p>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 12px; font-size: 0.66em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.9em;">Input model</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( X = T P^T + E \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">loadings \( P \): how scores rebuild \( X \)</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #27ae6066; border-top: 5px solid #27ae60;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e1f5e9; color: #27ae60; font-weight: 700; font-size: 0.9em;">Output model</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( y = T q + f \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">coefficients \( q \): how scores predict \( y \)</p>
+                        </div>
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 12px; font-size: 0.64em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e74c3c66; border-top: 5px solid #e74c3c;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdecea; color: #e74c3c; font-weight: 700; font-size: 0.9em;">Scores</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( T = X W \in \mathbb{R}^{N \times k} \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">latent variables, \( k \ll d \)</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e67e2266; border-top: 5px solid #e67e22;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdf0e3; color: #e67e22; font-weight: 700; font-size: 0.9em;">Weights</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( W \in \mathbb{R}^{d \times k} \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">directions in feature space</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #8e44ad66; border-top: 5px solid #8e44ad;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #f3e8f8; color: #8e44ad; font-weight: 700; font-size: 0.9em;">Residuals</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( E, f \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">what the \( k \) components miss</p>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 12px;">Unlike PCA, the scores \( T \) are chosen to be useful for predicting \( y \).</p>
+                </section>
+
+                <section>
+                    <h2>Finding the First Component</h2>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 20px; font-size: 0.7em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e74c3c66; border-top: 5px solid #e74c3c;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdecea; color: #e74c3c; font-weight: 700; font-size: 0.9em;">1. Scores</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( t_1 = X w_1 \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">project \( X \) onto a direction \( w_1 \)</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #27ae6066; border-top: 5px solid #27ae60;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e1f5e9; color: #27ae60; font-weight: 700; font-size: 0.9em;">2. Objective</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( \max_{w_1} \operatorname{Cov}(X w_1, y) \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">\( \propto w_1^T X^T y \) for centred data</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.9em;">3. Constraint</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( \|w_1\| = 1 \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">prevents arbitrary scaling</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e67e2266; border-top: 5px solid #e67e22;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdf0e3; color: #e67e22; font-weight: 700; font-size: 0.9em;">4. Solution</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( w_1 = \dfrac{X^T y}{\|X^T y\|} \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">no eigenproblem needed for one output</p>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 16px;">The first PLS direction is simply the (normalised) covariance between each feature and \( y \).</p>
+                </section>
+
+                <section>
+                    <h2>Link to SVD</h2>
+                    <p class="lead">With several responses \( Y \in \mathbb{R}^{N \times m} \), find two directions \( w \) and \( c \):</p>
+                    <div class="question-box" style="text-align: center; font-size: 0.75em;">
+                        $$ \max_{\|w\| = \|c\| = 1} \operatorname{Cov}(Xw, \, Yc) = w^T (X^T Y) \, c $$
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 16px; font-size: 0.7em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.9em;">Input direction</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( w_1 = \) first left singular vector</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">of the cross-covariance \( X^T Y \)</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #27ae6066; border-top: 5px solid #27ae60;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e1f5e9; color: #27ae60; font-weight: 700; font-size: 0.9em;">Output direction</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( c_1 = \) first right singular vector</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">of the same matrix \( X^T Y \)</p>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 14px;">PCA is the SVD of \( X \); PLS is the SVD of \( X^T Y \).</p>
+                </section>
+
+                <section>
+                    <h2>Next Components: Deflation</h2>
+                    <p class="lead">After component 1, remove what \( t_1 \) already explains and repeat on the residuals:</p>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 20px; font-size: 0.72em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.9em;">Deflate X</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( X \leftarrow X - t_1 p_1^T \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">\( p_1 = X^T t_1 / t_1^T t_1 \)</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #27ae6066; border-top: 5px solid #27ae60;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e1f5e9; color: #27ae60; font-weight: 700; font-size: 0.9em;">Deflate y</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( y \leftarrow y - q_1 t_1 \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">\( q_1 = y^T t_1 / t_1^T t_1 \)</p>
+                        </div>
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 14px; font-size: 0.7em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e74c3c66; border-top: 5px solid #e74c3c;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdecea; color: #e74c3c; font-weight: 700; font-size: 0.9em;">Orthogonal scores</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( t_i^T t_j = 0 \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">each component carries new information</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e67e2266; border-top: 5px solid #e67e22;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdf0e3; color: #e67e22; font-weight: 700; font-size: 0.9em;">Ordered</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">component 1 &rarr; k</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">later components explain what earlier ones missed</p>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 16px;">Deflation plays the role of PCA's orthogonality constraint.</p>
+                </section>
+
+                <section>
+                    <h2>PCA vs PCR vs PLSR</h2>
+                    <table style="width: 100%; margin-top: 16px; font-size: 0.62em; border-collapse: separate; border-spacing: 0 4px;">
+                        <thead>
+                            <tr style="color: #2c3e50;">
+                                <th style="padding: 4px 12px; text-align: left;"></th>
+                                <th style="padding: 4px 12px; text-align: center; color: #e67e22;">PCA</th>
+                                <th style="padding: 4px 12px; text-align: center; color: #2a7ae2;">PCR</th>
+                                <th style="padding: 4px 12px; text-align: center; color: #27ae60;">PLSR</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="fragment"><td style="padding: 5px 12px; font-weight: 700;">Uses \( y \)?</td><td style="text-align: center;">no</td><td style="text-align: center;">only in the last step</td><td style="text-align: center;">yes, to find directions</td></tr>
+                            <tr class="fragment"><td style="padding: 5px 12px; font-weight: 700;">Objective</td><td style="text-align: center;">\( \max \operatorname{Var}(Xw) \)</td><td style="text-align: center;">PCA, then least squares</td><td style="text-align: center;">\( \max \operatorname{Cov}(Xw, y) \)</td></tr>
+                            <tr class="fragment"><td style="padding: 5px 12px; font-weight: 700;">Solved by</td><td style="text-align: center;">SVD of \( X \)</td><td style="text-align: center;">SVD of \( X \)</td><td style="text-align: center;">SVD of \( X^T Y \) / NIPALS</td></tr>
+                            <tr class="fragment"><td style="padding: 5px 12px; font-weight: 700;">Task</td><td style="text-align: center;">compression, visualisation</td><td style="text-align: center;">regression</td><td style="text-align: center;">regression</td></tr>
+                            <tr class="fragment"><td style="padding: 5px 12px; font-weight: 700;">Components needed</td><td style="text-align: center;">&mdash;</td><td style="text-align: center;">often many</td><td style="text-align: center;">usually fewer</td></tr>
+                        </tbody>
+                    </table>
+                    <p class="takeaway fragment" style="margin-top: 18px;">PLSR is <span class="keyword">supervised</span> dimensionality reduction.</p>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">3.</span><br />
+                        Algorithm
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Input &amp; Output</h2>
+                    <div
+                        style="display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); column-gap: 10px; row-gap: 14px; align-items: stretch; margin-top: 30px; font-size: 0.72em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.9em;">Input</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( X \in \mathbb{R}^{N \times d}, \; y \in \mathbb{R}^{N} \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">centred data and a number of components \( k \)</p>
+                        </div>
+                        <div class="fragment" style="align-self: center; font-size: 1.6em; font-weight: 700; color: #bbb;">&rarr;</div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e67e2266; border-top: 5px solid #e67e22;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdf0e3; color: #e67e22; font-weight: 700; font-size: 0.9em;">Output</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( \hat{\beta} = W (P^T W)^{-1} q \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">a linear model \( \hat{y} = X \hat{\beta} \) built from \( k \) latent scores</p>
+                        </div>
+                    </div>
+                    <p class="lead fragment" style="margin-top: 26px; text-align: center; font-size: 0.7em;">Running example (already centred): &nbsp; \( X = \begin{bmatrix} 2 & 1 \\ 1 & 2 \\ -1 & -1 \\ -2 & -2 \end{bmatrix}, \; y = \begin{bmatrix} 2 \\ 0 \\ -1 \\ -1 \end{bmatrix} \)</p>
+                </section>
+
+                <section>
+                    <h2>Algorithm Overview (NIPALS)</h2>
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 16px; font-size: 0.66em;">
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 16px; background: #f8f9fa; padding: 8px 20px; border-radius: 10px; border: 1px solid #27ae6066; border-left: 4px solid #27ae60;">
+                            <div
+                                style="min-width: 34px; height: 34px; background: #27ae60; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">
+                                1</div>
+                            <div style="flex: 1;">
+                                <strong style="color: #2c3e50;">Weights</strong>
+                                <div style="color: #666; font-size: 0.9em;">\( w = X^T y / \|X^T y\| \)</div>
+                            </div>
+                            <span style="color: #888; font-size: 0.85em;">direction</span>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 16px; background: #f8f9fa; padding: 8px 20px; border-radius: 10px; border: 1px solid #27ae6066; border-left: 4px solid #27ae60;">
+                            <div
+                                style="min-width: 34px; height: 34px; background: #27ae60; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">
+                                2</div>
+                            <div style="flex: 1;">
+                                <strong style="color: #2c3e50;">Scores</strong>
+                                <div style="color: #666; font-size: 0.9em;">\( t = X w \)</div>
+                            </div>
+                            <span style="color: #888; font-size: 0.85em;">project</span>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 16px; background: #f8f9fa; padding: 8px 20px; border-radius: 10px; border: 1px solid #27ae6066; border-left: 4px solid #27ae60;">
+                            <div
+                                style="min-width: 34px; height: 34px; background: #27ae60; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">
+                                3</div>
+                            <div style="flex: 1;">
+                                <strong style="color: #2c3e50;">Loadings</strong>
+                                <div style="color: #666; font-size: 0.9em;">\( p = X^T t / t^T t, \;\; q = y^T t / t^T t \)</div>
+                            </div>
+                            <span style="color: #888; font-size: 0.85em;">regress on t</span>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 16px; background: #f8f9fa; padding: 8px 20px; border-radius: 10px; border: 1px solid #27ae6066; border-left: 4px solid #27ae60;">
+                            <div
+                                style="min-width: 34px; height: 34px; background: #27ae60; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">
+                                4</div>
+                            <div style="flex: 1;">
+                                <strong style="color: #2c3e50;">Deflate</strong>
+                                <div style="color: #666; font-size: 0.9em;">\( X \leftarrow X - t p^T, \;\; y \leftarrow y - q t \)</div>
+                            </div>
+                            <span style="color: #888; font-size: 0.85em;">repeat k times</span>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 16px;">Weights &rarr; Scores &rarr; Loadings &rarr; Deflate, then \( \hat{\beta} = W (P^T W)^{-1} q \)</p>
+                </section>
+
+                <section>
+                    <h2>Step 1: Weights</h2>
+                    <div style="display: flex; gap: 6px; margin: 4px 0 14px;"><div style="flex: 1; height: 6px; background: #27ae60; border-radius: 3px;"></div><div style="flex: 1; height: 6px; background: #ddd; border-radius: 3px;"></div><div style="flex: 1; height: 6px; background: #ddd; border-radius: 3px;"></div><div style="flex: 1; height: 6px; background: #ddd; border-radius: 3px;"></div></div>
+                    <div class="question-box" style="text-align: center; font-size: 0.7em;">
+                        $$ w = \frac{X^T y}{\|X^T y\|} $$
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 12px; font-size: 0.68em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.9em;">What?</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">Covariance of each feature with \( y \), normalised</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e67e2266; border-top: 5px solid #e67e22;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdf0e3; color: #e67e22; font-weight: 700; font-size: 0.9em;">Why?</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">It is the direction that maximises \( \operatorname{Cov}(Xw, y) \)</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 12px; font-size: 0.7em;">
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 18px; background: #f8f9fa; padding: 10px 20px; border-radius: 10px; border: 1px solid #8e44ad66; border-left: 4px solid #8e44ad;">
+                            <strong style="color: #8e44ad; width: 110px; flex-shrink: 0;">Example</strong>
+                            <div style="color: #2c3e50;">\( X^T y = [7, 5] \;\Rightarrow\; w = [0.81, 0.58] \)</div>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 16px;">Features that co-vary more with \( y \) get larger weights.</p>
+                </section>
+
+                <section>
+                    <h2>Step 2: Scores</h2>
+                    <div style="display: flex; gap: 6px; margin: 4px 0 14px;"><div style="flex: 1; height: 6px; background: #27ae60; border-radius: 3px;"></div><div style="flex: 1; height: 6px; background: #27ae60; border-radius: 3px;"></div><div style="flex: 1; height: 6px; background: #ddd; border-radius: 3px;"></div><div style="flex: 1; height: 6px; background: #ddd; border-radius: 3px;"></div></div>
+                    <div class="question-box" style="text-align: center; font-size: 0.7em;">
+                        $$ t = X w $$
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 12px; font-size: 0.68em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.9em;">What?</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">Project every sample onto \( w \)</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e67e2266; border-top: 5px solid #e67e22;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdf0e3; color: #e67e22; font-weight: 700; font-size: 0.9em;">Why?</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">\( t \) is the latent variable that summarises \( X \) for predicting \( y \)</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 12px; font-size: 0.7em;">
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 18px; background: #f8f9fa; padding: 10px 20px; border-radius: 10px; border: 1px solid #8e44ad66; border-left: 4px solid #8e44ad;">
+                            <strong style="color: #8e44ad; width: 110px; flex-shrink: 0;">Example</strong>
+                            <div style="color: #2c3e50;">\( t = [2.21, \; 1.98, \; -1.39, \; -2.79] \)</div>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 16px;">\( d \) features become one number per sample.</p>
+                </section>
+
+                <section>
+                    <h2>Step 3: Loadings</h2>
+                    <div style="display: flex; gap: 6px; margin: 4px 0 14px;"><div style="flex: 1; height: 6px; background: #27ae60; border-radius: 3px;"></div><div style="flex: 1; height: 6px; background: #27ae60; border-radius: 3px;"></div><div style="flex: 1; height: 6px; background: #27ae60; border-radius: 3px;"></div><div style="flex: 1; height: 6px; background: #ddd; border-radius: 3px;"></div></div>
+                    <div class="question-box" style="text-align: center; font-size: 0.7em;">
+                        $$ p = \frac{X^T t}{t^T t}, \qquad q = \frac{y^T t}{t^T t} $$
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 12px; font-size: 0.68em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.9em;">What?</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">Regress \( X \) and \( y \) on the score \( t \)</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e67e2266; border-top: 5px solid #e67e22;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdf0e3; color: #e67e22; font-weight: 700; font-size: 0.9em;">Why?</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">\( p \) rebuilds \( X \) from \( t \); \( q \) predicts \( y \) from \( t \)</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 12px; font-size: 0.7em;">
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 18px; background: #f8f9fa; padding: 10px 20px; border-radius: 10px; border: 1px solid #8e44ad66; border-left: 4px solid #8e44ad;">
+                            <strong style="color: #8e44ad; width: 110px; flex-shrink: 0;">Example</strong>
+                            <div style="color: #2c3e50;">\( p = [0.72, 0.71], \; q = 0.46 \;\Rightarrow\; \hat{y} = q\,t, \; R^2 = 0.67 \)</div>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 16px;">One component already explains two thirds of the variance of \( y \).</p>
+                </section>
+
+                <section>
+                    <h2>Step 4: Deflate</h2>
+                    <div style="display: flex; gap: 6px; margin: 4px 0 14px;"><div style="flex: 1; height: 6px; background: #27ae60; border-radius: 3px;"></div><div style="flex: 1; height: 6px; background: #27ae60; border-radius: 3px;"></div><div style="flex: 1; height: 6px; background: #27ae60; border-radius: 3px;"></div><div style="flex: 1; height: 6px; background: #27ae60; border-radius: 3px;"></div></div>
+                    <div class="question-box" style="text-align: center; font-size: 0.7em;">
+                        $$ X \leftarrow X - t p^T, \qquad y \leftarrow y - q t $$
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 12px; font-size: 0.68em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.9em;">What?</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">Remove the part of \( X \) and \( y \) explained by \( t \)</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e67e2266; border-top: 5px solid #e67e22;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdf0e3; color: #e67e22; font-weight: 700; font-size: 0.9em;">Why?</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">The next component then captures only new information</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 12px; font-size: 0.7em;">
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 18px; background: #f8f9fa; padding: 10px 20px; border-radius: 10px; border: 1px solid #8e44ad66; border-left: 4px solid #8e44ad;">
+                            <strong style="color: #8e44ad; width: 110px; flex-shrink: 0;">Example</strong>
+                            <div style="color: #2c3e50;">residual \( y = [0.97, -0.92, -0.35, 0.30] \) &rarr; component 2 explains the rest</div>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 16px;">Repeat steps 1&ndash;4 for \( k \) components.</p>
+                </section>
+
+                <section>
+                    <h2>How Many Components?</h2>
+                    <p class="lead">\( k \) is the main hyper-parameter: too few underfit, too many fit the noise. Pick it by <span class="keyword">cross-validation</span>.</p>
+                    <div style="text-align: center; margin-top: 4px;">
+                        <img src="img/lec-03/cv_components.png" alt="Cross-validated error of PCR and PLSR versus the number of components"
+                            style="max-width: 100%; max-height: 250px; object-fit: contain; margin: 0;" />
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 8px;">PLSR improves from the first component; PCR needs 6, because its first 5 directions describe interferents.</p>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">4.</span><br />
+                        Applications
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Spectroscopy</h2>
+                    <p class="lead">Predict a chemical concentration from a near-infrared spectrum (200 wavelengths, 60 samples):</p>
+                    <div style="text-align: center; margin-top: 4px;">
+                        <img src="img/lec-03/spectra.png" alt="Simulated near-infrared spectra coloured by concentration"
+                            style="max-width: 100%; max-height: 250px; object-fit: contain; margin: 0;" />
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 10px;">Wavelengths are highly correlated and \( d > N \): least squares fails, PLSR is the standard tool.</p>
+                </section>
+
+                <section>
+                    <h2>Predictions</h2>
+                    <div style="display: grid; grid-template-columns: 0.9fr 1.3fr; column-gap: 24px; align-items: center; margin-top: 10px; font-size: 0.64em;">
+                        <div>
+                            <img src="img/lec-03/pred_vs_true.png" alt="Predicted versus true concentration for training and test samples" style="width: 100%; max-height: 330px; object-fit: contain; margin: 0;" />
+                        </div>
+                        <div>
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 0px; font-size: 1em;">
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 18px; background: #f8f9fa; padding: 10px 20px; border-radius: 10px; border: 1px solid #27ae6066; border-left: 4px solid #27ae60;">
+                            <strong style="color: #27ae60; width: 150px; flex-shrink: 0;">Components</strong>
+                            <div style="color: #2c3e50;">\( k = 6 \), chosen by CV</div>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 18px; background: #f8f9fa; padding: 10px 20px; border-radius: 10px; border: 1px solid #2a7ae266; border-left: 4px solid #2a7ae2;">
+                            <strong style="color: #2a7ae2; width: 150px; flex-shrink: 0;">Compression</strong>
+                            <div style="color: #2c3e50;">200 wavelengths &rarr; 6 scores</div>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 18px; background: #f8f9fa; padding: 10px 20px; border-radius: 10px; border: 1px solid #e74c3c66; border-left: 4px solid #e74c3c;">
+                            <strong style="color: #e74c3c; width: 150px; flex-shrink: 0;">Accuracy</strong>
+                            <div style="color: #2c3e50;">test \( R^2 = 0.99 \)</div>
+                        </div>
+                    </div>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 14px;">A handful of supervised components is enough for accurate prediction.</p>
+                </section>
+
+                <section>
+                    <h2>More Features Than Samples</h2>
+                    <p class="lead">PLSR works directly when \( d \gg N \), where least squares is undefined:</p>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 20px; font-size: 0.7em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e74c3c66; border-top: 5px solid #e74c3c;">
+                            <span style="font-size: 1.6em; line-height: 1;">🧬</span>
+                            <span style="margin-top: 6px; padding: 2px 10px; border-radius: 999px; background: #fdecea; color: #e74c3c; font-weight: 700; font-size: 0.9em;">Genomics</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">thousands of gene expressions, tens of patients</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #27ae6066; border-top: 5px solid #27ae60;">
+                            <span style="font-size: 1.6em; line-height: 1;">🧪</span>
+                            <span style="margin-top: 6px; padding: 2px 10px; border-radius: 999px; background: #e1f5e9; color: #27ae60; font-weight: 700; font-size: 0.9em;">Metabolomics</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">hundreds of metabolite peaks per sample</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span style="font-size: 1.6em; line-height: 1;">🧠</span>
+                            <span style="margin-top: 6px; padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.9em;">Neuroimaging</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">many voxels, few subjects</p>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 20px;">PLSR never inverts \( X^T X \): it only needs \( k \le N \) latent components.</p>
+                </section>
+
+                <section>
+                    <h2>Multiple Outputs</h2>
+                    <p class="lead">PLS2 predicts several correlated responses \( Y \in \mathbb{R}^{N \times m} \) with one shared set of scores:</p>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 20px; font-size: 0.7em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e74c3c66; border-top: 5px solid #e74c3c;">
+                            <span style="font-size: 1.6em; line-height: 1;">🍷</span>
+                            <span style="margin-top: 6px; padding: 2px 10px; border-radius: 999px; background: #fdecea; color: #e74c3c; font-weight: 700; font-size: 0.9em;">Food science</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">chemical profile &rarr; several sensory scores</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #27ae6066; border-top: 5px solid #27ae60;">
+                            <span style="font-size: 1.6em; line-height: 1;">🏭</span>
+                            <span style="margin-top: 6px; padding: 2px 10px; border-radius: 999px; background: #e1f5e9; color: #27ae60; font-weight: 700; font-size: 0.9em;">Process control</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">sensor readings &rarr; several quality measures</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span style="font-size: 1.6em; line-height: 1;">📊</span>
+                            <span style="margin-top: 6px; padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.9em;">Visualisation</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">plot the first two scores to see how samples relate to \( Y \)</p>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 20px;">Sharing latent scores across outputs uses their correlation instead of fitting each separately.</p>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">5.</span><br />
+                        Limitations
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Linear Method</h2>
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 16px; font-size: 0.7em;">
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 18px; background: #f8f9fa; padding: 10px 20px; border-radius: 10px; border: 1px solid #e74c3c66; border-left: 4px solid #e74c3c;">
+                            <strong style="color: #e74c3c; width: 100px; flex-shrink: 0;">Problem</strong>
+                            <div style="color: #2c3e50;">PLSR models a <strong>linear</strong> relationship between latent scores and \( y \).</div>
+                        </div>
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 16px; font-size: 0.7em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e67e2266; border-top: 5px solid #e67e22;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdf0e3; color: #e67e22; font-weight: 700; font-size: 0.9em;">Curved responses</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">saturation or thresholds are poorly captured</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e67e2266; border-top: 5px solid #e67e22;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdf0e3; color: #e67e22; font-weight: 700; font-size: 0.9em;">Interactions</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">products of features are not modelled</p>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 18px;"><strong>Alternatives:</strong> kernel PLS, neural networks, gradient boosting</p>
+                </section>
+
+                <section>
+                    <h2>Choosing k</h2>
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 16px; font-size: 0.7em;">
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 18px; background: #f8f9fa; padding: 10px 20px; border-radius: 10px; border: 1px solid #e67e2266; border-left: 4px solid #e67e22;">
+                            <strong style="color: #e67e22; width: 100px; flex-shrink: 0;">Problem</strong>
+                            <div style="color: #2c3e50;">Too many components <strong>overfit</strong>: later components start fitting noise in \( y \).</div>
+                        </div>
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 16px; font-size: 0.7em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e67e2266; border-top: 5px solid #e67e22;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdf0e3; color: #e67e22; font-weight: 700; font-size: 0.9em;">Small data</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">cross-validation estimates are noisy</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e67e2266; border-top: 5px solid #e67e22;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdf0e3; color: #e67e22; font-weight: 700; font-size: 0.9em;">Different optimum</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">the best \( k \) changes with the data split</p>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 18px;"><strong>Alternatives:</strong> repeated / nested cross-validation, one-standard-error rule</p>
+                </section>
+
+                <section>
+                    <h2>Interpretation</h2>
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 16px; font-size: 0.7em;">
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 18px; background: #f8f9fa; padding: 10px 20px; border-radius: 10px; border: 1px solid #e67e2266; border-left: 4px solid #e67e22;">
+                            <strong style="color: #e67e22; width: 100px; flex-shrink: 0;">Problem</strong>
+                            <div style="color: #2c3e50;">Latent components mix all features: weights \( w \) are hard to read directly.</div>
+                        </div>
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 16px; font-size: 0.7em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e67e2266; border-top: 5px solid #e67e22;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdf0e3; color: #e67e22; font-weight: 700; font-size: 0.9em;">Mixed signs</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">positive and negative weights across many features</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e67e2266; border-top: 5px solid #e67e22;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdf0e3; color: #e67e22; font-weight: 700; font-size: 0.9em;">Not causal</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">large weight &ne; causal effect on \( y \)</p>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 18px;"><strong>Alternatives:</strong> VIP scores (variable importance in projection), sparse PLS</p>
+                </section>
+
+                <section>
+                    <h2>Scaling &amp; Preprocessing</h2>
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 16px; font-size: 0.7em;">
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 18px; background: #f8f9fa; padding: 10px 20px; border-radius: 10px; border: 1px solid #e74c3c66; border-left: 4px solid #e74c3c;">
+                            <strong style="color: #e74c3c; width: 100px; flex-shrink: 0;">Problem</strong>
+                            <div style="color: #2c3e50;">Like PCA, PLSR is <strong>sensitive to feature scales</strong> and to outliers.</div>
+                        </div>
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 16px; font-size: 0.7em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e67e2266; border-top: 5px solid #e67e22;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdf0e3; color: #e67e22; font-weight: 700; font-size: 0.9em;">Different units</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">a feature in large units dominates the covariance</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e67e2266; border-top: 5px solid #e67e22;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdf0e3; color: #e67e22; font-weight: 700; font-size: 0.9em;">Outliers</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">a few extreme samples can rotate the components</p>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 18px;"><strong>Alternatives:</strong> centre and standardise features; robust PLS for outliers</p>
+                </section>
+
+                <section>
+                    <h2>Limitations at a Glance</h2>
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 20px; font-size: 0.72em;">
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 18px; background: #f8f9fa; padding: 10px 20px; border-radius: 10px; border: 1px solid #e74c3c66; border-left: 4px solid #e74c3c;">
+                            <strong style="color: #e74c3c; width: 200px; flex-shrink: 0;">Linear only</strong>
+                            <div style="color: #2c3e50;">&rarr; kernel PLS, non-linear models</div>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 18px; background: #f8f9fa; padding: 10px 20px; border-radius: 10px; border: 1px solid #e67e2266; border-left: 4px solid #e67e22;">
+                            <strong style="color: #e67e22; width: 200px; flex-shrink: 0;">Choosing k</strong>
+                            <div style="color: #2c3e50;">&rarr; cross-validation, one-standard-error rule</div>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 18px; background: #f8f9fa; padding: 10px 20px; border-radius: 10px; border: 1px solid #e67e2266; border-left: 4px solid #e67e22;">
+                            <strong style="color: #e67e22; width: 200px; flex-shrink: 0;">Interpretation</strong>
+                            <div style="color: #2c3e50;">&rarr; VIP scores, sparse PLS</div>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 18px; background: #f8f9fa; padding: 10px 20px; border-radius: 10px; border: 1px solid #e74c3c66; border-left: 4px solid #e74c3c;">
+                            <strong style="color: #e74c3c; width: 200px; flex-shrink: 0;">Scale sensitive</strong>
+                            <div style="color: #2c3e50;">&rarr; always standardise first</div>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 22px;">PLSR is a strong, simple baseline when features are many and correlated.</p>
+                </section>
+            </section>
+
+            <section>
+
+                <section>
+                    <h2>Summary</h2>
+                    <div class="question-box" style="text-align: center; font-size: 0.7em;">
+                        $$ \max_{\|w\| = 1} \operatorname{Cov}(Xw, \, y), \qquad X = T P^T + E, \quad y = T q + f $$
+                    </div>
+                    <ul style="font-size: 0.68em; margin-top: 16px; display: flex; flex-direction: column; gap: 6px;">
+                        <li class="fragment">PCA ignores \( y \); PLSR finds latent directions that are <span class="keyword">predictive of the response</span></li>
+                        <li class="fragment">The first weight is \( w \propto X^T y \); with many outputs, PLS is the SVD of \( X^T Y \)</li>
+                        <li class="fragment">NIPALS: weights &rarr; scores &rarr; loadings &rarr; deflate, repeated \( k \) times</li>
+                        <li class="fragment">Works when features are <span class="keyword">many and correlated</span>, even when \( d > N \)</li>
+                    </ul>
+                    <p class="takeaway fragment" style="margin-top: 14px;">PCA &rarr; SVD &rarr; PLSR: from unsupervised to supervised dimensionality reduction.</p>
+                </section>
+            </section>
+
             <div class="footer">
                 Machine Learning §03: Dimensionality Reduction (PLSR)
             </div>

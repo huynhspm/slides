@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/png" href="../../favicon.png">
+    <title>Autoregressive Models I: From Pixels to Probability</title>
+
+    <link rel="stylesheet" href="revealjs/dist/reset.css" />
+    <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+    <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+    <link rel="stylesheet" href="slide-style.css" />
+</head>
+
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <section>
+                    <h1>Generative AI</h1>
+                    <h3>Autoregressive Models I: From Pixels to Probability</h3>
+                    <p>IAI · UET · VNU</p>
+                    <p>Presenter: Trinh Ngoc Huynh</p>
+                    <p>Email: <a href="mailto:huynhtn@vnu.edu.vn">huynhtn@vnu.edu.vn</a></p>
+                </section>
+
+                <section>
+                    <h2>Content</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; font-size: 0.7em;">
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #b15a2b;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #b15a2b; min-width: 40px; text-align: center;">1</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">The Autoregressive Factorization</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">The chain rule, pixel ordering and teacher forcing</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #2a7ae2; min-width: 40px; text-align: center;">2</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Neural Autoregressive Models</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">NADE, PixelRNN, PixelCNN and masked convolutions</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #27ae60; min-width: 40px; text-align: center;">3</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Sampling</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Why generation is sequential, and what that costs</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #e67e22; min-width: 40px; text-align: center;">4</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Strengths & Limitations</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">What this family buys, and what it gives up</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">1.</span><br />
+                        The Autoregressive Factorization
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>The Core Idea</h2>
+                    <div class="question-box">
+                        $$ p(x) = \prod_{i=1}^{D} p(x_i \mid x_{&lt;i}) $$
+                    </div>
+                    <ul>
+                        <li class="fragment">No approximation — this is the chain rule, exactly</li>
+                        <li class="fragment">One hard density becomes \( D \) small predictions</li>
+                        <li class="fragment">Each factor can be a neural network</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Ordering the Pixels</h2>
+                    <ul>
+                        <li class="fragment">The chain rule needs a fixed <span class="keyword">order</span></li>
+                        <li class="fragment">Images have no natural order — we impose one (usually raster scan)</li>
+                        <li class="fragment">Different orderings give different models of the same data</li>
+                    </ul>
+                    <div class="placeholder" style="border:1px dashed #999;padding:18px;border-radius:8px;">
+                        <em>[Figure: Raster-Scan Ordering]</em><br />
+                        <strong>Description:</strong> Pixels numbered left-to-right, top-to-bottom, with the context region shaded.<br />
+                        <strong>Image prompt:</strong> An 8x8 pixel grid numbered in raster order; pixels before the current one shaded blue, current pixel highlighted.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Training: Teacher Forcing</h2>
+                    <ul>
+                        <li class="fragment">At training time the <span class="keyword">true</span> prefix \( x_{&lt;i} \) is always fed in</li>
+                        <li class="fragment">All \( D \) conditionals are evaluated <span class="keyword">in parallel</span></li>
+                        <li class="fragment">Loss is the summed negative log-likelihood</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Training Objective</h2>
+                    <div class="question-box">
+                        $$ \mathcal{L}(\theta) = -\sum_{i=1}^{D} \log p_\theta(x_i \mid x_{&lt;i}) $$
+                    </div>
+                    <ul>
+                        <li class="fragment">Exactly maximum likelihood — no bound, no approximation</li>
+                        <li class="fragment">This is why autoregressive models report clean likelihood numbers</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">2.</span><br />
+                        Neural Autoregressive Models
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>NADE</h2>
+                    <ul>
+                        <li class="fragment">Models each conditional with a shared hidden representation</li>
+                        <li class="fragment">Weight sharing keeps the parameter count linear in \( D \)</li>
+                        <li class="fragment">The first practical neural autoregressive density estimator</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>PixelRNN</h2>
+                    <ul>
+                        <li class="fragment">An <span class="keyword">LSTM</span> reads pixels in sequence</li>
+                        <li class="fragment">Unbounded context: every previous pixel can influence the next</li>
+                        <li class="fragment"><strong>Cost:</strong> inherently sequential, so training is slow</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>PixelCNN</h2>
+                    <ul>
+                        <li class="fragment">Replace recurrence with a <span class="keyword">convolution</span></li>
+                        <li class="fragment">Training becomes fully parallel across pixels</li>
+                        <li class="fragment"><strong>Requirement:</strong> the convolution must not look ahead</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Masked Convolutions</h2>
+                    <div class="question-box">
+                        Zero out the kernel weights covering the current pixel and everything after it.
+                    </div>
+                    <ul>
+                        <li class="fragment"><strong>Mask A</strong> — excludes the centre pixel (first layer)</li>
+                        <li class="fragment"><strong>Mask B</strong> — includes the centre pixel (later layers)</li>
+                        <li class="fragment">Preserves the autoregressive property layer after layer</li>
+                    </ul>
+                    <div class="placeholder" style="border:1px dashed #999;padding:18px;border-radius:8px;">
+                        <em>[Figure: Masked Convolution Kernel]</em><br />
+                        <strong>Description:</strong> A 5x5 kernel with the causal half enabled and the rest zeroed.<br />
+                        <strong>Image prompt:</strong> A 5x5 grid: upper rows and left of centre filled blue, centre marked, lower-right cells greyed to zero.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>The Blind Spot</h2>
+                    <ul>
+                        <li class="fragment">Naive masking leaves a region of context <span class="keyword">unreachable</span></li>
+                        <li class="fragment">Fixed by splitting into vertical and horizontal stacks</li>
+                        <li class="fragment">Gated PixelCNN adds gated activations and conditioning</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">3.</span><br />
+                        Sampling
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Sampling Is Sequential</h2>
+                    <div class="question-box">
+                        $$ x_1 \sim p(x_1), \quad x_2 \sim p(x_2 \mid x_1), \quad \ldots, \quad x_D \sim p(x_D \mid x_{&lt;D}) $$
+                    </div>
+                    <ul>
+                        <li class="fragment">Each pixel needs a full forward pass</li>
+                        <li class="fragment">A \( 256 \times 256 \) image needs <span class="keyword">65,536</span> passes</li>
+                        <li class="fragment">This is the defining weakness of the family</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Train Fast, Sample Slow</h2>
+                    <ul>
+                        <li class="fragment"><strong>Training:</strong> parallel — all conditionals at once</li>
+                        <li class="fragment"><strong>Sampling:</strong> strictly sequential — one step at a time</li>
+                        <li class="fragment">The asymmetry comes directly from the factorization</li>
+                    </ul>
+                    <div class="placeholder" style="border:1px dashed #999;padding:18px;border-radius:8px;">
+                        <em>[Figure: Parallel Training vs Sequential Sampling]</em><br />
+                        <strong>Description:</strong> Training evaluates all positions simultaneously; sampling walks one position at a time.<br />
+                        <strong>Image prompt:</strong> Two rows: top shows all pixels computed in one parallel block; bottom shows a chain of arrows generating pixels one by one.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Exposure Bias</h2>
+                    <ul>
+                        <li class="fragment">Training always conditions on <span class="keyword">real</span> prefixes</li>
+                        <li class="fragment">Sampling conditions on the model's <span class="keyword">own</span> outputs</li>
+                        <li class="fragment">Small errors early can compound over a long sequence</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">4.</span><br />
+                        Strengths & Limitations
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Strengths</h2>
+                    <ul>
+                        <li class="fragment"><span class="keyword">Exact likelihood</span> — no bound, directly comparable</li>
+                        <li class="fragment">Stable maximum-likelihood training, no adversarial dynamics</li>
+                        <li class="fragment">Naturally handles discrete data</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Limitations</h2>
+                    <ul>
+                        <li class="fragment"><span class="keyword">Slow sampling</span> — \( O(D) \) sequential steps</li>
+                        <li class="fragment">Requires an arbitrary ordering of a 2D signal</li>
+                        <li class="fragment">No compact latent space for editing or interpolation</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Where This Goes Next</h2>
+                    <ul>
+                        <li class="fragment">Lecture 05 replaces the CNN with a <span class="keyword">Transformer</span></li>
+                        <li class="fragment">And replaces pixels with a much shorter sequence of visual tokens</li>
+                        <li class="fragment">The same chain rule, applied at a smarter granularity</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Summary</h2>
+                    <ul>
+                        <li class="fragment">Autoregressive models factorize \( p(x) = \prod_i p(x_i \mid x_{&lt;i}) \) exactly</li>
+                        <li class="fragment">They require a fixed generation order over the pixels</li>
+                        <li class="fragment"><span class="keyword">Masked convolutions</span> keep the model causal while training in parallel</li>
+                        <li class="fragment">Training is parallel but sampling is inherently <span class="keyword">sequential</span></li>
+                        <li class="fragment">Exact likelihood is the reward; slow sampling is the price</li>
+                    </ul>
+                </section>
+            </section>
+            <div class="footer">
+                Generative AI: Autoregressive Models I: From Pixels to Probability
+            </div>
+        </div>
+    </div>
+    <script src="revealjs/dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            controlsLayout: "edges",
+            slideNumber: true,
+            hashOneBasedIndex: true,
+            hash: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX],
+        });
+    </script>
+</body>
+
+</html>

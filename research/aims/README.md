@@ -1,6 +1,6 @@
 # AIMS — VUB — Research Presentations
 
-Research presentations at the **Artificial Intelligence in Medical Sciences Lab (AIMS)**, Vrije Universiteit Brussel (VUB).
+Research presentations at the **Artificial Intelligence-supported Modelling in Clinical Sciences (AIMS)**, Vrije Universiteit Brussel (VUB).
 
 🌐 **Live:** [https://huynhspm.github.io/slides/research/aims/](https://huynhspm.github.io/slides/research/aims/)
 
@@ -8,9 +8,10 @@ Research presentations at the **Artificial Intelligence in Medical Sciences Lab 
 
 ## 📚 Presentations
 
-| # | Title |
-|---|-------|
-| 1 | [Introduction](assets/pdf/Introduction.pdf) |
+| # | Title | Date | Materials |
+|---|-------|------|-----------|
+| 1 | Self-Introduction | Oct 07, 2025 | [PDF](assets/pdf/Introduction.pdf) |
+| 2 | PhD Plan | Oct 27, 2026 | [HTML](phd-plan.html) — 🔜 template, content in progress |
 
 ---
 
@@ -18,11 +19,14 @@ Research presentations at the **Artificial Intelligence in Medical Sciences Lab 
 
 ```
 research/aims/
-├── index.html              # Topic index page
+├── index.html              # Topic index page (light/dark theme toggle)
 ├── index-style.css         # Index page styles
+├── slide-style.css         # Shared Reveal.js slide styles
+├── phd-plan.html           # PhD plan presentation (template)
 ├── package.json
 ├── gulpfile.js
 ├── assets/
+│   ├── img/                # AIMS + VUB logos
 │   └── pdf/                # Presentation PDFs
 │       └── Introduction.pdf
 ├── plugin/                 # Reveal.js plugins

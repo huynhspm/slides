@@ -112,15 +112,53 @@ a:hover {
 	font-weight: 800;
 }
 
+.hero-period {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	margin: 18px 0 0;
+	padding: 6px 16px;
+	border-radius: 999px;
+	border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+	background: color-mix(in srgb, var(--accent) 12%, transparent);
+	color: var(--accent-strong);
+	font-size: 1.05rem;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	font-variant-numeric: tabular-nums;
+}
+
+:root[data-theme="dark"] .hero-period {
+	color: var(--accent);
+}
+
+.hero-text {
+	max-width: 90ch;
+	text-wrap: balance;
+	margin: 16px auto 0;
+	color: color-mix(in srgb, var(--text) 78%, var(--muted));
+	font-size: 1.2rem;
+	line-height: 1.6;
+}
+
 .hero-logo {
 	position: absolute;
 	top: 20px;
 	right: 20px;
 }
 
+/* logo sits on a white card so transparent / white parts stay visible in both themes */
 .hero-logo img {
-	width: auto;
-	filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.15));
+	display: block;
+	width: 108px;
+	height: 84px;
+	object-fit: contain;
+	box-sizing: content-box;
+	padding: 10px;
+	background: #fff;
+	border-radius: 18px;
+	border: 1px solid var(--line-strong);
+	box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
 }
 
 .hero-back {
@@ -273,11 +311,11 @@ a:hover {
 }
 
 .slides-table thead th:nth-child(2) {
-	width: 28%;
+	width: 25%;
 }
 
 .slides-table thead th:nth-child(4) {
-	width: 22%;
+	width: 12%;
 }
 
 .slides-table td:last-child {

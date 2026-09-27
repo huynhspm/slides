@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 330 160" role="img" aria-label="The prompt a cat on a sofa is turned into a generated image of a cat on a sofa">
+  <path d="M18 36 h108 a10 10 0 0 1 10 10 v56 a10 10 0 0 1 -10 10 h-70 l-14 16 v-16 h-24 a10 10 0 0 1 -10 -10 v-56 a10 10 0 0 1 10 -10 z" fill="#ffffff" stroke="#cfd6dd" stroke-width="2"/>
+  <text x="72" y="68" font-size="16" font-style="italic" fill="#2c3e50" text-anchor="middle" font-family="Source Sans Pro, Segoe UI, Helvetica, Arial, sans-serif">&#8220;a cat on</text>
+  <text x="72" y="90" font-size="16" font-style="italic" fill="#2c3e50" text-anchor="middle" font-family="Source Sans Pro, Segoe UI, Helvetica, Arial, sans-serif">a sofa&#8221;</text>
+  <line x1="146" y1="80" x2="180" y2="80" stroke="#9aa3ad" stroke-width="2.5" stroke-linecap="round"/><path d="M174 74 L182 80 L174 86" fill="none" stroke="#9aa3ad" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><text x="158" y="69" font-size="16" font-style="italic" fill="#6c757d" font-family="Georgia, serif">p</text><text x="167" y="73" font-size="10" font-style="italic" fill="#6c757d" font-family="Georgia, serif">θ</text>
+  <rect x="198" y="18" width="120" height="124" rx="10" fill="#eaf2fb" stroke="#c9daf0" stroke-width="2"/>
+  <g transform="translate(198,0)">
+    <rect x="10" y="96" width="100" height="30" rx="6" fill="#7b5ea7"/>
+    <rect x="16" y="70" width="88" height="34" rx="8" fill="#9577c4"/>
+    <rect x="6" y="84" width="16" height="44" rx="6" fill="#6a4f93"/><rect x="98" y="84" width="16" height="44" rx="6" fill="#6a4f93"/>
+    <rect x="16" y="126" width="6" height="10" fill="#4a3668"/><rect x="98" y="126" width="6" height="10" fill="#4a3668"/>
+    <g transform="translate(26,34) scale(0.62)"><polygon points="42,72 45,38 66,58" fill="#e8913f"/><polygon points="102,72 99,38 78,58" fill="#e8913f"/>
+    <polygon points="47,64 48,47 60,58" fill="#f7c6c0"/><polygon points="97,64 96,47 84,58" fill="#f7c6c0"/>
+    <circle cx="72" cy="90" r="36" fill="#f2a65a"/>
+    <path d="M60 60 q4 8 0 14 M72 57 q4 9 0 15 M84 60 q4 8 0 14" stroke="#e08a38" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <ellipse cx="58" cy="88" rx="4.5" ry="7" fill="#2c3e50"/><ellipse cx="86" cy="88" rx="4.5" ry="7" fill="#2c3e50"/>
+    <circle cx="59.5" cy="85.5" r="1.6" fill="#fff"/><circle cx="87.5" cy="85.5" r="1.6" fill="#fff"/>
+    <path d="M68 99 L76 99 L72 104 Z" fill="#d9636b"/>
+    <path d="M72 104 q-5 6 -10 3 M72 104 q5 6 10 3" stroke="#8a5a3c" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+    <path d="M50 100 L30 96 M50 104 L30 106 M94 100 L114 96 M94 104 L114 106" stroke="#8a5a3c" stroke-width="1.4" stroke-linecap="round"/></g>
+  </g>
+</svg>

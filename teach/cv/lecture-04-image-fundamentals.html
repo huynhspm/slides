@@ -1,0 +1,579 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/png" href="../../favicon.png">
+    <title>Image Fundamentals</title>
+
+    <link rel="stylesheet" href="revealjs/dist/reset.css" />
+    <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+    <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+    <link rel="stylesheet" href="slide-style.css" />
+</head>
+
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <section>
+                    <h1>Computer Vision</h1>
+                    <h3>Image Fundamentals</h3>
+                    <p>IAI · UET · VNU</p>
+                    <p>Presenter: Trinh Ngoc Huynh</p>
+                    <p>Email: <a href="mailto:huynhtn@vnu.edu.vn">huynhtn@vnu.edu.vn</a></p>
+                </section>
+
+                <section>
+                    <h2>Content</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; font-size: 0.7em;">
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #b15a2b;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #b15a2b; min-width: 40px; text-align: center;">1</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Digital Image Representation</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">The image model, matrix
+                                    form, and coordinate system</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #2a7ae2; min-width: 40px; text-align: center;">2</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Resolution & Quantization</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Spatial vs. intensity
+                                    resolution, false contouring</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #27ae60; min-width: 40px; text-align: center;">3</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Pixel Relationships</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Neighbors, adjacency,
+                                    connectivity, distance</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #e67e22; min-width: 40px; text-align: center;">4</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Basic Operations on Images</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Arithmetic, logical, and
+                                    set operations</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">1.</span><br />
+                        Digital Image Representation
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>What is a Digital Image?</h2>
+
+                    <div class="question-box fragment" style="font-size: 0.72em; margin-top: 8px;">
+                        <p style="margin: 0;">
+                            <strong style="color: #b15a2b;">Definition:</strong>
+                            A digital image is a 2D function $f(x, y)$, where $(x, y)$ are spatial coordinates and
+                            $f$ is the <span class="keyword">intensity</span> at that point — a value called a
+                            <span class="keyword">pixel</span>.
+                        </p>
+                    </div>
+
+                    <ul style="font-size: 0.7em; margin-top: 18px;">
+                        <li class="fragment" style="margin-bottom: 8px;">Pixel values are <span class="keyword">nonnegative
+                                and finite</span>: $0 \le f(x,y) < \infty$</li>
+                        <li class="fragment" style="margin-bottom: 8px;">Their physical meaning depends on the imaging
+                            source (light, X-ray, ultrasound…)</li>
+                        <li class="fragment">Also called a <em>picture element</em>, <em>image element</em>, or
+                            <em>pel</em></li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Illumination & Reflectance</h2>
+
+                    <div style="font-size: 0.7em;">
+                        <p class="fragment" style="color: #555;">Image intensity is the product of two components:</p>
+
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 16px 20px; border-radius: 10px; border-left: 4px solid #2a7ae2; margin: 12px 0;">
+                            <p style="text-align: center; font-size: 1.3em; margin: 0;">
+                                $$f(x, y) = i(x, y) \cdot r(x, y)$$
+                            </p>
+                        </div>
+
+                        <div style="display: flex; gap: 14px; margin-top: 14px;">
+                            <div class="fragment"
+                                style="flex: 1; background: #eef5fc; padding: 12px 16px; border-radius: 10px; text-align: center;">
+                                <strong style="color: #2a7ae2;">Illumination $i(x,y)$</strong>
+                                <p style="margin: 4px 0 0 0; color: #555;">Light hitting the scene<br />$0 \le i <
+                                    \infty$</p>
+                            </div>
+                            <div class="fragment"
+                                style="flex: 1; background: #eafaf1; padding: 12px 16px; border-radius: 10px; text-align: center;">
+                                <strong style="color: #27ae60;">Reflectance $r(x,y)$</strong>
+                                <p style="margin: 4px 0 0 0; color: #555;">Fraction reflected<br />$0 \le r \le 1$</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="margin-top: 16px; padding: 12px 18px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                            <p style="margin: 0;">
+                                <strong style="color: #b8860b;">Key Idea:</strong>
+                                What we see combines <em>how the scene is lit</em> with <em>how its surfaces
+                                    reflect</em> light.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>An Image as a Matrix</h2>
+
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                        <div class="fragment" style="flex: 1.1; font-size: 0.62em;">
+                            <p style="color: #555;">An $M \times N$ image is stored as a numerical array:</p>
+                            <div
+                                style="background: #f8f9fa; padding: 12px 14px; border-radius: 10px; border-left: 4px solid #2a7ae2; margin-top: 8px;">
+                                <p style="text-align: center; margin: 0;">
+                                    $$f = \begin{bmatrix} f(0,0) & \cdots & f(0,N\!-\!1) \\ \vdots & \ddots & \vdots
+                                    \\ f(M\!-\!1,0) & \cdots & f(M\!-\!1,N\!-\!1) \end{bmatrix}$$
+                                </p>
+                            </div>
+                            <ul style="margin-top: 10px;">
+                                <li style="margin-bottom: 4px;">Origin at top-left: $f(0,0)$</li>
+                                <li style="margin-bottom: 4px;">$x$ = row index (down), $y$ = column index (right)</li>
+                                <li>$M, N$ are positive integers</li>
+                            </ul>
+                        </div>
+                        <div class="placeholder fragment"
+                            style="flex: 1; border:1px dashed #999; padding:14px; border-radius:8px; font-size: 0.56em;">
+                            <em>[Figure placeholder]</em><br />
+                            <strong>Description:</strong> Image coordinate convention with origin at the top-left,
+                            $x$ increasing downward and $y$ increasing to the right, over a pixel grid.<br />
+                            <strong>Image prompt:</strong> A labeled pixel grid showing the $(0,0)$ origin at
+                            top-left, the $x$ axis pointing down and $y$ axis pointing right.
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Images Come from Many Sources</h2>
+
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 16px; font-size: 0.55em;">
+                        <div class="fragment" style="background: #f8f9fa; padding: 10px; border-radius: 8px; text-align: center;">🌄<br /><strong>Natural photo</strong></div>
+                        <div class="fragment" style="background: #f8f9fa; padding: 10px; border-radius: 8px; text-align: center;">☢️<br /><strong>X-ray / CT</strong></div>
+                        <div class="fragment" style="background: #f8f9fa; padding: 10px; border-radius: 8px; text-align: center;">🔊<br /><strong>Ultrasound</strong></div>
+                        <div class="fragment" style="background: #f8f9fa; padding: 10px; border-radius: 8px; text-align: center;">🛰️<br /><strong>Satellite / radar</strong></div>
+                        <div class="fragment" style="background: #f8f9fa; padding: 10px; border-radius: 8px; text-align: center;">🔬<br /><strong>Microscope</strong></div>
+                        <div class="fragment" style="background: #f8f9fa; padding: 10px; border-radius: 8px; text-align: center;">👆<br /><strong>Fingerprint</strong></div>
+                        <div class="fragment" style="background: #f8f9fa; padding: 10px; border-radius: 8px; text-align: center;">📊<br /><strong>Barcode</strong></div>
+                        <div class="fragment" style="background: #f8f9fa; padding: 10px; border-radius: 8px; text-align: center;">💻<br /><strong>Synthetic</strong></div>
+                    </div>
+
+                    <div class="fragment"
+                        style="margin-top: 18px; font-size: 0.64em; padding: 14px 20px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                        <p style="margin: 0;">
+                            <strong style="color: #b8860b;">Key Idea:</strong>
+                            Regardless of source, all become the <em>same</em> object: a matrix of numbers we can
+                            process uniformly.
+                        </p>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">2.</span><br />
+                        Sampling & Quantization
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Digitizing a Continuous Image</h2>
+
+                    <p class="fragment" style="font-size: 0.7em; color: #555; margin-top: 6px;">
+                        A sensor gives a continuous function $f(x,y)$. Turning it into a digital image takes two
+                        steps:
+                    </p>
+
+                    <div style="display: flex; gap: 16px; margin-top: 12px; font-size: 0.7em;">
+                        <div class="fragment"
+                            style="flex: 1; background: #eef5fc; padding: 16px 20px; border-radius: 12px; border-left: 5px solid #2a7ae2; text-align: center;">
+                            <div style="font-size: 1.8em;">🔲</div>
+                            <strong style="color: #2a7ae2;">Sampling</strong>
+                            <p style="margin: 6px 0 0 0; color: #555;">Digitize the <span class="keyword">coordinates</span>
+                                $(x, y)$ — take values on a regular grid.</p>
+                        </div>
+                        <div class="fragment"
+                            style="flex: 1; background: #eafaf1; padding: 16px 20px; border-radius: 12px; border-left: 5px solid #27ae60; text-align: center;">
+                            <div style="font-size: 1.8em;">📊</div>
+                            <strong style="color: #27ae60;">Quantization</strong>
+                            <p style="margin: 6px 0 0 0; color: #555;">Digitize the <span class="keyword">amplitude</span>
+                                — round each sample to a discrete level.</p>
+                        </div>
+                    </div>
+
+                    <div class="placeholder fragment"
+                        style="border:1px dashed #999; padding:12px; border-radius:8px; margin-top: 12px; font-size: 0.56em;">
+                        <em>[Figure placeholder]</em><br />
+                        <strong>Description:</strong> A scan line of a continuous image sampled at regular
+                        positions and then quantized to discrete levels.<br />
+                        <strong>Image prompt:</strong> The Gonzalez Fig 2.16 style: continuous image → sampled dots
+                        along a scan line → quantized values on a gray-level scale.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Sampling Rate & Aliasing</h2>
+
+                    <div class="question-box fragment" style="font-size: 0.7em; margin-top: 8px;">
+                        <p style="margin: 0;">
+                            <strong style="color: #b15a2b;">Nyquist rule:</strong>
+                            To capture a signal without loss, sample at least <span class="keyword">twice</span> its
+                            highest frequency.
+                        </p>
+                    </div>
+
+                    <ul style="font-size: 0.66em; margin-top: 14px;">
+                        <li class="fragment" style="margin-bottom: 8px;">Too coarse a grid → high frequencies fold
+                            into low ones: <span class="keyword">aliasing</span> (moiré patterns)</li>
+                        <li class="fragment" style="margin-bottom: 8px;">Remedy: low-pass filter (blur) before
+                            sampling</li>
+                        <li class="fragment">Finer sampling → more pixels → higher spatial resolution</li>
+                    </ul>
+
+                    <div class="placeholder fragment"
+                        style="border:1px dashed #999; padding:12px; border-radius:8px; margin-top: 12px; font-size: 0.56em;">
+                        <em>[Figure placeholder]</em><br />
+                        <strong>Description:</strong> An under-sampled striped/textured image showing moiré, vs. an
+                        anti-aliased version.<br />
+                        <strong>Image prompt:</strong> Two versions of a fine-striped pattern — one with strong
+                        moiré aliasing, one pre-blurred and cleanly sampled.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Two Kinds of Resolution</h2>
+
+                    <div style="display: flex; gap: 14px; margin-top: 16px; font-size: 0.66em;">
+                        <div class="fragment"
+                            style="flex: 1; background: #eef5fc; padding: 14px 18px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <strong style="color: #2a7ae2;">Spatial Resolution</strong>
+                            <p style="margin: 6px 0 0 0; color: #555;">The smallest discernible detail — number of
+                                pixels ($M \times N$). Measured in <span class="keyword">dpi</span> or
+                                <span class="keyword">line pairs</span> per unit distance.</p>
+                        </div>
+                        <div class="fragment"
+                            style="flex: 1; background: #eafaf1; padding: 14px 18px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <strong style="color: #27ae60;">Intensity Resolution</strong>
+                            <p style="margin: 6px 0 0 0; color: #555;">Number of gray levels $L = 2^k$. A
+                                conventional grayscale image uses $k=8 \Rightarrow L = 256$ levels.</p>
+                        </div>
+                    </div>
+
+                    <div class="placeholder fragment"
+                        style="border:1px dashed #999; padding:12px; border-radius:8px; margin-top: 14px; font-size: 0.58em;">
+                        <em>[Figure placeholder]</em><br />
+                        <strong>Description:</strong> The same image shown at decreasing spatial resolution
+                        (e.g. 930→72 dpi), becoming blockier.<br />
+                        <strong>Image prompt:</strong> A 2×2 grid of the same photo at 930, 300, 150, and 72 dpi
+                        showing progressive loss of fine detail.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>False Contouring</h2>
+
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                        <div class="fragment" style="flex: 1; font-size: 0.68em;">
+                            <p style="color: #555;">
+                                Reducing the number of intensity levels causes <span class="keyword">false
+                                    contouring</span> — fine ridge-like edges appear in smooth regions.
+                            </p>
+                            <ul style="margin-top: 10px;">
+                                <li style="margin-bottom: 4px;">128 &amp; 64 levels: nearly identical to 256</li>
+                                <li style="margin-bottom: 4px;">32 levels: faint ridges appear</li>
+                                <li>16 or fewer: clearly objectionable</li>
+                            </ul>
+                        </div>
+                        <div class="placeholder fragment"
+                            style="flex: 1; border:1px dashed #999; padding:14px; border-radius:8px; font-size: 0.56em;">
+                            <em>[Figure placeholder]</em><br />
+                            <strong>Description:</strong> The same image quantized to 256, 32, 16, and 8 levels,
+                            showing false contours emerging.<br />
+                            <strong>Image prompt:</strong> A grid of the same smooth-gradient image at 256, 32, 16,
+                            and 8 intensity levels showing banding/contour artifacts.
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>How Many Levels Are Enough?</h2>
+
+                    <ul style="font-size: 0.7em; margin-top: 10px;">
+                        <li class="fragment" style="margin-bottom: 8px;">Digital images are typically quantized to
+                            <span class="keyword">256 gray levels</span> (8-bit)</li>
+                        <li class="fragment" style="margin-bottom: 8px;">Contouring is most visible on <span
+                                class="keyword">smooth ramps</span> and gradients</li>
+                        <li class="fragment" style="margin-bottom: 8px;"><span class="keyword">Contrast ratio</span> =
+                            ratio of highest to lowest intensity in the image</li>
+                        <li class="fragment">Spatial and intensity resolution trade off against <span
+                                class="keyword">storage</span> and quality</li>
+                    </ul>
+
+                    <div class="fragment"
+                        style="margin-top: 14px; font-size: 0.64em; padding: 14px 20px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                        <p style="margin: 0;">
+                            <strong style="color: #b8860b;">Key Idea:</strong>
+                            Choosing $M$, $N$, and $L$ balances visual quality against the amount of data to store
+                            and process.
+                        </p>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">3.</span><br />
+                        Pixel Relationships
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Neighbors of a Pixel</h2>
+
+                    <div style="display: flex; gap: 14px; margin-top: 14px; font-size: 0.62em;">
+                        <div class="fragment"
+                            style="flex: 1; background: #eef5fc; padding: 12px 16px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <strong style="color: #2a7ae2;">$N_4(p)$</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">The 4 horizontal &amp; vertical neighbors.</p>
+                        </div>
+                        <div class="fragment"
+                            style="flex: 1; background: #eafaf1; padding: 12px 16px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <strong style="color: #27ae60;">$N_D(p)$</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">The 4 diagonal neighbors.</p>
+                        </div>
+                        <div class="fragment"
+                            style="flex: 1; background: #f6ecfa; padding: 12px 16px; border-radius: 10px; border-left: 4px solid #9727ae;">
+                            <strong style="color: #9727ae;">$N_8(p)$</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">All 8 surrounding pixels ($N_4 \cup N_D$).</p>
+                        </div>
+                    </div>
+
+                    <div class="placeholder fragment"
+                        style="border:1px dashed #999; padding:12px; border-radius:8px; margin-top: 14px; font-size: 0.58em;">
+                        <em>[Figure placeholder]</em><br />
+                        <strong>Description:</strong> A 3×3 grid around a center pixel $p$, highlighting the 4-,
+                        diagonal, and 8-neighborhoods.<br />
+                        <strong>Image prompt:</strong> Three small 3×3 grids showing $N_4$ (plus shape), $N_D$
+                        (X shape), and $N_8$ (all eight cells) around a central pixel.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Adjacency & Connectivity</h2>
+
+                    <ul style="font-size: 0.68em; margin-top: 8px;">
+                        <li class="fragment" style="margin-bottom: 8px;">Two pixels are <span class="keyword">adjacent</span>
+                            if they are neighbors <em>and</em> their values satisfy a similarity criterion (e.g.
+                            same intensity set $V$)</li>
+                        <li class="fragment" style="margin-bottom: 8px;"><span class="keyword">4-adjacency</span>: $q
+                            \in N_4(p)$ &nbsp;·&nbsp; <span class="keyword">8-adjacency</span>: $q \in N_8(p)$</li>
+                        <li class="fragment" style="margin-bottom: 8px;"><span class="keyword">m-adjacency</span>
+                            (mixed): removes the ambiguity of multiple 8-connected paths</li>
+                        <li class="fragment">A <span class="keyword">connected component</span> is a maximal set of
+                            mutually connected pixels — the basis of region labeling</li>
+                    </ul>
+
+                    <div class="fragment"
+                        style="margin-top: 12px; font-size: 0.62em; padding: 12px 18px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                        <p style="margin: 0;">
+                            <strong style="color: #b8860b;">Key Idea:</strong>
+                            Connectivity defines what counts as one "object" — essential for segmentation and
+                            morphology.
+                        </p>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Distance Measures</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px; font-size: 0.6em;">
+                        <div class="fragment"
+                            style="background: #eef5fc; padding: 10px 16px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <strong style="color: #2a7ae2;">Euclidean</strong> &nbsp;
+                            $D_e(p,q) = \sqrt{(x_1\!-\!x_2)^2 + (y_1\!-\!y_2)^2}$
+                        </div>
+                        <div class="fragment"
+                            style="background: #eafaf1; padding: 10px 16px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <strong style="color: #27ae60;">City-block ($D_4$)</strong> &nbsp;
+                            $D_4(p,q) = |x_1\!-\!x_2| + |y_1\!-\!y_2|$
+                        </div>
+                        <div class="fragment"
+                            style="background: #f6ecfa; padding: 10px 16px; border-radius: 10px; border-left: 4px solid #9727ae;">
+                            <strong style="color: #9727ae;">Chessboard ($D_8$)</strong> &nbsp;
+                            $D_8(p,q) = \max\big(|x_1\!-\!x_2|,\, |y_1\!-\!y_2|\big)$
+                        </div>
+                    </div>
+
+                    <div class="fragment"
+                        style="margin-top: 14px; font-size: 0.62em; padding: 12px 18px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                        <p style="margin: 0;">
+                            <strong style="color: #b8860b;">Key Idea:</strong>
+                            $D_4$ and $D_8$ correspond to moving between pixels along 4- and 8-connected paths.
+                        </p>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">4.</span><br />
+                        Basic Operations on Images
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Arithmetic Operations</h2>
+
+                    <p class="fragment" style="font-size: 0.7em; color: #555; margin-top: 6px;">
+                        Applied <span class="keyword">element-wise</span> between images of the same size:
+                    </p>
+
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 12px; font-size: 0.6em;">
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 12px 16px; border-radius: 8px; border-left: 3px solid #2a7ae2;">
+                            <strong style="color: #2a7ae2;">Addition</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Averaging to reduce noise; HDR imaging.</p>
+                        </div>
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 12px 16px; border-radius: 8px; border-left: 3px solid #e67e22;">
+                            <strong style="color: #d35400;">Subtraction</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Change detection; background subtraction.</p>
+                        </div>
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 12px 16px; border-radius: 8px; border-left: 3px solid #27ae60;">
+                            <strong style="color: #27ae60;">Multiplication</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">ROI masking (multiply by a 0/1 mask).</p>
+                        </div>
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 12px 16px; border-radius: 8px; border-left: 3px solid #9727ae;">
+                            <strong style="color: #9727ae;">Division</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Shading correction $f = g / h$.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Example: Averaging & Subtraction</h2>
+
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                        <div class="fragment" style="flex: 1; font-size: 0.66em;">
+                            <p style="color: #555;"><strong style="color: #2a7ae2;">Averaging</strong> $N$ noisy
+                                frames of a static scene reduces random noise by a factor of $\sqrt{N}$.</p>
+                            <p style="color: #555; margin-top: 12px;"><strong style="color: #e67e22;">Subtraction</strong>
+                                of consecutive video frames isolates <span class="keyword">moving objects</span> from
+                                a static background.</p>
+                        </div>
+                        <div class="placeholder fragment"
+                            style="flex: 1; border:1px dashed #999; padding:14px; border-radius:8px; font-size: 0.56em;">
+                            <em>[Figure placeholder]</em><br />
+                            <strong>Description:</strong> Left: many noisy frames averaged into a clean image.
+                            Right: two video frames subtracted to reveal a moving person.<br />
+                            <strong>Image prompt:</strong> Two panels — noisy→averaged clean image, and frame1 −
+                            frame2 = highlighted moving object silhouette.
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Logical & Set Operations</h2>
+
+                    <ul style="font-size: 0.68em; margin-top: 8px;">
+                        <li class="fragment" style="margin-bottom: 8px;"><span class="keyword">Logical</span>
+                            operations (AND, OR, NOT, XOR) work between corresponding pixels of same-size binary
+                            images</li>
+                        <li class="fragment" style="margin-bottom: 8px;"><span class="keyword">Set</span> operations
+                            treat foreground pixels as sets of coordinates (union, intersection, complement)</li>
+                        <li class="fragment">Foundation for <span class="keyword">masking</span> and the <span
+                                class="keyword">morphological operations</span> studied later</li>
+                    </ul>
+
+                    <div class="placeholder fragment"
+                        style="border:1px dashed #999; padding:12px; border-radius:8px; margin-top: 12px; font-size: 0.58em;">
+                        <em>[Figure placeholder]</em><br />
+                        <strong>Description:</strong> Two binary shapes combined with AND, OR, and NOT to show the
+                        resulting regions.<br />
+                        <strong>Image prompt:</strong> Venn-like binary image operations showing A AND B, A OR B,
+                        and NOT A on two overlapping shapes.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Summary</h2>
+
+                    <ul style="font-size: 0.72em; margin-top: 16px;">
+                        <li class="fragment" style="margin-bottom: 10px;">A digital image is $f(x,y) = i(x,y)\,r(x,y)$,
+                            stored as an $M \times N$ matrix of pixels.</li>
+                        <li class="fragment" style="margin-bottom: 10px;"><span class="keyword">Spatial</span> and
+                            <span class="keyword">intensity</span> resolution set detail and tonal quality; too few
+                            levels cause false contouring.</li>
+                        <li class="fragment" style="margin-bottom: 10px;">Pixels relate through <span class="keyword">neighborhoods</span>,
+                            <span class="keyword">adjacency/connectivity</span>, and <span class="keyword">distance</span>
+                            measures.</li>
+                        <li class="fragment" style="margin-bottom: 10px;">Arithmetic, logical, and set operations are
+                            the building blocks of image processing.</li>
+                        <li class="fragment">These fundamentals prepare us for enhancement, filtering, and
+                            morphology.</li>
+                    </ul>
+                </section>
+            </section>
+
+            <div class="footer">
+                Computer Vision: Image Fundamentals
+            </div>
+        </div>
+    </div>
+    <script src="revealjs/dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            controlsLayout: "edges",
+            slideNumber: true,
+            hashOneBasedIndex: true,
+            hash: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX],
+        });
+    </script>
+</body>
+
+</html>

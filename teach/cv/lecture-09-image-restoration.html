@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/png" href="../../favicon.png">
+
+    <title>Image Restoration</title>
+    <link rel="stylesheet" href="revealjs/dist/reset.css" />
+    <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+    <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+    <link rel="stylesheet" href="slide-style.css" />
+</head>
+
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <section>
+                    <h1>Computer Vision</h1>
+                    <h3>Image Restoration</h3>
+                    <p>IAI · UET · VNU</p>
+                    <p>Presenter: Trinh Ngoc Huynh</p>
+                    <p>Email: <a href="mailto:huynhtn@vnu.edu.vn">huynhtn@vnu.edu.vn</a></p>
+                </section>
+
+                <section>
+                    <h2>Content</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; font-size: 0.7em;">
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #b15a2b;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #b15a2b; min-width: 40px; text-align: center;">1</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Introduction</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">What is image restoration
+                                    and why do we need it?</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #2a7ae2; min-width: 40px; text-align: center;">2</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Image Degradation Model</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Degradation process,
+                                    noise models, blur models</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #27ae60; min-width: 40px; text-align: center;">3</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Image Restoration Techniques</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Denoising, deblurring,
+                                    periodic noise reduction</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #e67e22; min-width: 40px; text-align: center;">4</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Restoration Evaluation</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Quality metrics and
+                                    visual comparison</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">1.</span><br />
+                        Introduction
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Motivation</h2>
+
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <div class="question-box" style="flex: 1.3; font-size: 0.7em;">
+                            <strong style="color: #b15a2b;">Why?</strong>
+                            <p style="margin: 6px 0 0 0;">Real-world images are often degraded by <span
+                                    class="keyword">noise</span>, <span class="keyword">blur</span>, or compression
+                                artifacts during image acquisition, transmission, or storage.</p>
+                        </div>
+                        <div style="flex: 1; text-align: center;">
+                            <img src="img/lec08/captured_image.png" alt="A degraded captured image"
+                                style="width: 100%; max-height: 250px; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); margin: 0;" />
+                        </div>
+                    </div>
+
+                    <div class="fragment" style="display: flex; gap: 10px; align-items: center; margin-top: 24px;">
+                        <div class="question-box" style="flex: 1.3; font-size: 0.7em;">
+                            <strong style="color: #2a7ae2;">Goal?</strong>
+                            <p style="margin: 6px 0 0 0;">Recover the original image using a known or estimated <span
+                                    class="keyword">degradation model</span>.</p>
+                        </div>
+                        <div style="flex: 1; text-align: center;">
+                            <img src="img/lec08/restored_image.png" alt="The restored image"
+                                style="width: 100%; max-height: 250px; object-fit: contain; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); margin: 0;" />
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2 style="font-size: 1.5em;">Restoration vs. Enhancement</h2>
+                    <table
+                        style="width: 100%; table-layout: fixed; border-collapse: collapse; margin-top: 30px; font-size: 0.9em;">
+                        <colgroup>
+                            <col style="width: 50%;">
+                            <col style="width: 50%;">
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th
+                                    style="background: #b15a2b; color: #fff; padding: 14px 18px; text-align: left; border-radius: 10px 0 0 0;">
+                                    Image Restoration</th>
+                                <th
+                                    style="background: #2a7ae2; color: #fff; padding: 14px 18px; text-align: left; border-radius: 0 10px 0 0;">
+                                    Image Enhancement</th>
+                            </tr>
+                        </thead>
+                        <tbody style="font-size: 0.7em;">
+                            <tr>
+                                <td style="padding: 14px 18px; border-bottom: 1px solid #eee; background: #fdf6f1;">
+                                    Recovers the true, original image</td>
+                                <td style="padding: 14px 18px; border-bottom: 1px solid #eee; background: #f8f9fa;">
+                                    Makes the image look better to the eye</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 14px 18px; border-bottom: 1px solid #eee; background: #fdf6f1;">
+                                    Objective: judged by how accurate it is</td>
+                                <td style="padding: 14px 18px; border-bottom: 1px solid #eee; background: #f8f9fa;">
+                                    Subjective: judged by how it looks</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 14px 18px; border-bottom: 1px solid #eee; background: #fdf6f1;">
+                                    Relies on a model of how the image was degraded</td>
+                                <td style="padding: 14px 18px; border-bottom: 1px solid #eee; background: #f8f9fa;">
+                                    Does not need to know how the image was
+                                    degraded</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 14px 18px; background: #fdf6f1; border-radius: 0 0 0 10px;">
+                                    Denoising, deblurring, deconvolution</td>
+                                <td style="padding: 14px 18px; background: #f8f9fa; border-radius: 0 0 10px 0;">
+                                    Contrast enhancement, histogram equalization, sharpening</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section>
+                    <h2>Common Causes</h2>
+
+                    <div style="display: flex; gap: 10px;">
+
+                        <!-- TEXT SECTION (LEFT) -->
+                        <div style="flex: 0.8; display: flex; flex-direction: column; gap: 0;">
+
+                            <!-- CAUSES LIST -->
+                            <div
+                                style="padding: 10px 15px; background: #f8f9fa; border-left: 4px solid #666; border-radius: 6px; flex: 0;">
+                                <ul style="margin: 0; font-size: 0.7em;"">
+                                    <li><strong>Blur</strong></li>
+                                    <li><strong>Noise</strong> </li>
+                                    <li><strong>Other degradations</strong></li>
+                                </ul>
+                            </div>
+
+                            <!-- IMAGE 5 (COMPRESSION) -->
+                            <div style=" margin-top: 12px; flex: 1;">
+                                    <img src="img/lec08/compression_artifacts.png" alt="Compression artifacts"
+                                        style="width: 100%; height: 200px; object-fit: contain; border-radius: 6px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                            </div>
+
+                        </div>
+
+                        <!-- IMAGES SECTION (RIGHT) -->
+                        <div style="flex: 1.2; display: flex; flex-direction: column;">
+                            <div style="display: flex; gap: 12px;">
+                                <img src="img/lec08/motion_blur.png" alt="Motion blur"
+                                    style="flex: 1; height: 200px; object-fit: contain; border-radius: 6px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                                <img src="img/lec08/defocus_blur.png" alt="Defocus blur"
+                                    style="flex: 1; height: 200px; object-fit: contain; border-radius: 6px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                            </div>
+                            <div style="display: flex; gap: 12px;">
+                                <img src="img/lec08/gaussian_noise.png" alt="Gaussian noise"
+                                    style="flex: 1; height: 200px; object-fit: contain; border-radius: 6px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                                <img src="img/lec08/salt_pepper_noise.png" alt="Salt-and-pepper noise"
+                                    style="flex: 1; height: 200px; object-fit: contain; border-radius: 6px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Applications</h2>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 0.7em;">
+                        <tbody>
+                            <tr class="fragment">
+                                <td style="padding: 10px 12px; border-bottom: 1px solid #ddd; text-align: left;">
+                                    <strong>Medical Imaging</strong>
+                                </td>
+                                <td
+                                    style="padding: 10px 12px; border-bottom: 1px solid #ddd; text-align: left; color: #666;">
+                                    Noise reduction
+                                </td>
+                            </tr>
+                            <tr class="fragment">
+                                <td style="padding: 10px 12px; border-bottom: 1px solid #ddd; text-align: left;">
+                                    <strong>Remote Sensing</strong>
+                                </td>
+                                <td
+                                    style="padding: 10px 12px; border-bottom: 1px solid #ddd; text-align: left; color: #666;">
+                                    Deblurring and atmospheric correction
+                                </td>
+                            </tr>
+                            <tr class="fragment">
+                                <td style="padding: 10px 12px; border-bottom: 1px solid #ddd; text-align: left;">
+                                    <strong>Surveillance</strong>
+                                </td>
+                                <td
+                                    style="padding: 10px 12px; border-bottom: 1px solid #ddd; text-align: left; color: #666;">
+                                    Low-light denoising
+                                </td>
+                            </tr>
+                            <tr class="fragment">
+                                <td style="padding: 10px 12px; border-bottom: 1px solid #ddd; text-align: left;">
+                                    <strong>Autonomous Driving</strong>
+                                </td>
+                                <td
+                                    style="padding: 10px 12px; border-bottom: 1px solid #ddd; text-align: left; color: #666;">
+                                    Motion deblurring
+                                </td>
+                            </tr>
+                            <tr class="fragment">
+                                <td style="padding: 10px 12px; text-align: left;">
+                                    <strong>Smartphone Photography</strong>
+                                </td>
+                                <td style="padding: 10px 12px; text-align: left; color: #666;">
+                                    Denoising and deblurring
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">2.</span><br />
+                        Image Degradation Model
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>2.1 Image Degradation Process</h2>
+                    <p style="text-align: center; margin: 20px 0;">
+                        \[g(x, y) = h(x, y) * f(x, y) + \eta(x, y)\]
+                    </p>
+                    <ul style="font-size: 0.85em;">
+                        <li class="fragment">\( f(x, y) \) — the original (unknown) image</li>
+                        <li class="fragment">\( h(x, y) \) — the degradation function (e.g. blur kernel)</li>
+                        <li class="fragment">\( * \) — convolution operator</li>
+                        <li class="fragment">\( \eta(x, y) \) — additive noise</li>
+                        <li class="fragment">\( g(x, y) \) — the observed degraded image</li>
+                    </ul>
+                    <div class="question-box fragment">
+                        <p style="margin: 0;"><strong>Goal:</strong> recover \( f(x,y) \) given \( g(x,y) \), and
+                            knowledge (or estimates) of \( h \) and \( \eta \).</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>2.2 Noise Models</h2>
+                    <ul>
+                        <li class="fragment"><span class="keyword">Gaussian noise</span> — sensor/thermal noise,
+                            symmetric bell-shaped distribution</li>
+                        <li class="fragment"><span class="keyword">Salt-and-pepper noise</span> — random black/white
+                            pixels from transmission errors</li>
+                        <li class="fragment"><span class="keyword">Poisson (shot) noise</span> — signal-dependent,
+                            common in low-light imaging</li>
+                        <li class="fragment"><span class="keyword">Speckle noise</span> — multiplicative, common in
+                            radar/ultrasound imaging</li>
+                        <li class="fragment"><span class="keyword">Periodic noise</span> — structured interference
+                            from electrical/mechanical sources</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>2.3 Blur Models</h2>
+                    <ul>
+                        <li class="fragment"><span class="keyword">Motion blur</span> — relative motion between
+                            camera and scene during exposure</li>
+                        <li class="fragment"><span class="keyword">Defocus (Gaussian) blur</span> — out-of-focus
+                            optical system</li>
+                        <li class="fragment"><span class="keyword">Atmospheric blur</span> — turbulence in the
+                            imaging medium</li>
+                    </ul>
+                    <p class="fragment" style="text-align: center; margin-top: 20px;">
+                        Each blur type corresponds to a different point spread function \( h(x, y) \).
+                    </p>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">3.</span><br />
+                        Image Restoration Techniques
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>3.1 Image Denoising</h2>
+                    <ul>
+                        <li class="fragment"><span class="keyword">Spatial filtering</span> — mean, median, Gaussian,
+                            bilateral filters</li>
+                        <li class="fragment"><span class="keyword">Frequency-domain filtering</span> — low-pass
+                            filtering in the Fourier domain</li>
+                        <li class="fragment"><span class="keyword">Wavelet denoising</span> — thresholding wavelet
+                            coefficients</li>
+                        <li class="fragment"><span class="keyword">Learning-based denoising</span> — CNN / diffusion
+                            models trained to predict noise</li>
+                    </ul>
+                    <div class="placeholder fragment"
+                        style="border:1px dashed #999;padding:14px;border-radius:8px; margin-top: 16px;">
+                        <em>[Figure placeholder]</em><br />
+                        <strong>Description:</strong> Noisy image before and after denoising.<br />
+                        <strong>Image prompt:</strong> Side-by-side comparison of a noisy photo and its denoised
+                        result.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>3.2 Image Deblurring</h2>
+                    <ul>
+                        <li class="fragment"><span class="keyword">Inverse filtering</span> — divide by the
+                            degradation function in the frequency domain</li>
+                        <li class="fragment"><span class="keyword">Wiener filtering</span> — inverse filtering that
+                            accounts for noise, minimizing mean square error</li>
+                        <li class="fragment"><span class="keyword">Blind deconvolution</span> — estimate both the
+                            image and the unknown blur kernel</li>
+                    </ul>
+                    <p class="fragment" style="text-align: center; margin: 16px 0 0;">
+                        \[\hat{F}(u,v) = \left[\frac{1}{H(u,v)} \frac{|H(u,v)|^2}{|H(u,v)|^2 + K}\right] G(u,v)\]
+                    </p>
+                    <div class="placeholder fragment"
+                        style="border:1px dashed #999;padding:14px;border-radius:8px; margin-top: 12px;">
+                        <em>[Figure placeholder]</em><br />
+                        <strong>Description:</strong> Blurry image before and after deblurring.<br />
+                        <strong>Image prompt:</strong> Side-by-side comparison of a motion-blurred photo and its
+                        deblurred result.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>3.3 Periodic Noise Reduction</h2>
+                    <ul>
+                        <li class="fragment">Periodic noise appears as isolated peaks in the Fourier spectrum</li>
+                        <li class="fragment"><span class="keyword">Notch filtering</span> — reject narrow frequency
+                            bands around the peaks</li>
+                        <li class="fragment"><span class="keyword">Band-reject filtering</span> — reject a range of
+                            frequencies</li>
+                    </ul>
+                    <div class="placeholder fragment"
+                        style="border:1px dashed #999;padding:14px;border-radius:8px; margin: 12px 0;">
+                        <em>[Figure placeholder]</em><br />
+                        <strong>Description:</strong> Image with periodic noise, its Fourier spectrum showing peaks,
+                        and the result after notch filtering.<br />
+                        <strong>Image prompt:</strong> Three-panel figure: noisy image → Fourier spectrum with
+                        highlighted peaks → cleaned image.
+                    </div>
+                    <div class="question-box fragment">
+                        <p style="margin: 0;">Detect the noise in the Fourier domain first, then design a filter
+                            that removes it while preserving the rest of the spectrum.</p>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">4.</span><br />
+                        Restoration Evaluation
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>4.1 Quality Metrics</h2>
+                    <ul>
+                        <li class="fragment"><span class="keyword">MSE</span> (Mean Squared Error) — average squared
+                            pixel-wise difference</li>
+                        <li class="fragment"><span class="keyword">PSNR</span> (Peak Signal-to-Noise Ratio) —
+                            logarithmic measure derived from MSE</li>
+                        <li class="fragment"><span class="keyword">SSIM</span> (Structural Similarity Index) —
+                            perceptual similarity in luminance, contrast, structure</li>
+                        <li class="fragment"><span class="keyword">LPIPS</span> — learned perceptual metric using
+                            deep features</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>4.2 Visual Comparison</h2>
+                    <ul>
+                        <li class="fragment">Quantitative metrics don't always align with perceived quality</li>
+                        <li class="fragment">Side-by-side comparison of degraded, restored, and ground-truth images
+                        </li>
+                        <li class="fragment">Zoomed-in crops to inspect fine detail and artifacts</li>
+                    </ul>
+                    <div class="placeholder fragment"
+                        style="border:1px dashed #999;padding:18px;border-radius:8px; margin-top: 20px;">
+                        <em>[Figure placeholder]</em><br />
+                        <strong>Description:</strong> Side-by-side comparison of degraded input, restored output, and
+                        ground-truth image.<br />
+                        <strong>Image prompt:</strong> Three-panel comparison showing a noisy/blurred image, its
+                        restored version, and the original clean image.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Summary</h2>
+                    <ul>
+                        <li class="fragment">Image restoration recovers an original image from a <span
+                                class="keyword">modeled degradation</span> (blur + noise)</li>
+                        <li class="fragment">Techniques range from classical filtering (Wiener, notch filters) to
+                            learning-based approaches</li>
+                        <li class="fragment">Evaluation combines objective metrics (PSNR, SSIM) with visual
+                            inspection</li>
+                    </ul>
+                </section>
+            </section>
+
+            <div class="footer">
+                Computer Vision: Image Restoration
+            </div>
+        </div>
+    </div>
+    <script src="revealjs/dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            controlsLayout: "edges",
+            slideNumber: true,
+            hashOneBasedIndex: true,
+            hash: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX],
+        });
+    </script>
+</body>
+
+</html>

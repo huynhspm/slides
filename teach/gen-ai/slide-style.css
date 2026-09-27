@@ -33,6 +33,21 @@
 	font-size: 0.9em;
 }
 
+.reveal .footer {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	text-align: left;
+	font-size: 1rem;
+	color: #888;
+}
+
+/* Hide footer when the first slide is showing */
+.reveal section:first-of-type.present ~ .footer {
+	display: none;
+}
+
 .reveal .keyword {
 	color: #2f3e7a;
 	font-weight: 700;
@@ -45,4 +60,30 @@
 	margin: auto;
 	background: #f7efe6;
 	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Opening sentence or question that sets up a slide */
+.reveal .lead {
+	font-size: 0.8em;
+	color: #2c3e50;
+	margin: 0.2em 0 0.6em;
+	text-align: left;
+}
+
+/* Closing sentence: the finding a slide should leave behind */
+.reveal .takeaway {
+	font-size: 0.68em;
+	color: #2c3e50;
+	background: #fffbe6;
+	border: 1px solid #f5d76e;
+	border-left: 5px solid #f1c40f;
+	border-radius: 10px;
+	padding: 0.4em 0.9em;
+	margin: 0.7em 0 0;
+	text-align: left;
+}
+
+/* Display formulas inside key-statement boxes: no extra vertical margin */
+.reveal .question-box .katex-display {
+	margin: 0.15em 0;
 }

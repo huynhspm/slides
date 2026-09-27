@@ -1,0 +1,1173 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/png" href="../../favicon.png">
+    <title>Image Enhancement</title>
+
+    <link rel="stylesheet" href="revealjs/dist/reset.css" />
+    <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+    <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+    <link rel="stylesheet" href="slide-style.css" />
+</head>
+
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <section>
+                    <h1>Computer Vision</h1>
+                    <h3>Image Enhancement</h3>
+                    <p>IAI · UET · VNU</p>
+                    <p>Presenter: Trinh Ngoc Huynh </p>
+                    <p>Email: <a href="mailto:huynhtn@vnu.edu.vn">huynhtn@vnu.edu.vn</a></p>
+                </section>
+
+                <section>
+                    <h2>Content</h2>
+
+                    <div class="fragment"
+                        style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; font-size: 0.7em;">
+
+                        <div
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #b15a2b;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #b15a2b; min-width: 40px; text-align: center;">1</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Image Operations</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Point, local, and global
+                                    operations</p>
+                            </div>
+                        </div>
+
+                        <div
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #2a7ae2; min-width: 40px; text-align: center;">2</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Intensity Transformations</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Negative, Gamma,
+                                    contrast stretching, slicing, and thresholding</p>
+                            </div>
+                        </div>
+
+                        <div
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #27ae60; min-width: 40px; text-align: center;">3</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Histogram Processing</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Equalization & matching
+                                </p>
+                            </div>
+                        </div>
+
+                        <div
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #e67e22; min-width: 40px; text-align: center;">4</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Spatial Filtering</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Convolution, smoothing,
+                                    sharpening, edge detection</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">1.</span><br />
+                        Image Operations
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Motivation</h2>
+
+                    <div class="fragment"
+                        style="display: grid; grid-template-columns: repeat(3, 1fr); column-gap: 30px; row-gap: 30px;">
+
+                        <div
+                            style="background: #f8f9fa; border-radius: 8px; border-top: 4px solid #e74c3c; overflow: hidden; text-align: center;">
+                            <img src="img/too_dark.png" alt="Image is too dark"
+                                style="width: 100%; height: auto; max-height: 140px; object-fit: contain; display: block; margin: 0 auto;" />
+                            <p style="margin: 0; padding: 5px 6px; font-size: 0.5em; color: #2c3e50;">Too dark</p>
+                        </div>
+
+                        <div
+                            style="background: #f8f9fa; border-radius: 8px; border-top: 4px solid #e74c3c; overflow: hidden; text-align: center;">
+                            <img src="img/too_bright.png" alt="Image is too bright"
+                                style="width: 100%; height: auto; max-height: 140px; object-fit: contain; display: block; margin: 0 auto;" />
+                            <p style="margin: 0; padding: 5px 6px; font-size: 0.5em; color: #2c3e50;">Too bright</p>
+                        </div>
+
+                        <div
+                            style="background: #f8f9fa; border-radius: 8px; border-top: 4px solid #e74c3c; overflow: hidden; text-align: center;">
+                            <img src="img/noisy.png" alt="Image is noisy"
+                                style="width: 100%; height: auto; max-height: 140px; object-fit: contain; display: block; margin: 0 auto;" />
+                            <p style="margin: 0; padding: 5px 6px; font-size: 0.5em; color: #2c3e50;">Noisy</p>
+                        </div>
+
+                        <div
+                            style="background: #f8f9fa; border-radius: 8px; border-top: 4px solid #e74c3c; overflow: hidden; text-align: center;">
+                            <img src="img/blurry.png" alt="Image is blurry"
+                                style="width: 100%; height: auto; max-height: 140px; object-fit: contain; display: block; margin: 0 auto;" />
+                            <p style="margin: 0; padding: 5px 6px; font-size: 0.5em; color: #2c3e50;">Blurry</p>
+                        </div>
+
+                        <div
+                            style="background: #f8f9fa; border-radius: 8px; border-top: 4px solid #e74c3c; overflow: hidden; text-align: center;">
+                            <img src="img/unclear_edges.png" alt="Object edges are unclear"
+                                style="width: 100%; height: auto; max-height: 140px; object-fit: contain; display: block; margin: 0 auto;" />
+                            <p style="margin: 0; padding: 5px 6px; font-size: 0.5em; color: #2c3e50;">Unclear
+                                edges</p>
+                        </div>
+
+                        <div class="fragment"
+                            style="background: #eafaf1; border-radius: 8px; border-top: 4px solid #27ae60; overflow: hidden; text-align: center;">
+                            <img src="img/enhanced.png" alt="Enhanced image"
+                                style="width: 100%; height: auto; max-height: 140px; object-fit: contain; display: block; margin: 0 auto;" />
+                            <p
+                                style="margin: 0; padding: 5px 6px; font-size: 0.55em; color: #27ae60; font-weight: 700;">
+                                Enhanced</p>
+                        </div>
+
+                    </div>
+
+                    <div class="question-box fragment"
+                        style="margin-top: 12px; font-size: 0.6em; padding: 8px 18px; width: 90%; margin-left: auto; margin-right: auto;">
+                        <p style="margin: 0;"><strong>Question:</strong> How can we improve this image?
+                            $\rightarrow$ <span class="keyword">Image Enhancement</span></p>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Image Enhancement</h2>
+
+                    <div style="font-size: 0.7em; text-align: left;">
+
+                        <div class="fragment"
+                            style="display: flex; gap: 20px; align-items: flex-start; background: #f8d7da; padding: 14px 20px; border-radius: 10px; border-left: 4px solid #e74c3c; margin-bottom: 30px;">
+                            <span style="font-size: 1.3em;">✖</span>
+                            <div>
+                                <strong style="color: #e74c3c; font-size: 1.1em;">Does not create new
+                                    information</strong>
+                                <p style="margin: 4px 0 0 0; color: #555;">
+                                    Enhancement cannot recover information that is completely lost from the original
+                                    image.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; gap: 20px; align-items: flex-start; background: #d4edda; padding: 14px 20px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <span style="font-size: 1.3em;">✔</span>
+                            <div>
+                                <strong style="color: #27ae60; font-size: 1.1em;">Only highlights existing
+                                    information</strong>
+                                <p style="margin: 4px 0 0 0; color: #555;">
+                                    Transforms the image to make it easier to observe or process, for humans or
+                                    algorithms.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="margin-top: 40px; padding: 14px 20px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                            <p style="margin: 0;">
+                                <strong style="color: #b8860b;">Key Idea:</strong>
+                                Image Enhancement is a transformation that highlights desired features of an image.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Image Transformation</h2>
+
+                    <div style="margin-top: 20px; font-size: 0.7em; text-align: left;">
+
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 20px 24px; border-radius: 10px; border-left: 4px solid #2a7ae2; margin-bottom: 16px;">
+                            <p style="text-align: center; font-size: 1.5em; margin: 0;">
+                                $$g(x,y) = T\big(f(x,y)\big) \quad \text{or} \quad g = T(f)$$
+                            </p>
+                        </div>
+
+                        <div class="fragment" style="display: flex; gap: 14px;">
+                            <div
+                                style="flex: 1; background: #eef5fc; padding: 14px 18px; border-radius: 10px; text-align: center;">
+                                <strong style="color: #2a7ae2;">$f$</strong>
+                                <p style="margin: 4px 0 0 0; color: #666; font-size: 0.9em;">Input image</p>
+                            </div>
+                            <div
+                                style="flex: 1; background: #fffaf0; padding: 14px 18px; border-radius: 10px; text-align: center;">
+                                <strong style="color: #d35400;">$T$</strong>
+                                <p style="margin: 4px 0 0 0; color: #666; font-size: 0.9em;">Transformation</p>
+                            </div>
+                            <div
+                                style="flex: 1; background: #eafaf1; padding: 14px 18px; border-radius: 10px; text-align: center;">
+                                <strong style="color: #27ae60;">$g$</strong>
+                                <p style="margin: 4px 0 0 0; color: #666; font-size: 0.9em;">Output image</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="margin-top: 20px; padding: 14px 20px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                            <p style="margin: 0;">
+                                <strong style="color: #b8860b;">Key Idea:</strong>
+                                This is the foundational model used to explain the different types of image
+                                operations.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Types of Image Operations</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.5em;">
+
+                        <div class="fragment"
+                            style="display: flex; gap: 20px; align-items: center; background: #f8f9fa; padding: 0px 24px; border-radius: 10px; border-left: 4px solid #9727ae;">
+                            <div
+                                style="min-width: 48px; height: 48px; background: #9727ae; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">
+                                P</div>
+                            <div style="flex: 1;">
+                                <strong style="color: #2c3e50;">Point Operations</strong>
+                                <p style="margin: 6px 0 0 0; color: #555; line-height: 1.5;">
+                                    Output pixel depends only on the <span class="keyword">corresponding input
+                                        pixel</span>.
+                                    <br>$g(x,y) = T(f(x,y))$
+                                </p>
+                            </div>
+                            <img src="img/point.png" alt="Point operation illustration"
+                                style="width: 220px; height: 100px; object-fit: cover; object-position: center; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); flex-shrink: 0;" />
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; gap: 20px; align-items: center; background: #f8f9fa; padding: 0px 24px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <div
+                                style="min-width: 48px; height: 48px; background: #2a7ae2; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">
+                                L</div>
+                            <div style="flex: 1;">
+                                <strong style="color: #2c3e50;">Local Operations</strong>
+                                <p style="margin: 6px 0 0 0; color: #555; line-height: 1.5;">
+                                    Output pixel depends on a <span class="keyword">neighborhood</span> of input
+                                    pixels.
+                                    <br>$g(x,y) = T(f(\text{neighborhood of } x,y))$
+                                </p>
+                            </div>
+                            <img src="img/local.png" alt="Local operation illustration"
+                                style="width: 220px; height: 100px; object-fit: cover; object-position: center; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); flex-shrink: 0;" />
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; gap: 20px; align-items: center; background: #f8f9fa; padding: 0px 24px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <div
+                                style="min-width: 48px; height: 48px; background: #27ae60; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">
+                                G</div>
+                            <div style="flex: 1;">
+                                <strong style="color: #2c3e50;">Global Operations</strong>
+                                <p style="margin: 6px 0 0 0; color: #555; line-height: 1.5;">
+                                    Output pixel depends on <span class="keyword">all pixels</span> in the image.
+                                    <br>$g(x,y) = T(f)$
+                                </p>
+                            </div>
+                            <img src="img/global.png" alt="Global operation illustration"
+                                style="width: 220px; height: 100px; object-fit: cover; object-position: center; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); flex-shrink: 0;" />
+                        </div>
+
+                    </div>
+
+                    <div class="fragment"
+                        style="margin-top: 10px; font-size: 0.65em; padding: 14px 20px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                        <p style="margin: 0;">
+                            <strong style="color: #b8860b;">Key Idea:</strong>
+                            These operations differ in the <strong>amount of information</strong> used to compute a
+                            single output pixel.
+                        </p>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light" style="color: #888;">2.</span><br />
+                        Intensity Transformations
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Formulation</h2>
+
+                    <div style="margin-top: 20px; font-size: 0.65em; text-align: left;">
+
+                        <div class="fragment" style="display: flex; gap: 14px; margin-bottom: 16px;">
+                            <div
+                                style="flex: 1; background: #eef5fc; padding: 14px 18px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                                <strong style="color: #2a7ae2;">Intensity Transformation</strong>
+                                <p style="margin: 4px 0 0 0; color: #555;">
+                                    A transformation that remaps the intensity value of each pixel.
+                                </p>
+                            </div>
+                            <div
+                                style="flex: 1; background: #fffaf0; padding: 14px 18px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                                <strong style="color: #d35400;">Point Operations</strong>
+                                <p style="margin: 4px 0 0 0; color: #555;">
+                                    Each output pixel depends only on the corresponding input pixel.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 16px 20px; border-radius: 10px; border-left: 4px solid #9727ae; margin-bottom: 14px;">
+                            <strong style="color: #9727ae; font-size: 1em;">General Transformation Function</strong>
+                            <p style="text-align: center; font-size: 1.4em; margin: 8px 0 0 0;">
+                                $$s = T(r)$$
+                            </p>
+                        </div>
+
+                        <div class="fragment" style="display: flex; gap: 12px;">
+                            <div
+                                style="flex: 1; background: #eef5fc; padding: 10px 14px; border-radius: 8px; text-align: center;">
+                                <strong style="color: #2a7ae2;">$r$</strong>
+                                <p style="margin: 2px 0 0 0; color: #666; font-size: 0.85em;">Input intensity</p>
+                            </div>
+                            <div
+                                style="flex: 1; background: #eafaf1; padding: 10px 14px; border-radius: 8px; text-align: center;">
+                                <strong style="color: #27ae60;">$s$</strong>
+                                <p style="margin: 2px 0 0 0; color: #666; font-size: 0.85em;">Output intensity</p>
+                            </div>
+                            <div
+                                style="flex: 1; background: #fffaf0; padding: 10px 14px; border-radius: 8px; text-align: center;">
+                                <strong style="color: #d35400;">$T(\cdot)$</strong>
+                                <p style="margin: 2px 0 0 0; color: #666; font-size: 0.85em;">Transformation
+                                    function</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Image Negative</h2>
+
+                    <div style="margin-top: 20px; font-size: 0.6em; text-align: left;">
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 16px 20px; border-radius: 10px; border-left: 4px solid #2a7ae2; margin-bottom: 14px;">
+                            <p style="text-align: center; font-size: 1.3em; margin: 0;">
+                                $$s = (L - 1) - r$$
+                            </p>
+                            <p style="text-align: center; margin: 8px 0 0 0; color: #666; font-size: 0.95em;">
+                                $L$ is the number of intensity levels (e.g. $L=256$ for 8-bit images).
+                            </p>
+                        </div>
+
+                        <div class="fragment" style="display: flex; gap: 20px; margin-top: 20px">
+                            <div style="flex: 1; background: #fffaf0; padding: 14px 18px; border-radius: 10px;">
+                                <strong style="color: #d35400;">Goal</strong>
+                                <p style="margin: 4px 0 0 0; color: #555;">
+                                    Enhance white or gray detail embedded in dark regions of an image.
+                                </p>
+                            </div>
+                            <div style="flex: 1; background: #eef5fc; padding: 14px 18px; border-radius: 10px;">
+                                <strong style="color: #2c3e50;">What?</strong>
+                                <p style="margin: 4px 0 0 0; color: #555;">
+                                    Reverses intensity levels: dark becomes light and light becomes dark.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="margin-top: 20px; padding: 14px 20px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                            <p style="margin: 0;">
+                                <strong style="color: #b8860b;">Key Idea:</strong>
+                                Invert intensity values so that dark and light regions swap.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Image Negative</h2>
+
+                    <div style="display: flex; gap: 10px; align-items: center">
+                        <div class="fragment" style="flex: 1; font-size: 0.65em; text-align: left;">
+                            <strong style="color: #2c3e50;">Applications</strong>
+                            <ul style="margin-top: 8px;">
+                                <li style="margin-bottom: 6px;">Enhancing white or gray detail embedded in dark
+                                    regions of an image (e.g. medical images).</li>
+                                <li style="margin-bottom: 6px;">Producing film-like negatives for artistic or analog
+                                    photography effects.</li>
+                                <li>Highlighting features in mammograms and other diagnostic scans.</li>
+                            </ul>
+                        </div>
+
+                        <div class="fragment" style="flex: 1.2; text-align: center;">
+                            <img src="img/negative.png" alt="Original image vs negative image"
+                                style="width: 100%; object-fit: cover; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); display: block; margin: 0 auto;" />
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Gamma Transformation</h2>
+
+                    <div style="font-size: 0.65em; text-align: left;">
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 16px -10px; border-radius: 10px; border-left: 4px solid #2a7ae2; margin-bottom: 20px;">
+                            <p style="text-align: center; font-size: 1.3em; margin: 0;">
+                                $$s = c \, r^{\gamma}$$
+                            </p>
+                            <p style="text-align: center; margin-bottom: 10px; color: #666; font-size: 0.9em;">
+                                Gamma transformation operates on normalized intensities in $[0,1]$.
+                            </p>
+                            <div style="display: flex; gap: 10px; font-size: 0.65em;">
+                                <div
+                                    style="flex: 1.5; background: #f6ecfa; padding: 8px 10px; border-radius: 8px; text-align: center;">
+                                    <strong style="color: #9727ae;">1. Normalize</strong>
+                                    <p style="margin: 4px 0 0 0; color: #555;">$r \in [0, L-1] \rightarrow r_n =
+                                        \dfrac{r}{L-1} \in [0,1]$</p>
+                                </div>
+                                <div
+                                    style="flex: 1; background: #fdeeee; padding: 8px 10px; border-radius: 8px; text-align: center;">
+                                    <strong style="color: #c0392b;">2. Apply Power</strong>
+                                    <p style="margin: 4px 0 0 0; color: #555;">$s_n = c \, r_n^{\gamma}$</p>
+                                </div>
+                                <div
+                                    style="flex: 1; background: #eafaf1; padding: 8px 10px; border-radius: 8px; text-align: center;">
+                                    <strong style="color: #27ae60;">3. Re-normalize</strong>
+                                    <p style="margin: 4px 0 0 0; color: #555;">$s = s_n \times (L-1)$</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="fragment" style="display: flex; gap: 20px; margin-bottom: 20px;">
+                            <div
+                                style="flex: 1; background: #eef5fc; padding: 15px 18px; border-radius: 10px; text-align: center;">
+                                <strong style="color: #2a7ae2;">$\gamma < 1$</strong>
+                                        <p style="margin: 4px 0 0 0; color: #555;">Expands dark
+                                            regions,
+                                            compresses bright regions</p>
+                            </div>
+                            <div
+                                style="flex: 1; background: #fffaf0; padding: 15px 18px; border-radius: 10px; text-align: center;">
+                                <strong style="color: #d35400;">$\gamma > 1$</strong>
+                                <p style="margin: 4px 0 0 0; color: #555;">Expands bright regions,
+                                    compresses dark regions</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="padding: 15px 20px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                            <p style="margin: 0; font-size: 0.9em;">
+                                <strong style="color: #b8860b;">Key Idea:</strong>
+                                Nonlinearly remap all intensities using a power function.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Gamma Transformation</h2>
+
+                    <div style="display: flex; gap: 10px; align-items: center">
+                        <div class="fragment" style="flex: 1; font-size: 0.6em; text-align: left;">
+                            <strong style="color: #2c3e50;">Applications</strong>
+                            <ul style="margin-top: 8px;">
+                                <li style="margin-bottom: 6px;">Gamma correction for displays, cameras, and printers
+                                    to match human perception of brightness.</li>
+                                <li style="margin-bottom: 6px;">Enhancing contrast in medical or satellite images
+                                    with a narrow dynamic range.</li>
+                                <li>Preprocessing step before feeding images into computer vision models.</li>
+                            </ul>
+
+                            <div style="margin-top: 14px; font-size: 0.85em; color: #888;">
+                                <em>Further reading: Log Transformation.</em>
+                            </div>
+                        </div>
+
+                        <div class="fragment" style="flex: 1.2; text-align: center;">
+                            <img src="img/gamma.png" alt="Gamma transformation examples for different gamma values"
+                                style="width: 100%; object-fit: cover; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); display: block; margin: 0 auto;" />
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Contrast Stretching</h2>
+
+                    <div style="margin-top: 12px; font-size: 0.55em; text-align: left;">
+
+                        <div class="fragment"
+                            style="display: flex; gap: 14px; align-items: flex-start; background: #f8f9fa; padding: 10px 18px; border-radius: 10px; border-left: 4px solid #2a7ae2; margin-bottom: 12px;">
+                            <div
+                                style="min-width: 34px; height: 34px; background: #2a7ae2; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">
+                                1</div>
+                            <div>
+                                <strong style="font-size: 1.05em; color: #2c3e50;">Contrast</strong>
+                                <p style="margin: 4px 0 0 0; color: #555; line-height: 1.5;">
+                                    The difference in intensity between the brightest and darkest parts of an image.
+                                    Low contrast means intensities are crowded into a narrow range.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; gap: 14px; align-items: flex-start; background: #f8f9fa; padding: 10px 18px; border-radius: 10px; border-left: 4px solid #e67e22; margin-bottom: 12px;">
+                            <div
+                                style="min-width: 34px; height: 34px; background: #e67e22; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">
+                                2</div>
+                            <div style="flex: 1;">
+                                <strong style="font-size: 1.05em; color: #2c3e50;">Goal</strong>
+                                <p style="margin: 4px 0 0 0; color: #555; line-height: 1.5;">
+                                    Choose $(r_1, r_2)$ as the range to expand, and $(s_1, s_2)$ as the target
+                                    range:
+                                </p>
+
+                                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                                    <div
+                                        style="flex: 1; background: #eafaf1; padding: 8px 12px; border-radius: 8px; text-align: center;">
+                                        <strong style="color: #27ae60;">Expand middle</strong>
+                                        <p style="margin: 2px 0 0 0; color: #555; font-size: 0.9em;">$r_1 \to r_2$
+                                            maps to $s_1 \to s_2$ (wider range)</p>
+                                    </div>
+                                    <div
+                                        style="flex: 1; background: #fdeeee; padding: 8px 12px; border-radius: 8px; text-align: center;">
+                                        <strong style="color: #c0392b;">Compress others</strong>
+                                        <p style="margin: 2px 0 0 0; color: #555; font-size: 0.9em;">$0 \to r_1$ maps
+                                            to $0 \to s_1$</p>
+                                        <p style="margin: 2px 0 0 0; color: #555; font-size: 0.9em;">$r_2 \to 255$
+                                            maps to $s_2 \to 255$</p>
+                                    </div>
+                                </div>
+
+                                <div style="margin-top: 10px; display: flex; gap: 8px;">
+                                    <span
+                                        style="flex: 1; background: #eee; padding: 6px; border-radius: 6px; text-align: center; font-size: 0.9em; color: #2c3e50;">$(0,0)$</span>
+                                    <span
+                                        style="flex: 1; background: #eef5fc; padding: 6px; border-radius: 6px; text-align: center; font-size: 0.9em; color: #2a7ae2;">$(r_1,
+                                        s_1)$</span>
+                                    <span
+                                        style="flex: 1; background: #eef5fc; padding: 6px; border-radius: 6px; text-align: center; font-size: 0.9em; color: #2a7ae2;">$(r_2,
+                                        s_2)$</span>
+                                    <span
+                                        style="flex: 1; background: #eee; padding: 6px; border-radius: 6px; text-align: center; font-size: 0.9em; color: #2c3e50;">$(255,255)$</span>
+                                </div>
+                                <p style="margin: 6px 0 0 0; color: #666; text-align: center;">4 control points
+                                    define the transformation.</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="padding: 10px 16px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                            <p style="margin: 0;">
+                                <strong style="color: #b8860b;">Key Idea:</strong>
+                                Redistribute intensities to increase contrast in a selected range.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Contrast Stretching</h2>
+
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <div
+                            style="flex: 1; font-size: 0.5em; text-align: left; display: flex; flex-direction: column; gap: 12px;">
+                            <div class="fragment"
+                                style="background: #f8f9fa; padding: 12px 16px; border-radius: 10px; border-left: 4px solid #9727ae;">
+                                <strong style="color: #9727ae;">Line Through Two Points</strong>
+                                <p style="text-align: center; margin: 10px 0 0 0; font-size: 1.15em;">
+                                    $$y = y_1 + \dfrac{y_2 - y_1}{x_2 - x_1}(x - x_1)$$
+                                </p>
+                            </div>
+
+                            <div class="fragment"
+                                style="background: #eef5fc; padding: 12px 16px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                                <strong style="color: #27ae60;">General Transformation Function</strong>
+                                <p style="margin: 6px 0 0 0; color: #555;">
+                                    Control points: $(0,0)$, $(r_1, s_1)$, $(r_2, s_2)$, $(255, 255)$
+                                </p>
+                                <p style="text-align: center; margin: 14px 0 0 0; font-size: 0.85em;">
+                                    $$s = \begin{cases}
+                                    \dfrac{s_1}{r_1}\,r & 0 \leq r < r_1 \\[12pt] s_1 + \dfrac{s_2 - s_1}{r_2 - r_1}(r -
+                                        r_1) & r_1 \leq r < r_2 \\[12pt] s_2 + \dfrac{255 - s_2}{255 - r_2}(r - r_2) &
+                                        r_2 \leq r \leq 255 \end{cases}$$ </p>
+                            </div>
+                        </div>
+
+                        <div class="fragment" style="flex: 1.5; text-align: center;">
+                            <img src="img/contrast_stretch.png" alt="Contrast stretching example"
+                                style="width: 100%; object-fit: cover; border-radius: 10px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); display: block; margin: 0 auto;" />
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Intensity-level Slicing</h2>
+
+                    <div style="margin-top: 16px; font-size: 0.55em; text-align: left;">
+
+                        <div class="fragment"
+                            style="background: #eef5fc; padding: 10px 18px; border-radius: 10px; border-left: 4px solid #2a7ae2; margin-bottom: 20px;">
+                            <strong style="color: #2a7ae2;">Goal</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">
+                                Highlight a specific range of intensity values $[A, B]$ (e.g. to isolate a feature)
+                                by mapping it to a high value $H$ (typically $H=255$), while deciding what happens
+                                to the rest of the image.
+                            </p>
+                        </div>
+
+                        <div class="fragment" style="display: flex; gap: 14px; margin-bottom: 20px;">
+                            <div
+                                style="flex: 1; background: #f8f9fa; padding: 10px 16px; border-radius: 10px; border-left: 4px solid #9727ae;">
+                                <strong style="color: #9727ae;">With Background</strong>
+                                <p style="margin: 4px 0 0 0; color: #555;">
+                                    Keep values outside $[A,B]$ unchanged.
+                                </p>
+                                <p style="text-align: center; margin: 10px 0 0 0; font-size: 0.95em;">
+                                    $$s = \begin{cases} H & A \leq r \leq B \\[6pt] r & \text{otherwise}
+                                    \end{cases}$$
+                                </p>
+                            </div>
+                            <div
+                                style="flex: 1; background: #fffaf0; padding: 10px 16px; border-radius: 10px; border-left: 4px solid #d35400;">
+                                <strong style="color: #d35400;">Without Background</strong>
+                                <p style="margin: 4px 0 0 0; color: #555;">
+                                    Set values outside $[A,B]$ to $0$.
+                                </p>
+                                <p style="text-align: center; margin: 10px 0 0 0; font-size: 0.95em;">
+                                    $$s = \begin{cases} H & A \leq r \leq B \\[6pt] 0 & \text{otherwise}
+                                    \end{cases}$$
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="padding: 10px 18px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                            <p style="margin: 0;">
+                                <strong style="color: #b8860b;">Key Idea:</strong>
+                                Highlight a selected intensity range.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Intensity-level Slicing</h2>
+
+                    <div style="display: flex; gap: 20px; align-items: center;">
+                        <div class="fragment" style="flex: 1; font-size: 0.55em; text-align: left;">
+                            <strong style="color: #2c3e50;">Applications</strong>
+                            <ul style="margin-top: 8px;">
+                                <li style="margin-bottom: 6px;">Highlighting specific structures in medical images
+                                    (e.g. bones in an X-ray).</li>
+                                <li style="margin-bottom: 6px;">Enhancing features in satellite or aerial imagery
+                                    (e.g. water bodies, terrain types).</li>
+                                <li>Isolating flaws or defects in industrial inspection images.</li>
+                            </ul>
+                        </div>
+
+                        <div class="fragment" style="flex: 1.2; text-align: center;">
+                            <img src="img/intensity_slicing.png" alt="Intensity-level slicing example"
+                                style="width: 100%; object-fit: cover; border-radius: 10px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); display: block; margin: 0 auto;" />
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Thresholding</h2>
+
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <div class="fragment" style="flex: 1; font-size: 0.6em; text-align: left;">
+                            <div
+                                style="background: #f8f9fa; padding: 16px 20px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                                <p style="text-align: center; font-size: 1.2em; margin: 0;">
+                                    $$s = \begin{cases} 0 & \text{if } r < T \\[6pt] L-1 & \text{if } r \geq T
+                                        \end{cases}$$ </p>
+                            </div>
+                            <div
+                                style="padding: 15px 10px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px; margin-top: 20px;">
+                                <p style="margin: 0; color: #555; line-height: 1.5;">
+                                    <strong style="color: #b8860b;">Key Idea:</strong>
+                                    Separate pixels into classes.
+                                </p>
+                            </div>
+
+                            <div
+                                style="padding: 15px 10px; border-left: 4px solid #9727ae; background: #f6ecfa; border-radius: 4px; margin-top: 20px; font-size: 0.9em">
+                                <p style="margin: 0; color: #555; line-height: 1.5;">
+                                    <strong style="color: #9727ae;">Connection:</strong>
+                                    Thresholding is an extreme case of contrast stretching when:
+                                </p>
+                                <p>$r_1=r_2=T$, $s_1=0$, $s_2=L-1$.</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment" style="flex: 1.2; text-align: center;">
+                            <img src="img/thresholding.png" alt="Thresholding example"
+                                style="width: 100%; object-fit: cover; border-radius: 10px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); display: block; margin: 0 auto;" />
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light" style="color: #888;">3.</span><br />
+                        Histogram Processing
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Histogram</h2>
+
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <div style="flex: 3; font-size: 0.65em; text-align: left;">
+                            <div class="fragment"
+                                style="background: #f8f9fa; padding: 14px 18px; border-radius: 10px; border-left: 4px solid #2a7ae2; margin-bottom: 20px;">
+                                <strong style="color: #2a7ae2;">Definition</strong>
+                                <p style="margin: 4px 0 0 0; color: #555;">
+                                    Histogram = frequency distribution of intensity values.
+                                </p>
+                            </div>
+
+                            <div class="fragment"
+                                style="background: #f8f9fa; padding: 14px 18px; border-radius: 10px; border-left: 4px solid #9727ae; margin-bottom: 20px;">
+                                <p style="text-align: center; font-size: 1.1em; margin: 0;">
+                                    $$h(r_k) = n_k$$
+                                </p>
+                                <p style="text-align: center; margin: 8px 0 0 0; color: #666; font-size: 0.85em;">
+                                    $r_k$: the $k$-th intensity level.<br>
+                                    $n_k$: the number of pixels with that intensity.
+                                </p>
+                            </div>
+
+                            <div class="fragment"
+                                style="padding: 14px 20px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                                <p style="margin: 0;">
+                                    <strong style="color: #b8860b;">Key Idea:</strong>
+                                    A histogram describes the intensity distribution of an image.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="fragment" style="flex: 2; text-align: center;">
+                            <img src="img/histogram.png" alt="Histogram example"
+                                style="width: 100%; object-fit: cover; border-radius: 10px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); display: block; margin: 0 auto;" />
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Interpret a Histogram</h2>
+
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 20px;">
+
+                        <div class="fragment"
+                            style="background: #f8f9fa; border-radius: 10px; border-top: 4px solid #2a7ae2; overflow: hidden; text-align: center;">
+                            <img src="img/dark.png" alt="Narrow histogram shifted left"
+                                style="width: 100%; object-fit: cover; display: block;" />
+                            <div style="padding: 10px 4px">
+                                <strong
+                                    style="display: block; color: #2a7ae2; font-size: 0.6em; margin-bottom: 5px;">Narrow,
+                                    shifted left</strong>
+                                <p style="margin: 0; font-size: 0.55em; color: #555;">Low contrast, dark image.</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="background: #f8f9fa; border-radius: 10px; border-top: 4px solid #e67e22; overflow: hidden; text-align: center;">
+                            <img src="img/bright.png" alt="Narrow histogram shifted right"
+                                style="width: 100%; object-fit: cover; display: block;" />
+                            <div style="padding: 10px 4px">
+                                <strong
+                                    style="display: block; color: #d35400; font-size: 0.6em; margin-bottom: 5px;">Narrow,
+                                    shifted right</strong>
+                                <p style="margin: 0; font-size: 0.55em; color: #555;">Low contrast, bright image.</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="background: #f8f9fa; border-radius: 10px; border-top: 4px solid #27ae60; overflow: hidden; text-align: center;">
+                            <img src="img/wide.png" alt="Wide, spread out histogram"
+                                style="width: 100%; object-fit: cover; display: block;" />
+                            <div style="padding: 10px 4px;">
+                                <strong
+                                    style="display: block; color: #27ae60; font-size: 0.65em; margin-bottom: 5px;">Wide,
+                                    spread out</strong>
+                                <p style="margin: 0; font-size: 0.55em; color: #555;">High contrast, good tonal
+                                    range.</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="background: #f8f9fa; border-radius: 10px; border-top: 4px solid #9727ae; overflow: hidden; text-align: center;">
+                            <img src="img/multipeak.png" alt="Histogram with multiple peaks"
+                                style="width: 100%; object-fit: cover; display: block;" />
+                            <div style="padding: 10px 4px;">
+                                <strong
+                                    style="display: block; color: #9727ae; font-size: 0.65em; margin-bottom: 5px;">Multiple
+                                    peaks</strong>
+                                <p style="margin: 0; font-size: 0.55em; color: #555;">Distinct regions or
+                                    objects.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Histogram Equalization</h2>
+
+                    <div style="margin-top: 20px; font-size: 0.6em; text-align: left;">
+
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 14px 18px; border-radius: 10px; border-left: 4px solid #9727ae; margin-bottom: 12px;">
+                            <strong style="color: #9727ae;">Goal</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">
+                                Redistribute intensities to flatten the histogram and improve global contrast.
+                            </p>
+                        </div>
+
+                        <div class="fragment"
+                            style="background: #eef5fc; padding: 14px 18px; border-radius: 10px; border-left: 4px solid #2a7ae2; margin-bottom: 12px;">
+                            <strong style="color: #2a7ae2;">Transformation Function</strong>
+                            <p style="text-align: center; margin: 8px 0 0 0; font-size: 1.05em;">
+                                $$s_k = (L-1) \sum_{j=0}^{k} p(r_j)$$
+                            </p>
+                            <p style="margin: 8px 0 0 0; color: #666; font-size: 0.85em;">
+                                The cumulative distribution function (CDF) of the intensities, scaled to $[0,
+                                L-1]$.
+                            </p>
+                        </div>
+
+                        <div class="fragment"
+                            style="padding: 14px 20px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                            <p style="margin: 0;">
+                                <strong style="color: #b8860b;">Key Idea:</strong>
+                                Spreads out the most frequent intensities, boosting global contrast automatically —
+                                no manual thresholds needed.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Histogram Matching</h2>
+
+                    <div style="margin-top: 20px; font-size: 0.6em; text-align: left;">
+
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 14px 18px; border-radius: 10px; border-left: 4px solid #d35400; margin-bottom: 12px;">
+                            <strong style="color: #d35400;">Goal</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">
+                                Transform an image's histogram to match a specified target histogram, instead of a
+                                flat one.
+                            </p>
+                        </div>
+
+                        <div style="display: flex; gap: 14px; margin-bottom: 12px;">
+                            <div class="fragment"
+                                style="flex: 1; background: #eef5fc; padding: 10px 14px; border-radius: 8px; text-align: center;">
+                                <strong style="color: #2a7ae2;">1. Equalize</strong>
+                                <p style="margin: 4px 0 0 0; color: #555; font-size: 0.9em;">Map source image to a
+                                    flat histogram via $s_k = (L-1)\sum p(r_j)$.</p>
+                            </div>
+                            <div class="fragment"
+                                style="flex: 1; background: #eafaf1; padding: 10px 14px; border-radius: 8px; text-align: center;">
+                                <strong style="color: #27ae60;">2. Equalize target</strong>
+                                <p style="margin: 4px 0 0 0; color: #555; font-size: 0.9em;">Map desired histogram to
+                                    the same flat histogram.</p>
+                            </div>
+                            <div class="fragment"
+                                style="flex: 1; background: #f6ecfa; padding: 10px 14px; border-radius: 8px; text-align: center;">
+                                <strong style="color: #9727ae;">3. Invert</strong>
+                                <p style="margin: 4px 0 0 0; color: #555; font-size: 0.9em;">Chain the source mapping
+                                    with the inverse of the target mapping.</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="padding: 14px 20px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                            <p style="margin: 0;">
+                                <strong style="color: #b8860b;">Key Idea:</strong>
+                                Also called histogram specification — useful for matching the tone of a reference
+                                image.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Local Histogram Equalization</h2>
+
+                    <div style="margin-top: 20px; font-size: 0.6em; text-align: left;">
+
+                        <div class="fragment" style="display: flex; gap: 14px; margin-bottom: 14px;">
+                            <div style="flex: 1; background: #eef5fc; padding: 14px 18px; border-radius: 10px;">
+                                <strong style="color: #2c3e50;">Problem</strong>
+                                <p style="margin: 4px 0 0 0; color: #555;">
+                                    Global equalization uses one histogram for the whole image — local details in
+                                    small regions can still be lost.
+                                </p>
+                            </div>
+                            <div style="flex: 1; background: #fffaf0; padding: 14px 18px; border-radius: 10px;">
+                                <strong style="color: #d35400;">Solution</strong>
+                                <p style="margin: 4px 0 0 0; color: #555;">
+                                    Slide a small window over the image and equalize using only the histogram of
+                                    that neighborhood.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="padding: 14px 20px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                            <p style="margin: 0;">
+                                <strong style="color: #b8860b;">Key Idea:</strong>
+                                A local operation — the output pixel now depends on its neighborhood, not just its
+                                own value.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>CLAHE</h2>
+
+                    <div style="margin-top: 20px; font-size: 0.6em; text-align: left;">
+
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 14px 18px; border-radius: 10px; border-left: 4px solid #9727ae; margin-bottom: 12px;">
+                            <strong style="color: #9727ae;">Contrast Limited Adaptive Histogram Equalization</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">
+                                Local histogram equalization applied on small tiles, with a clip limit to prevent
+                                over-amplifying noise.
+                            </p>
+                        </div>
+
+                        <div class="fragment" style="display: flex; gap: 14px; margin-bottom: 12px;">
+                            <div style="flex: 1; background: #eef5fc; padding: 10px 14px; border-radius: 8px;">
+                                <strong style="color: #2a7ae2;">Clip Limit</strong>
+                                <p style="margin: 4px 0 0 0; color: #555; font-size: 0.9em;">
+                                    Cap the histogram bins before computing the CDF, redistributing the clipped
+                                    excess evenly.
+                                </p>
+                            </div>
+                            <div style="flex: 1; background: #eafaf1; padding: 10px 14px; border-radius: 8px;">
+                                <strong style="color: #27ae60;">Tile Boundaries</strong>
+                                <p style="margin: 4px 0 0 0; color: #555; font-size: 0.9em;">
+                                    Interpolate between neighboring tiles to avoid visible block artifacts.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="padding: 14px 20px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                            <p style="margin: 0;">
+                                <strong style="color: #b8860b;">Key Idea:</strong>
+                                Balances local contrast enhancement with noise suppression — widely used in medical
+                                imaging.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light" style="color: #888;">4.</span><br />
+                        Spatial Filtering
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Convolution</h2>
+
+                    <div style="margin-top: 20px; font-size: 0.65em; text-align: left;">
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 16px 20px; border-radius: 10px; border-left: 4px solid #27ae60; margin-bottom: 14px;">
+                            <p style="text-align: center; font-size: 1.3em; margin: 0;">
+                                $$g(x,y) = \sum_{s=-a}^{a} \sum_{t=-b}^{b} h(s,t)\, f(x-s, y-t)$$
+                            </p>
+                        </div>
+
+                        <div class="fragment" style="display: flex; gap: 14px;">
+                            <div style="flex: 1; background: #eef5fc; padding: 14px 18px; border-radius: 10px;">
+                                <strong style="color: #2c3e50;">What?</strong>
+                                <p style="margin: 4px 0 0 0; color: #555;">
+                                    Slide a kernel $h$ over the image and compute a weighted sum at each position.
+                                </p>
+                            </div>
+                            <div style="flex: 1; background: #fffaf0; padding: 14px 18px; border-radius: 10px;">
+                                <strong style="color: #d35400;">Why?</strong>
+                                <p style="margin: 4px 0 0 0; color: #555;">
+                                    Foundation for all local spatial filtering operations.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Spatial Filtering</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; font-size: 0.65em;">
+
+                        <div class="fragment"
+                            style="display: flex; gap: 20px; align-items: flex-start; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <div
+                                style="min-width: 48px; height: 48px; background: #2a7ae2; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1.2em;">
+                                1</div>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Smoothing</strong>
+                                <p style="margin: 6px 0 0 0; color: #555; line-height: 1.5;">
+                                    Reduce noise and detail using <span class="keyword">low-pass</span> filters
+                                    (mean, Gaussian, median).
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; gap: 20px; align-items: flex-start; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <div
+                                style="min-width: 48px; height: 48px; background: #e67e22; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1.2em;">
+                                2</div>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Sharpening</strong>
+                                <p style="margin: 6px 0 0 0; color: #555; line-height: 1.5;">
+                                    Enhance fine detail and edges using <span class="keyword">high-pass</span> filters
+                                    (Laplacian, unsharp masking).
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; gap: 20px; align-items: flex-start; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <div
+                                style="min-width: 48px; height: 48px; background: #27ae60; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1.2em;">
+                                3</div>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Edge Detection</strong>
+                                <p style="margin: 6px 0 0 0; color: #555; line-height: 1.5;">
+                                    Locate intensity discontinuities using gradient-based operators (Sobel, Prewitt).
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Smoothing</h2>
+
+                    <div style="margin-top: 20px; font-size: 0.65em; text-align: left;">
+                        <div class="fragment" style="display: flex; gap: 14px; margin-bottom: 14px;">
+                            <div style="flex: 1; background: #eef5fc; padding: 14px 18px; border-radius: 10px;">
+                                <strong style="color: #2c3e50;">Goal</strong>
+                                <p style="margin: 4px 0 0 0; color: #555;">
+                                    Blur out noise and small variations.
+                                </p>
+                            </div>
+                            <div style="flex: 1; background: #fffaf0; padding: 14px 18px; border-radius: 10px;">
+                                <strong style="color: #d35400;">Trade-off</strong>
+                                <p style="margin: 4px 0 0 0; color: #555;">
+                                    Larger kernels smooth more but blur edges.
+                                </p>
+                            </div>
+                        </div>
+
+                        <ul class="fragment" style="font-size: 1em;">
+                            <li style="margin-bottom: 10px;"><strong>Mean filter:</strong> average of neighborhood</li>
+                            <li style="margin-bottom: 10px;"><strong>Gaussian filter:</strong> weighted average, less
+                                blurring of edges</li>
+                            <li><strong>Median filter:</strong> nonlinear, robust to salt-and-pepper noise</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Sharpening</h2>
+
+                    <div style="margin-top: 20px; font-size: 0.65em; text-align: left;">
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 16px 20px; border-radius: 10px; border-left: 4px solid #e67e22; margin-bottom: 14px;">
+                            <p style="text-align: center; font-size: 1.2em; margin: 0;">
+                                $$g(x,y) = f(x,y) + c \big[\nabla^2 f(x,y)\big]$$
+                            </p>
+                        </div>
+
+                        <ul class="fragment" style="font-size: 1em;">
+                            <li style="margin-bottom: 10px;"><strong>Laplacian:</strong> second-order derivative,
+                                highlights fine detail</li>
+                            <li><strong>Unsharp masking:</strong> subtract a blurred version to emphasize high
+                                frequencies</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Edge Detection</h2>
+
+                    <div style="margin-top: 20px; font-size: 0.65em; text-align: left;">
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 16px 20px; border-radius: 10px; border-left: 4px solid #27ae60; margin-bottom: 14px;">
+                            <p style="text-align: center; font-size: 1.2em; margin: 0;">
+                                $$|\nabla f| = \sqrt{\left(\frac{\partial f}{\partial x}\right)^2 +
+                                \left(\frac{\partial f}{\partial y}\right)^2}$$
+                            </p>
+                        </div>
+
+                        <div class="fragment" style="display: flex; gap: 14px;">
+                            <div style="flex: 1; background: #eef5fc; padding: 14px 18px; border-radius: 10px;">
+                                <strong style="color: #2c3e50;">First-order</strong>
+                                <p style="margin: 4px 0 0 0; color: #555;">
+                                    Sobel, Prewitt — gradient magnitude and direction.
+                                </p>
+                            </div>
+                            <div style="flex: 1; background: #fffaf0; padding: 14px 18px; border-radius: 10px;">
+                                <strong style="color: #d35400;">Second-order</strong>
+                                <p style="margin: 4px 0 0 0; color: #555;">
+                                    Laplacian — zero-crossings mark edges.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <div class="footer">
+                Computer Vision: Image Enhancement
+            </div>
+        </div>
+    </div>
+    <script src="revealjs/dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            controlsLayout: "edges",
+            slideNumber: true,
+            hashOneBasedIndex: true,
+            hash: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX],
+        });
+    </script>
+</body>
+
+</html>

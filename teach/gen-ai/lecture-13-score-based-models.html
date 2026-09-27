@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/png" href="../../favicon.png">
+    <title>Score-Based Generation & Efficient Sampling</title>
+
+    <link rel="stylesheet" href="revealjs/dist/reset.css" />
+    <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+    <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+    <link rel="stylesheet" href="slide-style.css" />
+</head>
+
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <section>
+                    <h1>Generative AI</h1>
+                    <h3>Score-Based Generation & Efficient Sampling</h3>
+                    <p>IAI · UET · VNU</p>
+                    <p>Presenter: Trinh Ngoc Huynh</p>
+                    <p>Email: <a href="mailto:huynhtn@vnu.edu.vn">huynhtn@vnu.edu.vn</a></p>
+                </section>
+
+                <section>
+                    <h2>Content</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; font-size: 0.7em;">
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #b15a2b;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #b15a2b; min-width: 40px; text-align: center;">1</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">The Score Function</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Score matching, denoising, and the link to DDPM</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #2a7ae2; min-width: 40px; text-align: center;">2</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Continuous Time</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Forward SDE, reverse-time SDE and the probability-flow ODE</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #27ae60; min-width: 40px; text-align: center;">3</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Fast Sampling</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">DDIM, deterministic sampling and modern solvers</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #e67e22; min-width: 40px; text-align: center;">4</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Guidance</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Classifier and classifier-free guidance</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">1.</span><br />
+                        The Score Function
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>The Score Function</h2>
+                    <div class="question-box">
+                        $$ s(x) = \nabla_x \log p(x) $$
+                    </div>
+                    <ul>
+                        <li class="fragment">A vector field pointing toward <span class="keyword">higher density</span></li>
+                        <li class="fragment">From Lecture 11: it does not depend on the normalising constant</li>
+                        <li class="fragment">So we can learn it without ever knowing \( p(x) \)</li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>The Score Vector Field</h2>
+                    <div class="placeholder" style="border:1px dashed #999;padding:18px;border-radius:8px;">
+                        <em>[Figure: Score Vector Field]</em><br />
+                        <strong>Description:</strong> Arrows pointing uphill in density over a two-mode distribution.<br />
+                        <strong>Image prompt:</strong> A 2D contour plot of a bimodal density overlaid with arrows pointing toward the two mode centres.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Score Matching</h2>
+                    <div class="question-box">
+                        $$ \mathcal{J}(\theta) = \frac{1}{2}\mathbb{E}_{p_{\text{data}}}\big[\| s_\theta(x) - \nabla_x \log p_{\text{data}}(x) \|^2 \big] $$
+                    </div>
+                    <ul>
+                        <li class="fragment">The target is unknown, so this cannot be used directly</li>
+                        <li class="fragment">Integration by parts removes it, but leaves a costly trace term</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Denoising Score Matching</h2>
+                    <div class="question-box">
+                        $$ \mathbb{E}\big[\| s_\theta(\tilde{x}) - \nabla_{\tilde{x}} \log q(\tilde{x} \mid x) \|^2\big], \qquad \tilde{x} = x + \sigma\epsilon $$
+                    </div>
+                    <ul>
+                        <li class="fragment">Perturb the data, then match the score of the <span class="keyword">known</span> noise kernel</li>
+                        <li class="fragment">For a Gaussian kernel the target is simply \( -\epsilon/\sigma \)</li>
+                        <li class="fragment">Tractable, and it needs no knowledge of \( p_{\text{data}} \)</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Denoising Is Score Estimation</h2>
+                    <div class="question-box">
+                        $$ s_\theta(x_t, t) = -\frac{\epsilon_\theta(x_t, t)}{\sqrt{1-\bar{\alpha}_t}} $$
+                    </div>
+                    <ul>
+                        <li class="fragment">The DDPM noise predictor <span class="keyword">is</span> a scaled score model</li>
+                        <li class="fragment">Two literatures, two derivations, one network</li>
+                        <li class="fragment">This identity unifies Lectures 11, 12 and 13</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">2.</span><br />
+                        Continuous Time
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Taking the Limit</h2>
+                    <ul>
+                        <li class="fragment">DDPM used \( T = 1000 \) discrete steps</li>
+                        <li class="fragment">Let the step size go to zero: the chain becomes a <span class="keyword">continuous process</span></li>
+                        <li class="fragment">Discrete diffusion is one particular discretisation</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Forward SDE</h2>
+                    <div class="question-box">
+                        $$ dx = f(x,t)\,dt + g(t)\,dw $$
+                    </div>
+                    <ul>
+                        <li class="fragment">\( f \) is the drift, \( g \) the diffusion coefficient, \( w \) a Wiener process</li>
+                        <li class="fragment"><strong>VP-SDE</strong> corresponds to DDPM; <strong>VE-SDE</strong> to score matching</li>
+                        <li class="fragment">One framework covering both prior lectures</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Reverse-Time SDE</h2>
+                    <div class="question-box">
+                        $$ dx = \big[f(x,t) - g(t)^2 \nabla_x \log p_t(x)\big] dt + g(t)\, d\bar{w} $$
+                    </div>
+                    <ul>
+                        <li class="fragment">Anderson's theorem: the reverse of a diffusion is also a diffusion</li>
+                        <li class="fragment">It requires exactly one unknown — the <span class="keyword">score</span></li>
+                        <li class="fragment">Which is what we trained the network to provide</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Probability-Flow ODE</h2>
+                    <div class="question-box">
+                        $$ \frac{dx}{dt} = f(x,t) - \frac{1}{2}g(t)^2 \nabla_x \log p_t(x) $$
+                    </div>
+                    <ul>
+                        <li class="fragment">A <span class="keyword">deterministic</span> path with the same marginals as the SDE</li>
+                        <li class="fragment">Enables fast black-box ODE solvers</li>
+                        <li class="fragment">And gives an exact likelihood via the continuous change of variables</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">3.</span><br />
+                        Fast Sampling
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Why Sampling Is Slow</h2>
+                    <ul>
+                        <li class="fragment">The ancestral sampler follows the Markov chain step by step</li>
+                        <li class="fragment">Small steps are needed to keep the Gaussian assumption valid</li>
+                        <li class="fragment">Hundreds of network calls per image</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>DDIM</h2>
+                    <div class="question-box">
+                        $$ x_{t-1} = \sqrt{\bar{\alpha}_{t-1}}\, \hat{x}_0 + \sqrt{1 - \bar{\alpha}_{t-1} - \sigma_t^2}\quad \epsilon_\theta(x_t,t) + \sigma_t z $$
+                    </div>
+                    <ul>
+                        <li class="fragment">A <span class="keyword">non-Markovian</span> process with the same training objective</li>
+                        <li class="fragment">\( \sigma_t = 0 \) makes sampling fully deterministic</li>
+                        <li class="fragment">Skip timesteps: 1000 steps become 50 with little quality loss</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Deterministic Sampling Is Useful</h2>
+                    <ul>
+                        <li class="fragment">The same seed always gives the same image</li>
+                        <li class="fragment">The latent becomes <span class="keyword">invertible</span>, enabling real-image editing</li>
+                        <li class="fragment">Semantic interpolation in noise space becomes meaningful</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Faster Solvers</h2>
+                    <ul>
+                        <li class="fragment">The probability-flow ODE lets us borrow numerical analysis</li>
+                        <li class="fragment">DPM-Solver and friends reach good samples in 10–20 steps</li>
+                        <li class="fragment">The ceiling is the ODE's curvature — which Lecture 15 attacks</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">4.</span><br />
+                        Guidance
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Conditional Generation</h2>
+                    <div class="question-box">
+                        $$ \nabla_x \log p(x \mid c) = \nabla_x \log p(x) + \nabla_x \log p(c \mid x) $$
+                    </div>
+                    <ul>
+                        <li class="fragment">By Bayes rule, the conditional score splits in two</li>
+                        <li class="fragment">An unconditional score plus a <span class="keyword">correction</span> toward the condition</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Classifier Guidance</h2>
+                    <div class="question-box">
+                        $$ \hat{\epsilon} = \epsilon_\theta(x_t,t) - w\sqrt{1-\bar{\alpha}_t}\, \nabla_x \log p_\phi(c \mid x_t) $$
+                    </div>
+                    <ul>
+                        <li class="fragment">Train a separate classifier on <span class="keyword">noisy</span> images</li>
+                        <li class="fragment">Its gradient steers sampling toward the target class</li>
+                        <li class="fragment"><strong>Drawback:</strong> a second model, trained on noisy data</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Classifier-Free Guidance</h2>
+                    <div class="question-box">
+                        $$ \hat{\epsilon} = (1+w)\,\epsilon_\theta(x_t,t,c) - w\,\epsilon_\theta(x_t,t,\varnothing) $$
+                    </div>
+                    <ul>
+                        <li class="fragment">Train <span class="keyword">one</span> model, randomly dropping the condition</li>
+                        <li class="fragment">At sampling time, extrapolate away from the unconditional prediction</li>
+                        <li class="fragment">No classifier needed — this is what every modern system uses</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Guidance Trade-off</h2>
+                    <ul>
+                        <li class="fragment">Higher \( w \) → stronger prompt adherence, higher fidelity</li>
+                        <li class="fragment">But <span class="keyword">lower diversity</span> and eventually oversaturation</li>
+                        <li class="fragment">The quality-versus-diversity trade-off from Lecture 01, once again</li>
+                    </ul>
+                    <div class="placeholder" style="border:1px dashed #999;padding:18px;border-radius:8px;">
+                        <em>[Figure: Guidance Scale Sweep]</em><br />
+                        <strong>Description:</strong> The same prompt and seed rendered at increasing guidance strength.<br />
+                        <strong>Image prompt:</strong> A row of images from one prompt at guidance scales 1, 3, 7, 15 and 30, growing sharper and more saturated but less varied.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Summary</h2>
+                    <ul>
+                        <li class="fragment">The <span class="keyword">score</span> \( \nabla_x \log p(x) \) avoids the normalising constant</li>
+                        <li class="fragment">Denoising score matching makes it learnable, and equals \( \epsilon \)-prediction</li>
+                        <li class="fragment">The <span class="keyword">SDE</span> view unifies DDPM and score matching in continuous time</li>
+                        <li class="fragment">The probability-flow <span class="keyword">ODE</span> gives fast deterministic sampling and exact likelihood</li>
+                        <li class="fragment"><span class="keyword">Classifier-free guidance</span> trades diversity for prompt adherence</li>
+                    </ul>
+                </section>
+            </section>
+            <div class="footer">
+                Generative AI: Score-Based Generation & Efficient Sampling
+            </div>
+        </div>
+    </div>
+    <script src="revealjs/dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            controlsLayout: "edges",
+            slideNumber: true,
+            hashOneBasedIndex: true,
+            hash: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX],
+        });
+    </script>
+</body>
+
+</html>

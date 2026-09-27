@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/png" href="../../favicon.png">
+    <title>Efficient, Safe & Deployable Visual GenAI</title>
+
+    <link rel="stylesheet" href="revealjs/dist/reset.css" />
+    <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+    <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+    <link rel="stylesheet" href="slide-style.css" />
+</head>
+
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <section>
+                    <h1>Generative AI</h1>
+                    <h3>Efficient, Safe & Deployable Visual GenAI</h3>
+                    <p>IAI · UET · VNU</p>
+                    <p>Presenter: Trinh Ngoc Huynh</p>
+                    <p>Email: <a href="mailto:huynhtn@vnu.edu.vn">huynhtn@vnu.edu.vn</a></p>
+                </section>
+
+                <section>
+                    <h2>Content</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; font-size: 0.7em;">
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #b15a2b;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #b15a2b; min-width: 40px; text-align: center;">1</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Efficient Generation</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">NFE, distillation and consistency models</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #2a7ae2; min-width: 40px; text-align: center;">2</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Deployment</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Memory, latency, throughput and batching</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #27ae60; min-width: 40px; text-align: center;">3</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Safety and Responsibility</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Bias, deepfakes, privacy and provenance</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #e67e22; min-width: 40px; text-align: center;">4</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Open Problems & Closing</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">What remains unsolved, and the question that unifies the course</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">1.</span><br />
+                        Efficient Generation
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>The Cost of Iterative Sampling</h2>
+                    <div class="question-box">
+                        $$ \text{cost} \approx \text{NFE} \times \text{cost per forward pass} $$
+                    </div>
+                    <ul>
+                        <li class="fragment"><span class="keyword">NFE</span> — number of function evaluations</li>
+                        <li class="fragment">Diffusion needs 20–50; a GAN needs 1</li>
+                        <li class="fragment">This number dominates deployment cost</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Reducing the Step Count</h2>
+                    <ul>
+                        <li class="fragment"><strong>Better solvers</strong> (Lecture 13) — 1000 steps down to ~20</li>
+                        <li class="fragment"><strong>Straighter paths</strong> (Lecture 15) — down to 1–4</li>
+                        <li class="fragment"><strong>Distillation</strong> — train a student to take bigger steps</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Progressive Distillation</h2>
+                    <ul>
+                        <li class="fragment">Train a student to reproduce <span class="keyword">two</span> teacher steps in one</li>
+                        <li class="fragment">Halve the step count, then repeat</li>
+                        <li class="fragment">1024 → 512 → … → 4 steps, one halving at a time</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Consistency Models</h2>
+                    <div class="question-box">
+                        $$ f_\theta(x_t, t) = x_0 \quad \text{for every } t \text{ on the same trajectory} $$
+                    </div>
+                    <ul>
+                        <li class="fragment">Learn to jump to the endpoint from <span class="keyword">any</span> point on the path</li>
+                        <li class="fragment">Enables genuine one-step generation</li>
+                        <li class="fragment">Trainable by distillation or from scratch</li>
+                    </ul>
+                    <div class="placeholder" style="border:1px dashed #999;padding:18px;border-radius:8px;">
+                        <em>[Figure: Multi-Step vs One-Step Sampling]</em><br />
+                        <strong>Description:</strong> An iterative trajectory against a direct jump to the data point.<br />
+                        <strong>Image prompt:</strong> Two panels: left shows many small arrows stepping from noise to an image; right shows one long arrow going straight there.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Cheaper Forward Passes</h2>
+                    <ul>
+                        <li class="fragment"><strong>Quantization</strong> — 8-bit or 4-bit weights</li>
+                        <li class="fragment"><strong>Attention kernels</strong> — memory-efficient implementations</li>
+                        <li class="fragment"><strong>Distilled backbones</strong> — fewer parameters</li>
+                        <li class="fragment">Orthogonal to reducing NFE — the two multiply</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">2.</span><br />
+                        Deployment
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Serving Constraints</h2>
+                    <ul>
+                        <li class="fragment"><strong>GPU memory</strong> — model weights plus activations</li>
+                        <li class="fragment"><strong>Latency</strong> — time to first image</li>
+                        <li class="fragment"><strong>Throughput</strong> — images per second across users</li>
+                        <li class="fragment">Optimising one usually costs another</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Batching</h2>
+                    <ul>
+                        <li class="fragment">Diffusion batches well: every request runs the same step count</li>
+                        <li class="fragment">Larger batches raise throughput and also raise latency</li>
+                        <li class="fragment">Continuous batching keeps the GPU busy across arrivals</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Resolution and Cost</h2>
+                    <ul>
+                        <li class="fragment">Cost grows roughly with pixel count</li>
+                        <li class="fragment">Latent diffusion already bought a large constant factor</li>
+                        <li class="fragment">Generate small, then upscale with a cheaper specialised model</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>A Practical Checklist</h2>
+                    <ul>
+                        <li class="fragment">Measure NFE before optimising anything else</li>
+                        <li class="fragment">Profile before you quantize</li>
+                        <li class="fragment">Cache text embeddings for repeated prompts</li>
+                        <li class="fragment">Decide the quality floor <span class="keyword">before</span> tuning for speed</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">3.</span><br />
+                        Safety and Responsibility
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Representation Bias</h2>
+                    <ul>
+                        <li class="fragment">Training data reflects who took and captioned the photographs</li>
+                        <li class="fragment">Occupation prompts reproduce and often <span class="keyword">amplify</span> stereotypes</li>
+                        <li class="fragment">Filtering changes the bias rather than removing it</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Harmful Content</h2>
+                    <ul>
+                        <li class="fragment">Explicit, violent and hateful imagery</li>
+                        <li class="fragment">Mitigations: dataset filtering, safety classifiers, concept erasure</li>
+                        <li class="fragment">All are partial, and all can be circumvented</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Deepfakes and Consent</h2>
+                    <ul>
+                        <li class="fragment">Photorealistic images of real, identifiable people</li>
+                        <li class="fragment">Non-consensual imagery is the most acute documented harm</li>
+                        <li class="fragment">Detection is a losing arms race against generation</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Privacy and Memorisation</h2>
+                    <ul>
+                        <li class="fragment">Models can <span class="keyword">memorise</span> and reproduce training images</li>
+                        <li class="fragment">More likely for duplicated examples</li>
+                        <li class="fragment">Deduplication reduces but does not eliminate the risk</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Copyright and Provenance</h2>
+                    <ul>
+                        <li class="fragment">Training data is largely scraped without explicit licence</li>
+                        <li class="fragment">Style imitation sits in unsettled legal territory</li>
+                        <li class="fragment"><span class="keyword">Watermarking</span> and signed content credentials aim to mark provenance</li>
+                        <li class="fragment">Robust invisible watermarking remains unsolved</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">4.</span><br />
+                        Open Problems & Closing
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Open Problems: Control</h2>
+                    <ul>
+                        <li class="fragment">Compositional prompts still fail: counting, spatial relations, attribute binding</li>
+                        <li class="fragment"><span class="keyword">Consistency</span> of a character across images</li>
+                        <li class="fragment">Precise editing without disturbing the rest of the image</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Open Problems: Scale and Fidelity</h2>
+                    <ul>
+                        <li class="fragment">Native high-resolution generation without an upscaling cascade</li>
+                        <li class="fragment">Long-form video with temporal coherence</li>
+                        <li class="fragment">3D generation limited by scarce training data</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Open Problems: Foundations</h2>
+                    <ul>
+                        <li class="fragment">Evaluation that actually tracks human judgement</li>
+                        <li class="fragment">Truly single-step sampling at full quality</li>
+                        <li class="fragment">Data efficiency — learning from far less</li>
+                        <li class="fragment">Attribution and provenance that survive editing</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Course, in One Question</h2>
+                    <div class="question-box">
+                        <strong>How should we represent, learn, evaluate and sample from \( p_\theta(x) \)?</strong>
+                    </div>
+                    <ul>
+                        <li class="fragment">Every family we studied is one answer to this question</li>
+                        <li class="fragment">Autoregressive, latent, flow, adversarial, energy, diffusion, transport</li>
+                        <li class="fragment">They differ in assumptions and computational strategy, not in purpose</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>What to Take Away</h2>
+                    <ul>
+                        <li class="fragment"><strong>Represent:</strong> explicitly, implicitly, or through a score or vector field</li>
+                        <li class="fragment"><strong>Learn:</strong> by likelihood, a bound, an adversary, or regression</li>
+                        <li class="fragment"><strong>Evaluate:</strong> never with a single number</li>
+                        <li class="fragment"><strong>Sample:</strong> in one step or many — this decides the cost</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Summary</h2>
+                    <ul>
+                        <li class="fragment">Sampling cost is <span class="keyword">NFE</span> times cost per pass; attack both</li>
+                        <li class="fragment"><span class="keyword">Distillation</span> and consistency models enable few-step generation</li>
+                        <li class="fragment">Deployment balances memory, latency and throughput</li>
+                        <li class="fragment">Bias, deepfakes, memorisation and provenance are engineering concerns, not afterthoughts</li>
+                        <li class="fragment">Control, evaluation and efficiency remain open problems</li>
+                    </ul>
+                </section>
+            </section>
+            <div class="footer">
+                Generative AI: Efficient, Safe & Deployable Visual GenAI
+            </div>
+        </div>
+    </div>
+    <script src="revealjs/dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            controlsLayout: "edges",
+            slideNumber: true,
+            hashOneBasedIndex: true,
+            hash: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX],
+        });
+    </script>
+</body>
+
+</html>

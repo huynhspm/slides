@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/png" href="../../favicon.png">
+    <title>Latent Variable Models & Variational Inference</title>
+
+    <link rel="stylesheet" href="revealjs/dist/reset.css" />
+    <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+    <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+    <link rel="stylesheet" href="slide-style.css" />
+</head>
+
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <section>
+                    <h1>Generative AI</h1>
+                    <h3>Latent Variable Models & Variational Inference</h3>
+                    <p>IAI · UET · VNU</p>
+                    <p>Presenter: Trinh Ngoc Huynh</p>
+                    <p>Email: <a href="mailto:huynhtn@vnu.edu.vn">huynhtn@vnu.edu.vn</a></p>
+                </section>
+
+                <section>
+                    <h2>Content</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; font-size: 0.7em;">
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #b15a2b;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #b15a2b; min-width: 40px; text-align: center;">1</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Latent Variable Models</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Hidden structure, the prior, and why generation is easy</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #2a7ae2; min-width: 40px; text-align: center;">2</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Gaussian Mixtures & EM</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">A tractable latent-variable model and how to fit it</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #27ae60; min-width: 40px; text-align: center;">3</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">The Intractable Posterior</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Why neural decoders break exact inference</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #e67e22; min-width: 40px; text-align: center;">4</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Variational Inference & the ELBO</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Deriving the bound that trains every VAE</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">1.</span><br />
+                        Latent Variable Models
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Why Latent Variables?</h2>
+                    <div class="question-box">
+                        Real data has <span class="keyword">hidden structure</span>: pose, style, identity, lighting. None of it is labelled.
+                    </div>
+                    <ul>
+                        <li class="fragment">A flat density over pixels ignores this structure</li>
+                        <li class="fragment">Latent variables give the model a place to put it</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Latent-Variable Formulation</h2>
+                    <div class="question-box">
+                        $$ p_\theta(x) = \int p_\theta(x \mid z)\, p(z)\, dz $$
+                    </div>
+                    <ul>
+                        <li class="fragment">\( z \) — an unobserved <span class="keyword">latent variable</span></li>
+                        <li class="fragment">\( p(z) \) — a simple <strong>prior</strong>, usually \( \mathcal{N}(0, I) \)</li>
+                        <li class="fragment">\( p_\theta(x \mid z) \) — the <strong>decoder</strong> or likelihood</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Prior, Likelihood, Posterior</h2>
+                    <ul>
+                        <li class="fragment"><strong>Prior</strong> \( p(z) \) — what we assume before seeing data</li>
+                        <li class="fragment"><strong>Likelihood</strong> \( p_\theta(x \mid z) \) — how a latent produces data</li>
+                        <li class="fragment"><strong>Posterior</strong> \( p_\theta(z \mid x) \) — which latent explains this \( x \)</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Generation Is Easy</h2>
+                    <div class="question-box">
+                        $$ z \sim p(z), \qquad x \sim p_\theta(x \mid z) $$
+                    </div>
+                    <ul>
+                        <li class="fragment">Ancestral sampling: draw a latent, then decode it</li>
+                        <li class="fragment">Sampling is cheap — the difficulty is <span class="keyword">training</span></li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">2.</span><br />
+                        Gaussian Mixtures & EM
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Gaussian Mixture Models</h2>
+                    <div class="question-box">
+                        $$ p(x) = \sum_{k=1}^{K} \pi_k \, \mathcal{N}(x; \mu_k, \Sigma_k) $$
+                    </div>
+                    <ul>
+                        <li class="fragment">The latent \( z \in \{1,\ldots,K\} \) selects which component generated \( x \)</li>
+                        <li class="fragment">The simplest useful latent-variable model</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Responsibility</h2>
+                    <div class="question-box">
+                        $$ \gamma_{ik} = p(z_i = k \mid x_i) = \frac{\pi_k \mathcal{N}(x_i; \mu_k, \Sigma_k)}{\sum_j \pi_j \mathcal{N}(x_i; \mu_j, \Sigma_j)} $$
+                    </div>
+                    <ul>
+                        <li class="fragment">The posterior over the latent, and here it is <span class="keyword">tractable</span></li>
+                        <li class="fragment">A soft assignment of each point to each component</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The EM Algorithm</h2>
+                    <ul>
+                        <li class="fragment"><strong>E-step:</strong> compute the posterior \( \gamma_{ik} \) with parameters fixed</li>
+                        <li class="fragment"><strong>M-step:</strong> update \( \pi_k, \mu_k, \Sigma_k \) with the posterior fixed</li>
+                        <li class="fragment">Each iteration never decreases the likelihood</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Why GMMs Are Not Enough</h2>
+                    <ul>
+                        <li class="fragment">Needs \( K \) components to cover \( K \) modes — hopeless in pixel space</li>
+                        <li class="fragment">Assumes a fixed simple form per component</li>
+                        <li class="fragment">But it makes the posterior tractable, which real models will not</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">3.</span><br />
+                        The Intractable Posterior
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>The Intractable Posterior</h2>
+                    <div class="question-box">
+                        $$ p_\theta(z \mid x) = \frac{p_\theta(x \mid z)p(z)}{p_\theta(x)}, \qquad p_\theta(x) = \int p_\theta(x \mid z)p(z)\,dz $$
+                    </div>
+                    <ul>
+                        <li class="fragment">With a neural decoder that integral has <span class="keyword">no closed form</span></li>
+                        <li class="fragment">High dimension makes numerical integration hopeless</li>
+                        <li class="fragment">So the posterior is unavailable — and so is the likelihood</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Variational Idea</h2>
+                    <div class="question-box">
+                        Approximate the true posterior with a simpler distribution \( q_\phi(z \mid x) \) we <em>can</em> compute.
+                    </div>
+                    <ul>
+                        <li class="fragment">Turn <span class="keyword">inference into optimisation</span></li>
+                        <li class="fragment">Choose \( q_\phi \) from a tractable family, e.g. a Gaussian</li>
+                        <li class="fragment">Fit \( \phi \) so \( q_\phi(z\mid x) \approx p_\theta(z \mid x) \)</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Amortized Inference</h2>
+                    <ul>
+                        <li class="fragment">Naively, each \( x_i \) would need its own optimisation</li>
+                        <li class="fragment">Instead train one <span class="keyword">encoder network</span> mapping \( x \mapsto q_\phi(z \mid x) \)</li>
+                        <li class="fragment">The cost of inference is <em>amortized</em> across the dataset</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">4.</span><br />
+                        Variational Inference & the ELBO
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Deriving a Lower Bound</h2>
+                    <div class="question-box">
+                        $$ \log p_\theta(x) = \log \int q_\phi(z\mid x)\, \frac{p_\theta(x, z)}{q_\phi(z \mid x)}\, dz $$
+                    </div>
+                    <ul>
+                        <li class="fragment">Multiply and divide by \( q_\phi(z\mid x) \) — an expectation appears</li>
+                        <li class="fragment">Now apply Jensen's inequality from Lecture 02</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The ELBO</h2>
+                    <div class="question-box">
+                        $$ \log p_\theta(x) \quad \ge \quad  \mathbb{E}_{q_\phi(z \mid x)}\!\left[\log \frac{p_\theta(x,z)}{q_\phi(z \mid x)}\right] = \mathcal{L}(\theta,\phi;x) $$
+                    </div>
+                    <ul>
+                        <li class="fragment">The <span class="keyword">Evidence Lower BOund</span></li>
+                        <li class="fragment">Maximising it pushes up a bound on the true log-likelihood</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Two Readings of the ELBO</h2>
+                    <div class="question-box">
+                        $$ \mathcal{L} = \underbrace{\mathbb{E}_{q_\phi}[\log p_\theta(x \mid z)]}_{\text{reconstruction}} - \underbrace{D_{\mathrm{KL}}(q_\phi(z\mid x) \,\|\, p(z))}_{\text{regularisation}} $$
+                    </div>
+                    <ul>
+                        <li class="fragment"><strong>Reconstruction:</strong> the decoder should rebuild \( x \) from \( z \)</li>
+                        <li class="fragment"><strong>Regularisation:</strong> the posterior should stay near the prior</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Gap Is Exactly a KL</h2>
+                    <div class="question-box">
+                        $$ \log p_\theta(x) - \mathcal{L}(\theta,\phi;x) = D_{\mathrm{KL}}\big(q_\phi(z\mid x) \,\|\, p_\theta(z \mid x)\big) $$
+                    </div>
+                    <ul>
+                        <li class="fragment">The bound is tight exactly when \( q_\phi \) matches the true posterior</li>
+                        <li class="fragment">Maximising the ELBO does <span class="keyword">two jobs at once</span>: fits the model and improves inference</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Reconstruction–Regularisation Trade-off</h2>
+                    <ul>
+                        <li class="fragment">Push reconstruction alone → the latent space becomes a lookup table</li>
+                        <li class="fragment">Push the KL alone → the posterior collapses to the prior and ignores \( x \)</li>
+                        <li class="fragment">Good generative behaviour lives <span class="keyword">between</span> the two</li>
+                    </ul>
+                    <div class="placeholder" style="border:1px dashed #999;padding:18px;border-radius:8px;">
+                        <em>[Figure: Reconstruction vs Regularisation]</em><br />
+                        <strong>Description:</strong> Latent space under three weightings of the KL term.<br />
+                        <strong>Image prompt:</strong> Three scatter plots of a 2D latent space: scattered isolated clusters, a well-formed Gaussian ball, and a single collapsed blob.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Summary</h2>
+                    <ul>
+                        <li class="fragment">Latent variables model hidden structure: \( p_\theta(x) = \int p_\theta(x\mid z)p(z)dz \)</li>
+                        <li class="fragment">GMM + EM works because its posterior is tractable</li>
+                        <li class="fragment">With neural decoders the posterior is <span class="keyword">intractable</span></li>
+                        <li class="fragment">Variational inference replaces it with a learned \( q_\phi(z \mid x) \)</li>
+                        <li class="fragment">The <span class="keyword">ELBO</span> = reconstruction − KL, and its gap is a KL to the true posterior</li>
+                    </ul>
+                </section>
+            </section>
+            <div class="footer">
+                Generative AI: Latent Variable Models & Variational Inference
+            </div>
+        </div>
+    </div>
+    <script src="revealjs/dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            controlsLayout: "edges",
+            slideNumber: true,
+            hashOneBasedIndex: true,
+            hash: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX],
+        });
+    </script>
+</body>
+
+</html>

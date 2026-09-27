@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 330 160" role="img" aria-label="A movie review classified as positive with probability 0.95">
+  <path d="M18 30 h108 a10 10 0 0 1 10 10 v62 a10 10 0 0 1 -10 10 h-70 l-14 16 v-16 h-24 a10 10 0 0 1 -10 -10 v-62 a10 10 0 0 1 10 -10 z" fill="#ffffff" stroke="#cfd6dd" stroke-width="2"/>
+  <text x="72" y="62" font-size="15" font-style="italic" fill="#2c3e50" text-anchor="middle" font-family="Source Sans Pro, Segoe UI, Helvetica, Arial, sans-serif">&#8220;The movie</text>
+  <text x="72" y="82" font-size="15" font-style="italic" fill="#2c3e50" text-anchor="middle" font-family="Source Sans Pro, Segoe UI, Helvetica, Arial, sans-serif">was amazing!&#8221;</text>
+  <g fill="#f5b700"><path d="M50 94 l2.4 5 5.4 .6 -4 3.7 1.1 5.3 -4.9 -2.7 -4.9 2.7 1.1 -5.3 -4 -3.7 5.4 -.6z"/><path d="M72 94 l2.4 5 5.4 .6 -4 3.7 1.1 5.3 -4.9 -2.7 -4.9 2.7 1.1 -5.3 -4 -3.7 5.4 -.6z"/><path d="M94 94 l2.4 5 5.4 .6 -4 3.7 1.1 5.3 -4.9 -2.7 -4.9 2.7 1.1 -5.3 -4 -3.7 5.4 -.6z"/></g>
+  <line x1="140" y1="80" x2="172" y2="80" stroke="#9aa3ad" stroke-width="2.5" stroke-linecap="round"/><path d="M166 74 L174 80 L166 86" fill="none" stroke="#9aa3ad" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><text x="156" y="70" font-size="15" font-style="italic" fill="#6c757d" text-anchor="middle" font-family="Georgia, serif">f</text>
+  <text x="190" y="55" font-size="18" fill="#2c3e50" font-family="Source Sans Pro, Segoe UI, Helvetica, Arial, sans-serif">positive</text>
+  <rect x="190" y="64" width="94" height="12" rx="6" fill="#e9ecef"/>
+  <rect x="190" y="64" width="89" height="12" rx="6" fill="#27ae60" opacity="1"/>
+  <text x="289" y="73" font-size="16" font-weight="700" fill="#27ae60" font-family="Source Sans Pro, Segoe UI, Helvetica, Arial, sans-serif">0.95</text>
+  <text x="190" y="93" font-size="18" fill="#2c3e50" font-family="Source Sans Pro, Segoe UI, Helvetica, Arial, sans-serif">negative</text>
+  <rect x="190" y="102" width="94" height="12" rx="6" fill="#e9ecef"/>
+  <rect x="190" y="102" width="5" height="12" rx="6" fill="#27ae60" opacity="0.45"/>
+  <text x="289" y="111" font-size="16" font-weight="700" fill="#27ae60" font-family="Source Sans Pro, Segoe UI, Helvetica, Arial, sans-serif">0.05</text>
+</svg>

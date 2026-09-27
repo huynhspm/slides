@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/png" href="../../favicon.png">
+    <title>Flow Matching & Rectified Flow</title>
+
+    <link rel="stylesheet" href="revealjs/dist/reset.css" />
+    <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+    <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+    <link rel="stylesheet" href="slide-style.css" />
+</head>
+
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <section>
+                    <h1>Generative AI</h1>
+                    <h3>Flow Matching & Rectified Flow</h3>
+                    <p>IAI · UET · VNU</p>
+                    <p>Presenter: Trinh Ngoc Huynh</p>
+                    <p>Email: <a href="mailto:huynhtn@vnu.edu.vn">huynhtn@vnu.edu.vn</a></p>
+                </section>
+
+                <section>
+                    <h2>Content</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; font-size: 0.7em;">
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #b15a2b;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #b15a2b; min-width: 40px; text-align: center;">1</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Continuous Flows</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Vector fields, probability paths and the key insight</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #2a7ae2; min-width: 40px; text-align: center;">2</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">The Flow Matching Objective</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Conditional flow matching and linear paths</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #27ae60; min-width: 40px; text-align: center;">3</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Rectified Flow</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Straightening trajectories for few-step sampling</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #e67e22; min-width: 40px; text-align: center;">4</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Unifying the Picture</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">How diffusion and flow matching relate</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">1.</span><br />
+                        Continuous Flows
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Continuous Flows</h2>
+                    <div class="question-box">
+                        $$ \frac{dx_t}{dt} = v_\theta(x_t, t) $$
+                    </div>
+                    <ul>
+                        <li class="fragment">One <span class="keyword">vector field</span> replaces a stack of layers</li>
+                        <li class="fragment">Integrating it carries noise to data; invertibility is free</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Old Problem</h2>
+                    <ul>
+                        <li class="fragment">Training a CNF by maximum likelihood needs backpropagation through an ODE solver</li>
+                        <li class="fragment">Expensive, memory-hungry and unstable</li>
+                        <li class="fragment">This is why CNFs lost to diffusion for years</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Probability Paths</h2>
+                    <div class="question-box">
+                        $$ p_0 = \mathcal{N}(0, I) \quad \longrightarrow \quad p_1 = p_{\text{data}} $$
+                    </div>
+                    <ul>
+                        <li class="fragment">A path of distributions interpolating noise and data</li>
+                        <li class="fragment">Every generative model in Part 4 defines such a path</li>
+                        <li class="fragment">Diffusion picks one particular path; we can pick <span class="keyword">others</span></li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Key Insight</h2>
+                    <div class="question-box">
+                        If we <span class="keyword">choose</span> the probability path ourselves, its generating vector field is known in closed form — so we can regress onto it directly.
+                    </div>
+                    <ul>
+                        <li class="fragment">No ODE solving during training</li>
+                        <li class="fragment">No adversarial game, no variational bound</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">2.</span><br />
+                        The Flow Matching Objective
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>The Flow Matching Objective</h2>
+                    <div class="question-box">
+                        $$ \mathcal{L}_{\text{FM}} = \mathbb{E}_{t, p_t(x)} \big\| v_\theta(x,t) - u_t(x) \big\|^2 $$
+                    </div>
+                    <ul>
+                        <li class="fragment">Regress the network onto the <span class="keyword">target</span> vector field \( u_t \)</li>
+                        <li class="fragment">Simple mean-squared error, like diffusion</li>
+                        <li class="fragment"><strong>But:</strong> the marginal \( u_t \) is still intractable</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Conditional Flow Matching</h2>
+                    <div class="question-box">
+                        $$ \mathcal{L}_{\text{CFM}} = \mathbb{E}_{t, x_1, p_t(x \mid x_1)} \big\| v_\theta(x,t) - u_t(x \mid x_1) \big\|^2 $$
+                    </div>
+                    <ul>
+                        <li class="fragment">Condition on a single data point \( x_1 \) — now everything is closed form</li>
+                        <li class="fragment">The two objectives have the <span class="keyword">same gradients</span></li>
+                        <li class="fragment">The intractable problem becomes a trivial one</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Simplest Path</h2>
+                    <div class="question-box">
+                        $$ x_t = (1-t)\, x_0 + t\, x_1, \qquad u_t(x \mid x_1) = x_1 - x_0 $$
+                    </div>
+                    <ul>
+                        <li class="fragment">A <span class="keyword">straight line</span> between noise and data</li>
+                        <li class="fragment">The target velocity is constant — just the difference vector</li>
+                        <li class="fragment">Training reduces to predicting \( x_1 - x_0 \)</li>
+                    </ul>
+                    <div class="placeholder" style="border:1px dashed #999;padding:18px;border-radius:8px;">
+                        <em>[Figure: Curved vs Straight Paths]</em><br />
+                        <strong>Description:</strong> Diffusion trajectories against straight flow-matching trajectories.<br />
+                        <strong>Image prompt:</strong> Two panels from a noise cloud to a data cloud: left shows curved wandering paths, right shows straight parallel lines.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Training in Four Lines</h2>
+                    <ul>
+                        <li class="fragment">Sample \( x_1 \) from data and \( x_0 \sim \mathcal{N}(0,I) \)</li>
+                        <li class="fragment">Sample \( t \sim \mathcal{U}[0,1] \), form \( x_t = (1-t)x_0 + t x_1 \)</li>
+                        <li class="fragment">Predict \( v_\theta(x_t, t) \)</li>
+                        <li class="fragment">Regress it onto \( x_1 - x_0 \)</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">3.</span><br />
+                        Rectified Flow
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Why Straightness Matters</h2>
+                    <ul>
+                        <li class="fragment">Sampling means numerically integrating the ODE</li>
+                        <li class="fragment">Step count is driven by trajectory <span class="keyword">curvature</span></li>
+                        <li class="fragment">A perfectly straight path is exact in <em>one</em> Euler step</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Rectified Flow</h2>
+                    <ul>
+                        <li class="fragment">Train a flow, then generate \( (x_0, x_1) \) pairs by sampling it</li>
+                        <li class="fragment"><span class="keyword">Retrain</span> on those coupled pairs</li>
+                        <li class="fragment">Each such reflow round straightens the trajectories further</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Optimal Transport Paths</h2>
+                    <ul>
+                        <li class="fragment">Independent noise-data pairs give crossing trajectories</li>
+                        <li class="fragment">Minibatch <span class="keyword">OT coupling</span> pairs them more sensibly</li>
+                        <li class="fragment">Straighter paths from the very first training run</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Few-Step Generation</h2>
+                    <ul>
+                        <li class="fragment">Diffusion needs 20–50 steps; rectified flows reach good quality in 1–4</li>
+                        <li class="fragment">Sampling cost falls by an order of magnitude</li>
+                        <li class="fragment">This is why recent large models adopted the formulation</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">4.</span><br />
+                        Unifying the Picture
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Diffusion Is a Flow</h2>
+                    <ul>
+                        <li class="fragment">The probability-flow ODE of Lecture 13 <em>is</em> a continuous flow</li>
+                        <li class="fragment">Diffusion corresponds to one specific, <span class="keyword">curved</span> probability path</li>
+                        <li class="fragment">Flow matching simply lets us choose a better one</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Comparing the Two</h2>
+                    <ul>
+                        <li class="fragment"><strong>Objective:</strong> predict noise vs predict velocity</li>
+                        <li class="fragment"><strong>Path:</strong> fixed by the noise schedule vs freely chosen</li>
+                        <li class="fragment"><strong>Sampling:</strong> SDE or ODE vs ODE</li>
+                        <li class="fragment"><strong>Steps:</strong> tens vs a handful</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>A Single Family</h2>
+                    <div class="question-box">
+                        Score matching, diffusion and flow matching are three views of <span class="keyword">learning to transport noise into data</span>.
+                    </div>
+                    <ul>
+                        <li class="fragment">The differences are the path and the parameterization</li>
+                        <li class="fragment">Each new framing bought a practical improvement</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Summary</h2>
+                    <ul>
+                        <li class="fragment"><span class="keyword">Flow matching</span> regresses a vector field onto a chosen probability path</li>
+                        <li class="fragment"><span class="keyword">Conditional</span> flow matching makes the target tractable with identical gradients</li>
+                        <li class="fragment">Linear paths give a constant target velocity — training is trivial</li>
+                        <li class="fragment"><span class="keyword">Rectified flow</span> straightens trajectories for few-step sampling</li>
+                        <li class="fragment">Diffusion is the special case where the path is dictated by the noise schedule</li>
+                    </ul>
+                </section>
+            </section>
+            <div class="footer">
+                Generative AI: Flow Matching & Rectified Flow
+            </div>
+        </div>
+    </div>
+    <script src="revealjs/dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            controlsLayout: "edges",
+            slideNumber: true,
+            hashOneBasedIndex: true,
+            hash: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX],
+        });
+    </script>
+</body>
+
+</html>

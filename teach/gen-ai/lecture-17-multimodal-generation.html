@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/png" href="../../favicon.png">
+    <title>Large-Scale Visual Generation & Multimodal Conditioning</title>
+
+    <link rel="stylesheet" href="revealjs/dist/reset.css" />
+    <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+    <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+    <link rel="stylesheet" href="slide-style.css" />
+</head>
+
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <section>
+                    <h1>Generative AI</h1>
+                    <h3>Large-Scale Visual Generation & Multimodal Conditioning</h3>
+                    <p>IAI · UET · VNU</p>
+                    <p>Presenter: Trinh Ngoc Huynh</p>
+                    <p>Email: <a href="mailto:huynhtn@vnu.edu.vn">huynhtn@vnu.edu.vn</a></p>
+                </section>
+
+                <section>
+                    <h2>Content</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; font-size: 0.7em;">
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #b15a2b;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #b15a2b; min-width: 40px; text-align: center;">1</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Scale</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Web-scale data, quality filtering and scaling behaviour</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #2a7ae2; min-width: 40px; text-align: center;">2</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Vision-Language Representations</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">CLIP and contrastive image-text learning</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #27ae60; min-width: 40px; text-align: center;">3</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">From U-Net to Transformer</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Patchification, DiT and architectural convergence</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #e67e22; min-width: 40px; text-align: center;">4</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Beyond Images</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Video, 3D and audio — an overview</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">1.</span><br />
+                        Scale
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>From Single Models to Foundations</h2>
+                    <ul>
+                        <li class="fragment">Early models were trained per dataset: faces, bedrooms, digits</li>
+                        <li class="fragment">Modern models train once on <span class="keyword">web-scale</span> image-text data</li>
+                        <li class="fragment">One model then serves an open-ended range of prompts</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Image-Text Pairs</h2>
+                    <ul>
+                        <li class="fragment">Datasets of hundreds of millions to billions of pairs</li>
+                        <li class="fragment">Alt-text supervision is free but <span class="keyword">noisy</span></li>
+                        <li class="fragment">Filtering and recaptioning matter as much as model size</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Data Quality Over Data Quantity</h2>
+                    <ul>
+                        <li class="fragment">Aesthetic and resolution filtering</li>
+                        <li class="fragment">Synthetic recaptioning improves prompt following markedly</li>
+                        <li class="fragment">Deduplication reduces memorisation</li>
+                        <li class="fragment">Often the highest-leverage change available</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Scaling Behaviour</h2>
+                    <ul>
+                        <li class="fragment">Loss improves predictably with compute, data and parameters</li>
+                        <li class="fragment">Some capabilities appear only past a scale threshold</li>
+                        <li class="fragment">Predictable scaling is what justifies the investment</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">2.</span><br />
+                        Vision-Language Representations
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Vision-Language Representations</h2>
+                    <div class="question-box">
+                        Generation needs text and images to live in a <span class="keyword">shared</span> embedding space.
+                    </div>
+                    <ul>
+                        <li class="fragment">The text encoder must understand what the prompt describes</li>
+                        <li class="fragment">That understanding is learned separately, at scale</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>CLIP</h2>
+                    <div class="question-box">
+                        $$ \mathcal{L} = -\frac{1}{N}\sum_{i=1}^{N} \log \frac{\exp\big(\cos(I_i, T_i)/\tau\big)}{\sum_{j=1}^{N} \exp\big(\cos(I_i, T_j)/\tau\big)} $$
+                    </div>
+                    <ul>
+                        <li class="fragment"><span class="keyword">Contrastive</span> learning over a batch of pairs</li>
+                        <li class="fragment">Matched image-text pairs are pulled together, all others pushed apart</li>
+                        <li class="fragment">The batch supplies the negatives — larger batches help</li>
+                    </ul>
+                    <div class="placeholder" style="border:1px dashed #999;padding:18px;border-radius:8px;">
+                        <em>[Figure: Contrastive Image-Text Learning]</em><br />
+                        <strong>Description:</strong> A similarity matrix with matched pairs on the diagonal.<br />
+                        <strong>Image prompt:</strong> An N-by-N grid of image rows and text columns, diagonal cells highlighted as positives and off-diagonal cells shaded as negatives.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Why CLIP Mattered</h2>
+                    <ul>
+                        <li class="fragment">Zero-shot classification without task-specific training</li>
+                        <li class="fragment">A text encoder usable by <span class="keyword">any</span> conditional generator</li>
+                        <li class="fragment">And an alignment metric, as seen in Lecture 16</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">3.</span><br />
+                        From U-Net to Transformer
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>The Limits of the U-Net</h2>
+                    <ul>
+                        <li class="fragment">Convolutional inductive bias is helpful but restrictive</li>
+                        <li class="fragment">Scaling behaviour is less predictable than for Transformers</li>
+                        <li class="fragment">The rest of deep learning had already converged on one architecture</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Patchification</h2>
+                    <ul>
+                        <li class="fragment">Split the latent into non-overlapping patches</li>
+                        <li class="fragment">Flatten each patch into a token</li>
+                        <li class="fragment">The image becomes a <span class="keyword">sequence</span>, as in Lecture 05</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Diffusion Transformers</h2>
+                    <ul>
+                        <li class="fragment">Replace the U-Net entirely with a Transformer over latent patches</li>
+                        <li class="fragment">Timestep and class conditioning via <span class="keyword">adaptive layer norm</span></li>
+                        <li class="fragment">Text conditioning via cross-attention, as before</li>
+                    </ul>
+                    <div class="placeholder" style="border:1px dashed #999;padding:18px;border-radius:8px;">
+                        <em>[Figure: U-Net vs DiT]</em><br />
+                        <strong>Description:</strong> The two denoiser architectures side by side.<br />
+                        <strong>Image prompt:</strong> Left: U-Net with downsampling, bottleneck, upsampling and skip connections. Right: patchified latent into a stack of identical Transformer blocks.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Scaling Behaviour of DiT</h2>
+                    <ul>
+                        <li class="fragment">Sample quality improves smoothly with model FLOPs</li>
+                        <li class="fragment">No architectural redesign needed to grow the model</li>
+                        <li class="fragment">This predictability is why recent systems adopted it</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Convergence</h2>
+                    <ul>
+                        <li class="fragment">Language, vision and generation now share one backbone</li>
+                        <li class="fragment">The <span class="keyword">Transformer</span> plus a tokenizer or patchifier</li>
+                        <li class="fragment">Only the data and the objective differ</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">4.</span><br />
+                        Beyond Images
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Video Generation</h2>
+                    <ul>
+                        <li class="fragment">Add a time axis: the model must be temporally <span class="keyword">consistent</span></li>
+                        <li class="fragment">Spatio-temporal attention, or factorised spatial and temporal blocks</li>
+                        <li class="fragment"><strong>Cost:</strong> memory grows with frame count</li>
+                        <li class="fragment"><em>Overview only — this is a course on image generation</em></li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>3D Generation</h2>
+                    <ul>
+                        <li class="fragment">Represented as NeRFs, meshes or Gaussian splats</li>
+                        <li class="fragment">Very little 3D training data compared with images</li>
+                        <li class="fragment">Score distillation lifts a 2D image model into 3D</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Audio and Multimodal</h2>
+                    <ul>
+                        <li class="fragment">Audio generated as spectrograms or waveform tokens</li>
+                        <li class="fragment">The same diffusion and autoregressive recipes transfer</li>
+                        <li class="fragment">Unified models increasingly generate several modalities at once</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Summary</h2>
+                    <ul>
+                        <li class="fragment">Modern systems train once on <span class="keyword">web-scale</span> image-text data</li>
+                        <li class="fragment">Data quality often matters more than raw quantity</li>
+                        <li class="fragment"><span class="keyword">CLIP</span> provides the shared text-image space that conditioning needs</li>
+                        <li class="fragment"><span class="keyword">DiT</span> replaces the U-Net and scales predictably</li>
+                        <li class="fragment">Video, 3D and audio reuse the same recipes at greater cost</li>
+                    </ul>
+                </section>
+            </section>
+            <div class="footer">
+                Generative AI: Large-Scale Visual Generation & Multimodal Conditioning
+            </div>
+        </div>
+    </div>
+    <script src="revealjs/dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            controlsLayout: "edges",
+            slideNumber: true,
+            hashOneBasedIndex: true,
+            hash: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX],
+        });
+    </script>
+</body>
+
+</html>

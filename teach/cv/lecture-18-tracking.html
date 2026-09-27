@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/png" href="../../favicon.png">
+    <title>Object Tracking</title>
+
+    <link rel="stylesheet" href="revealjs/dist/reset.css" />
+    <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+    <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+    <link rel="stylesheet" href="slide-style.css" />
+</head>
+
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <section>
+                    <h1>Computer Vision</h1>
+                    <h3>Object Tracking</h3>
+                    <p>IAI · UET · VNU</p>
+                    <p>Presenter: Trinh Ngoc Huynh</p>
+                    <p>Email: <a href="mailto:huynhtn@vnu.edu.vn">huynhtn@vnu.edu.vn</a></p>
+                </section>
+
+                <section>
+                    <h2>Content</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; font-size: 0.7em;">
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #b15a2b;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #b15a2b; min-width: 40px; text-align: center;">1</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">The Tracking Problem</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Following objects over
+                                    time; challenges</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #2a7ae2; min-width: 40px; text-align: center;">2</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Motion & Classical Trackers</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Optical flow, mean-shift,
+                                    Kalman filter</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #27ae60; min-width: 40px; text-align: center;">3</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Modern Tracking</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Tracking-by-detection,
+                                    SORT / DeepSORT</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #e67e22; min-width: 40px; text-align: center;">4</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Evaluation & Course Wrap-up</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Metrics and the big
+                                    picture</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">1.</span><br />
+                        The Tracking Problem
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>What is Object Tracking?</h2>
+
+                    <div class="question-box fragment" style="font-size: 0.72em; margin-top: 8px;">
+                        <p style="margin: 0;">
+                            <strong style="color: #b15a2b;">Task:</strong>
+                            Follow one or more objects across the frames of a video, maintaining a consistent
+                            <span class="keyword">identity</span> for each.
+                        </p>
+                    </div>
+
+                    <div style="display: flex; gap: 14px; margin-top: 16px; font-size: 0.64em;">
+                        <div class="fragment"
+                            style="flex: 1; background: #eef5fc; padding: 12px 16px; border-radius: 10px; text-align: center;">
+                            <strong style="color: #2a7ae2;">Single-object (SOT)</strong>
+                            <p style="margin: 6px 0 0 0; color: #555;">Track one target given its first box.</p>
+                        </div>
+                        <div class="fragment"
+                            style="flex: 1; background: #eafaf1; padding: 12px 16px; border-radius: 10px; text-align: center;">
+                            <strong style="color: #27ae60;">Multi-object (MOT)</strong>
+                            <p style="margin: 6px 0 0 0; color: #555;">Track many targets, keeping IDs distinct.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Why is Tracking Hard?</h2>
+
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 16px; font-size: 0.58em;">
+                        <div class="fragment" style="background: #f8f9fa; padding: 10px 16px; border-radius: 8px; border-left: 3px solid #2a7ae2;">
+                            <strong style="color: #2a7ae2;">Occlusion</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Targets hide behind others</p>
+                        </div>
+                        <div class="fragment" style="background: #f8f9fa; padding: 10px 16px; border-radius: 8px; border-left: 3px solid #27ae60;">
+                            <strong style="color: #27ae60;">Appearance change</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Pose, lighting, scale shift</p>
+                        </div>
+                        <div class="fragment" style="background: #f8f9fa; padding: 10px 16px; border-radius: 8px; border-left: 3px solid #e67e22;">
+                            <strong style="color: #d35400;">ID switches</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Crossing objects swap identities</p>
+                        </div>
+                        <div class="fragment" style="background: #f8f9fa; padding: 10px 16px; border-radius: 8px; border-left: 3px solid #9727ae;">
+                            <strong style="color: #9727ae;">Real-time need</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Must keep up with video</p>
+                        </div>
+                    </div>
+
+                    <div class="fragment"
+                        style="margin-top: 14px; font-size: 0.62em; padding: 12px 18px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                        <p style="margin: 0;">
+                            <strong style="color: #b8860b;">Key Idea:</strong>
+                            Tracking combines <span class="keyword">motion prediction</span> with <span
+                                class="keyword">appearance matching</span>.
+                        </p>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">2.</span><br />
+                        Motion & Classical Trackers
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Optical Flow</h2>
+
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                        <div class="fragment" style="flex: 1; font-size: 0.62em;">
+                            <p style="color: #555;">Estimate per-pixel motion between frames, assuming brightness is
+                                constant:</p>
+                            <div
+                                style="background: #f8f9fa; padding: 10px 14px; border-radius: 10px; border-left: 4px solid #2a7ae2; margin: 8px 0;">
+                                <p style="text-align: center; margin: 0;">
+                                    $$I_x u + I_y v + I_t = 0$$
+                                </p>
+                            </div>
+                            <ul style="margin-top: 6px;">
+                                <li style="margin-bottom: 4px;"><span class="keyword">Lucas–Kanade</span>: sparse,
+                                    for keypoints</li>
+                                <li><span class="keyword">Farnebäck</span>: dense flow field</li>
+                            </ul>
+                        </div>
+                        <div class="placeholder fragment"
+                            style="flex: 1; border:1px dashed #999; padding:14px; border-radius:8px; font-size: 0.56em;">
+                            <em>[Figure placeholder]</em><br />
+                            <strong>Description:</strong> Two frames with motion vectors (arrows) showing pixel
+                            displacement, or a color-coded dense flow field.<br />
+                            <strong>Image prompt:</strong> An optical-flow visualization — arrows on moving objects
+                            or a hue-coded flow map.
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Mean-Shift & Kalman Filter</h2>
+
+                    <div style="display: flex; gap: 14px; margin-top: 16px; font-size: 0.62em;">
+                        <div class="fragment"
+                            style="flex: 1; background: #eef5fc; padding: 12px 16px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <strong style="color: #2a7ae2;">Mean-Shift</strong>
+                            <p style="margin: 6px 0 0 0; color: #555;">Iteratively move a window toward the region
+                                whose <span class="keyword">color histogram</span> best matches the target.</p>
+                        </div>
+                        <div class="fragment"
+                            style="flex: 1; background: #eafaf1; padding: 12px 16px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <strong style="color: #27ae60;">Kalman Filter</strong>
+                            <p style="margin: 6px 0 0 0; color: #555;"><span class="keyword">Predict</span> the next
+                                state from a motion model, then <span class="keyword">correct</span> with the new
+                                measurement.</p>
+                        </div>
+                    </div>
+
+                    <div class="fragment"
+                        style="margin-top: 14px; font-size: 0.6em; padding: 10px 16px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                        <p style="margin: 0;">
+                            <strong style="color: #b8860b;">Key Idea:</strong>
+                            The Kalman filter smooths trajectories and bridges short gaps (e.g. brief occlusion).
+                        </p>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">3.</span><br />
+                        Modern Tracking
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Tracking-by-Detection</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px; font-size: 0.58em;">
+                        <div class="fragment"
+                            style="display: flex; gap: 14px; align-items: center; background: #f8f9fa; padding: 8px 18px; border-radius: 10px; border-left: 4px solid #b15a2b;">
+                            <div style="min-width: 26px; height: 26px; background: #b15a2b; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700;">1</div>
+                            <p style="margin: 0; color: #555;"><strong>Detect</strong> objects in each frame (Lecture
+                                16)</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; gap: 14px; align-items: center; background: #f8f9fa; padding: 8px 18px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <div style="min-width: 26px; height: 26px; background: #2a7ae2; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700;">2</div>
+                            <p style="margin: 0; color: #555;"><strong>Predict</strong> each track's next position
+                                (Kalman)</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; gap: 14px; align-items: center; background: #f8f9fa; padding: 8px 18px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <div style="min-width: 26px; height: 26px; background: #27ae60; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700;">3</div>
+                            <p style="margin: 0; color: #555;"><strong>Associate</strong> detections to tracks
+                                (Hungarian algorithm on IoU / appearance)</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; gap: 14px; align-items: center; background: #f8f9fa; padding: 8px 18px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <div style="min-width: 26px; height: 26px; background: #e67e22; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700;">4</div>
+                            <p style="margin: 0; color: #555;"><strong>Update</strong> tracks; spawn / kill as needed</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>SORT & DeepSORT</h2>
+
+                    <div style="display: flex; gap: 14px; margin-top: 16px; font-size: 0.62em;">
+                        <div class="fragment"
+                            style="flex: 1; background: #eef5fc; padding: 12px 16px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <strong style="color: #2a7ae2;">SORT</strong>
+                            <p style="margin: 6px 0 0 0; color: #555;">Kalman + Hungarian on IoU. Simple and very fast,
+                                but IDs switch under occlusion.</p>
+                        </div>
+                        <div class="fragment"
+                            style="flex: 1; background: #eafaf1; padding: 12px 16px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <strong style="color: #27ae60;">DeepSORT</strong>
+                            <p style="margin: 6px 0 0 0; color: #555;">Adds a learned <span class="keyword">appearance
+                                    embedding</span> so identities survive occlusion.</p>
+                        </div>
+                    </div>
+
+                    <p class="fragment" style="font-size: 0.6em; color: #888; text-align: center; margin-top: 12px;">
+                        Newer trackers use transformers and joint detection-tracking networks.
+                    </p>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">4.</span><br />
+                        Evaluation & Course Wrap-up
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Tracking Metrics</h2>
+
+                    <ul style="font-size: 0.66em; margin-top: 8px;">
+                        <li class="fragment" style="margin-bottom: 8px;"><span class="keyword">MOTA</span> — Multiple
+                            Object Tracking Accuracy (misses, false positives, ID switches)</li>
+                        <li class="fragment" style="margin-bottom: 8px;"><span class="keyword">MOTP</span> — precision
+                            of matched box locations</li>
+                        <li class="fragment" style="margin-bottom: 8px;"><span class="keyword">IDF1</span> — how
+                            consistently identities are preserved</li>
+                        <li class="fragment"><span class="keyword">ID switches</span> — count of identity swaps
+                            (lower is better)</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>The Full Vision Pipeline</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px; font-size: 0.6em;">
+                        <div class="fragment"
+                            style="display: flex; gap: 16px; align-items: center; background: #f8f9fa; padding: 8px 20px; border-radius: 10px; border-left: 4px solid #b15a2b;">
+                            <strong style="min-width: 70px; color: #b15a2b;">Part 1</strong>
+                            <span style="color: #555;">Foundations — perception &amp; image formation</span>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; gap: 16px; align-items: center; background: #f8f9fa; padding: 8px 20px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <strong style="min-width: 70px; color: #27ae60;">Part 2</strong>
+                            <span style="color: #555;">Low-level — image processing (pixels)</span>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; gap: 16px; align-items: center; background: #f8f9fa; padding: 8px 20px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <strong style="min-width: 70px; color: #2a7ae2;">Part 3</strong>
+                            <span style="color: #555;">Mid-level — features &amp; representation</span>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; gap: 16px; align-items: center; background: #f8f9fa; padding: 8px 20px; border-radius: 10px; border-left: 4px solid #9727ae;">
+                            <strong style="min-width: 70px; color: #9727ae;">Part 4</strong>
+                            <span style="color: #555;">High-level — classification, detection, segmentation,
+                                tracking</span>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Summary</h2>
+
+                    <ul style="font-size: 0.72em; margin-top: 16px;">
+                        <li class="fragment" style="margin-bottom: 10px;">Tracking follows objects over time, keeping
+                            consistent <span class="keyword">identities</span> despite occlusion and change.</li>
+                        <li class="fragment" style="margin-bottom: 10px;">Classical tools: <span class="keyword">optical
+                                flow</span>, <span class="keyword">mean-shift</span>, and the <span class="keyword">Kalman
+                                filter</span>.</li>
+                        <li class="fragment" style="margin-bottom: 10px;">Modern <span class="keyword">tracking-by-detection</span>
+                            (SORT, DeepSORT) pairs detection with motion + appearance association.</li>
+                        <li class="fragment" style="margin-bottom: 10px;">Evaluated with MOTA, MOTP, IDF1, and ID
+                            switches.</li>
+                        <li class="fragment">From pixels to perception — that completes our journey through computer
+                            vision.</li>
+                    </ul>
+                </section>
+            </section>
+
+            <div class="footer">
+                Computer Vision: Object Tracking
+            </div>
+        </div>
+    </div>
+    <script src="revealjs/dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            controlsLayout: "edges",
+            slideNumber: true,
+            hashOneBasedIndex: true,
+            hash: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX],
+        });
+    </script>
+</body>
+
+</html>

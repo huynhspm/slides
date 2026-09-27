@@ -1,0 +1,706 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/png" href="../../favicon.png">
+    <title>Probabilistic Foundations</title>
+
+    <link rel="stylesheet" href="revealjs/dist/reset.css" />
+    <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+    <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+    <link rel="stylesheet" href="slide-style.css" />
+</head>
+
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <section>
+                    <h1>Generative AI</h1>
+                    <h3>Probabilistic Foundations</h3>
+                    <p>IAI · UET · VNU</p>
+                    <p>Presenter: Trinh Ngoc Huynh</p>
+                    <p>Email: <a href="mailto:huynhtn@vnu.edu.vn">huynhtn@vnu.edu.vn</a></p>
+                </section>
+
+                <section>
+                    <h2>Content</h2>
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; font-size: 0.7em;">
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border: 1px solid #b15a2b66; border-left: 4px solid #b15a2b;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #b15a2b; min-width: 40px; text-align: center;">1</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Random Variables &amp; Distributions</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Discrete and continuous distributions, and the Gaussian</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border: 1px solid #2a7ae266; border-left: 4px solid #2a7ae2;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #2a7ae2; min-width: 40px; text-align: center;">2</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Joint, Marginal &amp; Conditional</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">The product rule, chain rule and Bayes rule</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border: 1px solid #27ae6066; border-left: 4px solid #27ae60;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #27ae60; min-width: 40px; text-align: center;">3</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Expectation &amp; Sampling</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Monte Carlo estimation, ancestral sampling, change of variables</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border: 1px solid #e67e2266; border-left: 4px solid #e67e22;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #e67e22; min-width: 40px; text-align: center;">4</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Entropy &amp; KL Divergence</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Measuring uncertainty and the gap between distributions</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border: 1px solid #8e44ad66; border-left: 4px solid #8e44ad;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #8e44ad; min-width: 40px; text-align: center;">5</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Maximum Likelihood</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">MLE, its link to KL, and Jensen's inequality</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">1.</span><br />
+                        Random Variables &amp; Distributions
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Random Variables</h2>
+                    <div class="question-box" style="text-align: center; font-size: 0.8em;">
+                        A <span class="keyword">random variable</span> assigns a numerical value to each outcome of a random experiment.
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 24px; font-size: 0.72em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e74c3c66; border-top: 5px solid #e74c3c;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdecea; color: #e74c3c; font-weight: 700; font-size: 0.9em;">Discrete</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( x \in \{1, \dots, K\} \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">countably many values</p>
+                            <p style="margin: auto 0 0 0; padding-top: 8px; width: 100%; border-top: 1px dashed #ddd; color: #999; font-size: 0.78em; font-style: italic;">a token, a class label</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.9em;">Continuous</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( x \in \mathbb{R} \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">values in a continuum</p>
+                            <p style="margin: auto 0 0 0; padding-top: 8px; width: 100%; border-top: 1px dashed #ddd; color: #999; font-size: 0.78em; font-style: italic;">a pixel intensity, an audio amplitude</p>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 24px;">An image is a single high-dimensional random vector \( x \in \mathbb{R}^{H \times W \times C} \).</p>
+                </section>
+
+                <section>
+                    <h2>Probability Distributions</h2>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 12px; font-size: 0.68em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e74c3c66; border-top: 5px solid #e74c3c;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdecea; color: #e74c3c; font-weight: 700; font-size: 0.9em;">Discrete: mass function</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( p(x) \ge 0, \;\; \sum_x p(x) = 1 \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">\( p(x) \) is a probability</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.9em;">Continuous: density</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( p(x) \ge 0, \;\; \int p(x)\, dx = 1 \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">\( p(x)\,dx \) is a probability</p>
+                        </div>
+                    </div>
+                    <div class="fragment" style="text-align: center; margin-top: 12px;">
+                        <img src="img/lec02/gaussians.png" alt="Three Gaussian densities; the narrowest one peaks above 1"
+                            style="max-width: 100%; max-height: 260px; object-fit: contain; margin: 0;" />
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 8px;">A density can exceed 1: only its integral must equal 1.</p>
+                </section>
+
+                <section>
+                    <h2>Common Distributions</h2>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 24px; font-size: 0.72em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e74c3c66; border-top: 5px solid #e74c3c;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdecea; color: #e74c3c; font-weight: 700; font-size: 0.9em;">Categorical</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( p(x = k) = \pi_k \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">one of \( K \) discrete outcomes</p>
+                            <p style="margin: auto 0 0 0; padding-top: 8px; width: 100%; border-top: 1px dashed #ddd; color: #999; font-size: 0.78em; font-style: italic;">next-token prediction</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #27ae6066; border-top: 5px solid #27ae60;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e1f5e9; color: #27ae60; font-weight: 700; font-size: 0.9em;">Gaussian</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( \mathcal{N}(\mu, \sigma^2) \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">bell-shaped, set by mean and variance</p>
+                            <p style="margin: auto 0 0 0; padding-top: 8px; width: 100%; border-top: 1px dashed #ddd; color: #999; font-size: 0.78em; font-style: italic;">VAE prior, diffusion noise</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.9em;">Uniform</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( \mathcal{U}(a, b) \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">every value equally likely</p>
+                            <p style="margin: auto 0 0 0; padding-top: 8px; width: 100%; border-top: 1px dashed #ddd; color: #999; font-size: 0.78em; font-style: italic;">the raw source of randomness</p>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 24px;">Generative models turn samples from these simple distributions into complex data.</p>
+                </section>
+
+                <section>
+                    <h2>The Gaussian</h2>
+                    <div class="question-box" style="text-align: center; font-size: 0.7em;">
+                        $$ \mathcal{N}(x; \mu, \sigma^2) = \frac{1}{\sqrt{2\pi\sigma^2}} \exp\!\left(-\frac{(x-\mu)^2}{2\sigma^2}\right) $$
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 18px; font-size: 0.68em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e74c3c66; border-top: 5px solid #e74c3c;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdecea; color: #e74c3c; font-weight: 700; font-size: 0.9em;">Two parameters</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( \mu, \; \sigma^2 \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">mean and variance describe it fully</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #27ae6066; border-top: 5px solid #27ae60;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e1f5e9; color: #27ae60; font-weight: 700; font-size: 0.9em;">Multivariate</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( \mathcal{N}(\mu, \Sigma) \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">a mean vector and a covariance matrix</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.9em;">Easy to sample</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( x = \mu + \sigma \epsilon \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">shift and scale \( \epsilon \sim \mathcal{N}(0, 1) \)</p>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 18px;">It appears as the prior in VAEs and as the noise in diffusion models.</p>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">2.</span><br />
+                        Joint, Marginal &amp; Conditional
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Joint, Marginal, Conditional</h2>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 10px; font-size: 0.66em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.9em;">Joint</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( p(x, y) \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">both variables together</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #27ae6066; border-top: 5px solid #27ae60;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e1f5e9; color: #27ae60; font-weight: 700; font-size: 0.9em;">Marginal</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( p(x) = \int p(x, y)\, dy \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">integrate out what we do not need</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e74c3c66; border-top: 5px solid #e74c3c;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdecea; color: #e74c3c; font-weight: 700; font-size: 0.9em;">Conditional</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( p(y \mid x) = \dfrac{p(x, y)}{p(x)} \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">\( y \) when \( x \) is known</p>
+                        </div>
+                    </div>
+                    <div class="fragment" style="text-align: center; margin-top: 10px;">
+                        <img src="img/lec02/joint_marginal_conditional.png" alt="A 2-D joint density with its marginal, and the conditional at x = 1 as a normalised slice"
+                            style="max-width: 100%; max-height: 280px; object-fit: contain; margin: 0;" />
+                    </div>
+                </section>
+
+                <section>
+                    <h2>The Product Rule</h2>
+                    <div class="question-box" style="text-align: center; font-size: 0.75em;">
+                        $$ p(x, y) = p(y \mid x)\, p(x) = p(x \mid y)\, p(y) $$
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); column-gap: 10px; row-gap: 14px; align-items: stretch; margin-top: 24px; font-size: 0.72em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #27ae6066; border-top: 5px solid #27ae60;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e1f5e9; color: #27ae60; font-weight: 700; font-size: 0.9em;">Repeat it</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">the chain rule</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">factorise many variables one at a time</p>
+                        </div>
+                        <div class="fragment" style="align-self: center; font-size: 1.6em; font-weight: 700; color: #bbb;">&harr;</div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.9em;">Rearrange it</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">Bayes rule</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">turn \( p(x \mid y) \) into \( p(y \mid x) \)</p>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 24px;">Both key rules of this section follow from this one identity.</p>
+                </section>
+
+                <section>
+                    <h2>The Chain Rule</h2>
+                    <div class="question-box" style="text-align: center; font-size: 0.75em;">
+                        $$ p(x_1, \ldots, x_D) = \prod_{i=1}^{D} p(x_i \mid x_{\lt i}) $$
+                    </div>
+                    <div class="fragment" style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 26px; font-size: 0.72em;">
+                        <div
+                            style="padding: 8px 14px; border-radius: 10px; background: #fdecea; border: 2px solid #e74c3c; color: #e74c3c; font-weight: 700; text-align: center; white-space: nowrap;">
+                            \( p(x_1) \)</div>
+                        <div style="color: #bbb; font-size: 1.4em; font-weight: 700;">&rarr;</div>
+                        <div
+                            style="padding: 8px 14px; border-radius: 10px; background: #e1f5e9; border: 2px solid #27ae60; color: #27ae60; font-weight: 700; text-align: center; white-space: nowrap;">
+                            \( p(x_2 \mid x_1) \)</div>
+                        <div style="color: #bbb; font-size: 1.4em; font-weight: 700;">&rarr;</div>
+                        <div
+                            style="padding: 8px 14px; border-radius: 10px; background: #e3eefc; border: 2px solid #2a7ae2; color: #2a7ae2; font-weight: 700; text-align: center; white-space: nowrap;">
+                            \( p(x_3 \mid x_1, x_2) \)</div>
+                        <div style="color: #bbb; font-size: 1.4em; font-weight: 700;">&rarr;</div>
+                        <div
+                            style="padding: 8px 14px; border-radius: 10px; background: #f8f9fa; border: 2px solid #6c757d; color: #6c757d; font-weight: 700; text-align: center; white-space: nowrap;">
+                            \( \cdots \)</div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 26px;">One hard \( D \)-dimensional problem becomes \( D \) one-dimensional ones: the basis of autoregressive models (Lectures 04&ndash;05).</p>
+                </section>
+
+                <section>
+                    <h2>Bayes Rule</h2>
+                    <div class="question-box" style="text-align: center; font-size: 0.7em;">
+                        $$ \underbrace{p(z \mid x)}_{\text{posterior}} = \frac{\overbrace{p(x \mid z)}^{\text{likelihood}} \; \overbrace{p(z)}^{\text{prior}}}{\underbrace{p(x)}_{\text{evidence}}} $$
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 16px; font-size: 0.66em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #27ae6066; border-top: 5px solid #27ae60;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e1f5e9; color: #27ae60; font-weight: 700; font-size: 0.9em;">Prior</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( p(z) \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">belief about \( z \) before seeing data</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.9em;">Likelihood</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( p(x \mid z) \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">how \( z \) generates \( x \)</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e74c3c66; border-top: 5px solid #e74c3c;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdecea; color: #e74c3c; font-weight: 700; font-size: 0.9em;">Evidence</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( p(x) \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">\( \int p(x \mid z) p(z)\, dz \): usually <strong>intractable</strong></p>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 16px;">Lecture 03 shows how variational inference sidesteps the intractable evidence.</p>
+                </section>
+
+                <section>
+                    <h2>Independence</h2>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 30px; font-size: 0.72em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.9em;">Independent</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( p(x, y) = p(x)\, p(y) \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">knowing \( x \) says nothing about \( y \)</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #27ae6066; border-top: 5px solid #27ae60;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e1f5e9; color: #27ae60; font-weight: 700; font-size: 0.9em;">Conditionally independent</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( p(x, y \mid z) = p(x \mid z)\, p(y \mid z) \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">independent once \( z \) is known</p>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 28px;">Latent-variable models assume the pixels become independent <em>given</em> the latent \( z \).</p>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">3.</span><br />
+                        Expectation &amp; Sampling
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Expectation</h2>
+                    <p class="lead">The average value of a function \( f \) under a distribution \( p \):</p>
+                    <div class="question-box" style="text-align: center; font-size: 0.72em;">
+                        $$ \mathbb{E}_{p(x)}[f(x)] = \sum_x p(x) f(x) \quad \text{or} \quad \int p(x) f(x)\, dx $$
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 18px; font-size: 0.7em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e74c3c66; border-top: 5px solid #e74c3c;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdecea; color: #e74c3c; font-weight: 700; font-size: 0.9em;">Training loss</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( \mathbb{E}_{p_{\text{data}}}[-\log p_\theta(x)] \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">average over the data</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.9em;">Latent objectives</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( \mathbb{E}_{q(z \mid x)}[\log p(x \mid z)] \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">average over the latent</p>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 18px;">Nearly every training objective in this course is an expectation.</p>
+                </section>
+
+                <section>
+                    <h2>Monte Carlo Estimation</h2>
+                    <div class="question-box" style="text-align: center; font-size: 0.7em;">
+                        $$ \mathbb{E}_{p(x)}[f(x)] \approx \frac{1}{N}\sum_{i=1}^{N} f(x_i), \qquad x_i \sim p(x) $$
+                    </div>
+                    <div class="fragment" style="text-align: center; margin-top: 8px;">
+                        <img src="img/lec02/monte_carlo.png" alt="Monte Carlo estimates converge to the true value, with error shrinking like one over square root of N"
+                            style="max-width: 100%; max-height: 255px; object-fit: contain; margin: 0;" />
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 8px;">Unbiased, with error \( \propto 1/\sqrt{N} \): this is why a minibatch can stand in for the whole dataset.</p>
+                </section>
+
+                <section>
+                    <h2>Ancestral Sampling</h2>
+                    <p class="lead">For a factorised model \( p(x, z) = p(z)\, p(x \mid z) \), sample in the order of the factorisation:</p>
+                    <div class="fragment" style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 28px; font-size: 0.75em;">
+                        <div
+                            style="padding: 8px 14px; border-radius: 10px; background: #e1f5e9; border: 2px solid #27ae60; color: #27ae60; font-weight: 700; text-align: center; white-space: nowrap;">
+                            \( z \sim p(z) \)</div>
+                        <div style="color: #bbb; font-size: 1.4em; font-weight: 700;">&rarr;</div>
+                        <div
+                            style="padding: 8px 14px; border-radius: 10px; background: #e3eefc; border: 2px solid #2a7ae2; color: #2a7ae2; font-weight: 700; text-align: center; white-space: nowrap;">
+                            \( x \sim p(x \mid z) \)</div>
+                        <div style="color: #bbb; font-size: 1.4em; font-weight: 700;">&rarr;</div>
+                        <div
+                            style="padding: 8px 14px; border-radius: 10px; background: #f3e8f8; border: 2px solid #8e44ad; color: #8e44ad; font-weight: 700; text-align: center; white-space: nowrap;">
+                            new sample \( x \)</div>
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 26px; font-size: 0.7em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #27ae6066; border-top: 5px solid #27ae60;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e1f5e9; color: #27ae60; font-weight: 700; font-size: 0.9em;">1. Latent</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">draw from the prior</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">e.g. Gaussian noise</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.9em;">2. Data</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">decode / transform</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">e.g. a neural network</p>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 22px;">This is how a VAE or a GAN produces an image: draw \( z \), then map it to \( x \).</p>
+                </section>
+
+                <section>
+                    <h2>Change of Variables</h2>
+                    <div class="question-box" style="text-align: center; font-size: 0.7em;">
+                        $$ x = f(z) \;\; \text{invertible} \quad \Rightarrow \quad p_x(x) = p_z(z) \left| \det \frac{\partial z}{\partial x} \right| $$
+                    </div>
+                    <div class="fragment" style="text-align: center; margin-top: 10px;">
+                        <img src="img/lec02/change_of_variables.png" alt="A Gaussian z mapped through exp becomes a skewed log-normal density"
+                            style="max-width: 100%; max-height: 280px; object-fit: contain; margin: 0;" />
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 8px;">The Jacobian term tracks how the map stretches space: the foundation of normalizing flows (Lecture 08).</p>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">4.</span><br />
+                        Entropy &amp; KL Divergence
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Entropy</h2>
+                    <div class="question-box" style="text-align: center; font-size: 0.75em;">
+                        $$ H(p) = -\mathbb{E}_{p(x)}[\log p(x)] $$
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 22px; font-size: 0.72em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e74c3c66; border-top: 5px solid #e74c3c;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdecea; color: #e74c3c; font-weight: 700; font-size: 0.9em;">Fair coin</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( H = 1 \) bit</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">maximal uncertainty</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #27ae6066; border-top: 5px solid #27ae60;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e1f5e9; color: #27ae60; font-weight: 700; font-size: 0.9em;">Biased coin (90/10)</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( H \approx 0.47 \) bits</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">fairly predictable</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.9em;">Always heads</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( H = 0 \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">no uncertainty</p>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 22px;">Entropy measures uncertainty: the average surprise \( -\log p(x) \).</p>
+                </section>
+
+                <section>
+                    <h2>Cross-Entropy</h2>
+                    <div class="question-box" style="text-align: center; font-size: 0.75em;">
+                        $$ H(p, q) = -\mathbb{E}_{p(x)}[\log q(x)] $$
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 22px; font-size: 0.72em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.9em;">Meaning</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">the average surprise when data come from \( p \) but we predict with a model \( q \)</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e67e2266; border-top: 5px solid #e67e22;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdf0e3; color: #e67e22; font-weight: 700; font-size: 0.9em;">In practice</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">the standard loss for classifiers and language models</p>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 22px;">\( H(p, q) \ge H(p) \): using the wrong model always costs extra.</p>
+                </section>
+
+                <section>
+                    <h2>KL Divergence</h2>
+                    <div class="question-box" style="text-align: center; font-size: 0.75em;">
+                        $$ D_{\mathrm{KL}}(p \,\|\, q) = \mathbb{E}_{p(x)}\!\left[\log \frac{p(x)}{q(x)}\right] $$
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 22px; font-size: 0.68em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #27ae6066; border-top: 5px solid #27ae60;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e1f5e9; color: #27ae60; font-weight: 700; font-size: 0.9em;">Non-negative</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( D_{\mathrm{KL}} \ge 0 \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">the extra cost is never negative</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.9em;">Zero at a match</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( = 0 \) iff \( p = q \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">it measures a gap</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e74c3c66; border-top: 5px solid #e74c3c;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdecea; color: #e74c3c; font-weight: 700; font-size: 0.9em;">Not symmetric</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( D(p \| q) \ne D(q \| p) \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">so it is not a distance</p>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 22px;">KL is the core regulariser in the VAE objective.</p>
+                </section>
+
+                <section>
+                    <h2>Cross-Entropy and KL</h2>
+                    <div class="question-box" style="text-align: center; font-size: 0.75em;">
+                        $$ H(p, q) = H(p) + D_{\mathrm{KL}}(p \,\|\, q) $$
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 22px; font-size: 0.72em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #e67e2266; border-top: 5px solid #e67e22;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #fdf0e3; color: #e67e22; font-weight: 700; font-size: 0.9em;">Cross-entropy</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( H(p, q) \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">what we minimise</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #27ae6066; border-top: 5px solid #27ae60;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e1f5e9; color: #27ae60; font-weight: 700; font-size: 0.9em;">Entropy</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( H(p) \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">fixed by the data</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.9em;">KL gap</span>
+                            <div style="margin-top: 8px; font-size: 1.05em; white-space: nowrap;">\( D_{\mathrm{KL}}(p \| q) \)</div>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">what actually changes</p>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 22px;">Minimising cross-entropy is the same as minimising KL.</p>
+                </section>
+
+                <section>
+                    <h2>Forward vs Reverse KL</h2>
+                    <p class="lead">Fit a single Gaussian \( q \) to a two-mode target \( p \):</p>
+                    <div style="text-align: center; margin-top: 6px;">
+                        <img src="img/lec02/forward_reverse_kl.png" alt="Forward KL gives a broad Gaussian over both modes; reverse KL gives a narrow Gaussian on one mode"
+                            style="max-width: 100%; max-height: 330px; object-fit: contain; margin: 0;" />
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 8px;">Intuition for failure modes: over-spread, blurry samples (forward) vs. samples that miss modes (reverse).</p>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">5.</span><br />
+                        Maximum Likelihood
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Likelihood Estimation</h2>
+                    <p class="lead">Choose the parameters that make the observed data most probable:</p>
+                    <div class="question-box" style="text-align: center; font-size: 0.72em;">
+                        $$ \theta^\star = \arg\max_\theta \prod_{i=1}^{N} p_\theta(x_i) = \arg\max_\theta \sum_{i=1}^{N} \log p_\theta(x_i) $$
+                    </div>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: stretch; margin-top: 20px; font-size: 0.72em;">
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #27ae6066; border-top: 5px solid #27ae60;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e1f5e9; color: #27ae60; font-weight: 700; font-size: 0.9em;">Same optimum</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">\( \log \) is increasing, so the maximiser does not change</p>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; flex-direction: column; align-items: center; text-align: center; background: #f8f9fa; padding: 12px 14px 10px; border-radius: 12px; border: 1px solid #2a7ae266; border-top: 5px solid #2a7ae2;">
+                            <span style="padding: 2px 10px; border-radius: 999px; background: #e3eefc; color: #2a7ae2; font-weight: 700; font-size: 0.9em;">Numerically stable</span>
+                            <p style="margin: 6px 0 0 0; color: #555; font-size: 0.85em; line-height: 1.35;">products of many small numbers underflow; sums do not</p>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 20px;">MLE is the default training principle for most generative models.</p>
+                </section>
+
+                <section>
+                    <h2>MLE Minimises KL</h2>
+                    <div class="question-box" style="text-align: center; font-size: 0.66em;">
+                        $$ D_{\mathrm{KL}}(p_{\text{data}} \| p_\theta) = \underbrace{\mathbb{E}_{p_{\text{data}}}[\log p_{\text{data}}(x)]}_{\text{constant in } \theta} - \mathbb{E}_{p_{\text{data}}}[\log p_\theta(x)] $$
+                    </div>
+                    <div class="fragment" style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 26px; font-size: 0.72em;">
+                        <div
+                            style="padding: 8px 14px; border-radius: 10px; background: #e1f5e9; border: 2px solid #27ae60; color: #27ae60; font-weight: 700; text-align: center; white-space: nowrap;">
+                            \( \max_\theta \mathbb{E}_{p_{\text{data}}}[\log p_\theta(x)] \)</div>
+                        <div style="color: #bbb; font-size: 1.4em; font-weight: 700;">&rarr;</div>
+                        <div
+                            style="padding: 8px 14px; border-radius: 10px; background: #e3eefc; border: 2px solid #2a7ae2; color: #2a7ae2; font-weight: 700; text-align: center; white-space: nowrap;">
+                            \( \min_\theta D_{\mathrm{KL}}(p_{\text{data}} \| p_\theta) \)</div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 26px;">Fitting by likelihood <em>is</em> matching the data distribution: Lecture 01's goal \( p_\theta \approx p_{\text{data}} \) as a concrete loss.</p>
+                </section>
+
+                <section>
+                    <h2>Jensen's Inequality</h2>
+                    <div style="display: grid; grid-template-columns: 1.4fr 1fr; column-gap: 24px; align-items: center; margin-top: 14px; font-size: 0.66em;">
+                        <div>
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 0px; font-size: 1em;">
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 18px; background: #f8f9fa; padding: 10px 20px; border-radius: 10px; border: 1px solid #2a7ae266; border-left: 4px solid #2a7ae2;">
+                            <strong style="color: #2a7ae2; width: 130px; flex-shrink: 0;">Statement</strong>
+                            <div style="color: #2c3e50;">\( \log \mathbb{E}[X] \ge \mathbb{E}[\log X] \)</div>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 18px; background: #f8f9fa; padding: 10px 20px; border-radius: 10px; border: 1px solid #27ae6066; border-left: 4px solid #27ae60;">
+                            <strong style="color: #27ae60; width: 130px; flex-shrink: 0;">Reason</strong>
+                            <div style="color: #2c3e50;">\( \log \) is <span class="keyword">concave</span></div>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 18px; background: #f8f9fa; padding: 10px 20px; border-radius: 10px; border: 1px solid #e67e2266; border-left: 4px solid #e67e22;">
+                            <strong style="color: #e67e22; width: 130px; flex-shrink: 0;">Use</strong>
+                            <div style="color: #2c3e50;">an intractable \( \log \int \) gets a tractable <span class="keyword">lower bound</span></div>
+                        </div>
+                    </div>
+                        </div>
+                        <div>
+                            <img class="fragment" src="img/lec02/jensen.png" alt="The chord of the concave log curve lies below the curve" style="width: 100%; max-height: 300px; object-fit: contain; margin: 0;" />
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 16px;">This is exactly the step that produces the ELBO in Lecture 03.</p>
+                </section>
+
+                <section>
+                    <h2>Why This Matters</h2>
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; font-size: 0.7em;">
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 18px; background: #f8f9fa; padding: 10px 20px; border-radius: 10px; border: 1px solid #e74c3c66; border-left: 4px solid #e74c3c;">
+                            <strong style="color: #e74c3c; width: 270px; flex-shrink: 0;">Chain rule</strong>
+                            <div style="color: #2c3e50;">&rarr; autoregressive models (Lectures 04&ndash;05)</div>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 18px; background: #f8f9fa; padding: 10px 20px; border-radius: 10px; border: 1px solid #27ae6066; border-left: 4px solid #27ae60;">
+                            <strong style="color: #27ae60; width: 270px; flex-shrink: 0;">Bayes + Jensen</strong>
+                            <div style="color: #2c3e50;">&rarr; the ELBO and VAEs (Lectures 03, 06&ndash;07)</div>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 18px; background: #f8f9fa; padding: 10px 20px; border-radius: 10px; border: 1px solid #2a7ae266; border-left: 4px solid #2a7ae2;">
+                            <strong style="color: #2a7ae2; width: 270px; flex-shrink: 0;">Change of variables</strong>
+                            <div style="color: #2c3e50;">&rarr; normalizing flows (Lecture 08)</div>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 18px; background: #f8f9fa; padding: 10px 20px; border-radius: 10px; border: 1px solid #e67e2266; border-left: 4px solid #e67e22;">
+                            <strong style="color: #e67e22; width: 270px; flex-shrink: 0;">Divergences</strong>
+                            <div style="color: #2c3e50;">&rarr; GAN objectives (Lectures 09&ndash;10)</div>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 18px; background: #f8f9fa; padding: 10px 20px; border-radius: 10px; border: 1px solid #8e44ad66; border-left: 4px solid #8e44ad;">
+                            <strong style="color: #8e44ad; width: 270px; flex-shrink: 0;">Gaussian noise</strong>
+                            <div style="color: #2c3e50;">&rarr; diffusion models (Lectures 12&ndash;14)</div>
+                        </div>
+                    </div>
+                    <p class="takeaway fragment" style="margin-top: 20px;">Every tool in this lecture reappears as the core of a model family.</p>
+                </section>
+            </section>
+
+            <section>
+
+                <section>
+                    <h2>Summary</h2>
+                    <div class="question-box" style="text-align: center; font-size: 0.7em;">
+                        $$ \max_\theta \; \mathbb{E}_{p_{\text{data}}}[\log p_\theta(x)] \;\; \Longleftrightarrow \;\; \min_\theta \; D_{\mathrm{KL}}(p_{\text{data}} \,\|\, p_\theta) $$
+                    </div>
+                    <ul style="font-size: 0.68em; margin-top: 16px; display: flex; flex-direction: column; gap: 6px;">
+                        <li class="fragment">A distribution is a mass or density function that sums or integrates to one</li>
+                        <li class="fragment">The <span class="keyword">chain rule</span> and <span class="keyword">Bayes rule</span> both come from the product rule</li>
+                        <li class="fragment"><span class="keyword">Monte Carlo</span> turns intractable expectations into sample averages</li>
+                        <li class="fragment"><span class="keyword">KL divergence</span> measures the gap between distributions; MLE minimises it</li>
+                    </ul>
+                    <p class="takeaway fragment" style="margin-top: 14px;">Next lecture: <span class="keyword">Latent Variable Models &amp; Variational Inference</span></p>
+                </section>
+            </section>
+
+            <div class="footer">
+                Generative AI: Probabilistic Foundations
+            </div>
+        </div>
+    </div>
+    <script src="revealjs/dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            controlsLayout: "edges",
+            slideNumber: true,
+            hashOneBasedIndex: true,
+            hash: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX],
+        });
+    </script>
+</body>
+
+</html>

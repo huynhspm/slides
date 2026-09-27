@@ -11,10 +11,8 @@ Lecture slides for the **Machine Learning** course, built with [Reveal.js](https
 | # | Course | Title | Materials | Status |
 |---|--------|-------|-----------|--------|
 | 1 | Dimensionality Reduction | Principal Component Analysis | [Slide](lecture-01-pca.html) | ✅ Available |
-| 2 | Dimensionality Reduction | Singular Value Decomposition | [Slide](lecture-02-svd.html) | 🔜 Empty deck |
-| 3 | Dimensionality Reduction | Partial Least Squares Regression | [Slide](lecture-03-plsr.html) | 🔜 Empty deck |
-
-`lecture-02-svd.html` and `lecture-03-plsr.html` are currently placeholder decks (cover + footer only) — the lecture content has not been written yet.
+| 2 | Dimensionality Reduction | Singular Value Decomposition | [Slide](lecture-02-svd.html) | ✅ Available |
+| 3 | Dimensionality Reduction | Partial Least Squares Regression | [Slide](lecture-03-plsr.html) | ✅ Available |
 
 ---
 
@@ -44,12 +42,14 @@ teach/ml/
 ├── index-style.css          # Index page styles
 ├── slide-style.css          # Shared Reveal.js slide styles
 ├── lecture-01-pca.html      # Principal Component Analysis
-├── lecture-02-svd.html      # Singular Value Decomposition (placeholder)
-├── lecture-03-plsr.html     # Partial Least Squares Regression (placeholder)
+├── lecture-02-svd.html      # Singular Value Decomposition
+├── lecture-03-plsr.html     # Partial Least Squares Regression
 ├── package.json
 ├── gulpfile.js
 ├── img/                     # Images and figures
-│   └── lec-01/               # PCA lecture images
+│   ├── lec-01/               # PCA lecture images
+│   ├── lec-02/               # SVD lecture images
+│   └── lec-03/               # PLSR lecture images
 ├── plugin/                  # Reveal.js plugins (highlight, markdown, math/KaTeX, notes, search, zoom)
 └── revealjs/                 # Reveal.js library
 ```

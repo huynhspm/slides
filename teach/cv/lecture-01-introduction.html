@@ -1,0 +1,509 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/png" href="../../favicon.png">
+    <title>Introduction</title>
+
+    <link rel="stylesheet" href="revealjs/dist/reset.css" />
+    <link rel="stylesheet" href="revealjs/dist/reveal.css" />
+    <link rel="stylesheet" href="revealjs/dist/theme/white.css" />
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+    <link rel="stylesheet" href="slide-style.css" />
+</head>
+
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <section>
+                <section>
+                    <h1>Computer Vision</h1>
+                    <h3>Introduction</h3>
+                    <p>IAI · UET · VNU</p>
+                    <p>Presenter: Trinh Ngoc Huynh</p>
+                    <p>Email: <a href="mailto:huynhtn@vnu.edu.vn">huynhtn@vnu.edu.vn</a></p>
+                </section>
+
+                <section>
+                    <h2>Content</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px; font-size: 0.7em;">
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #b15a2b;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #b15a2b; min-width: 40px; text-align: center;">1</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">What is Computer Vision?</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Definition, goals, and
+                                    the three levels of processing</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #2a7ae2; min-width: 40px; text-align: center;">2</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Why Study It?</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Course goals and where
+                                    vision sits in computer science</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #27ae60; min-width: 40px; text-align: center;">3</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">History & Future</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">From the 1920s to the
+                                    deep learning era</p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; align-items: center; gap: 20px; background: #f8f9fa; padding: 10px 24px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <span
+                                style="font-size: 1.8em; font-weight: 700; color: #e67e22; min-width: 40px; text-align: center;">4</span>
+                            <div>
+                                <strong style="font-size: 1.1em; color: #2c3e50;">Applications & Course Overview</strong>
+                                <p style="margin: 4px 0 0 0; color: #888; font-size: 0.85em;">Real-world uses, tools,
+                                    and the course roadmap</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">1.</span><br />
+                        What is Computer Vision?
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>The Big Questions</h2>
+
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 20px; font-size: 0.7em;">
+
+                        <div class="fragment"
+                            style="background: #eef5fc; padding: 16px 20px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <strong style="color: #2a7ae2;">Q1</strong>
+                            <p style="margin: 6px 0 0 0; color: #444;">What is image processing &amp; computer
+                                vision?</p>
+                        </div>
+
+                        <div class="fragment"
+                            style="background: #fffaf0; padding: 16px 20px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <strong style="color: #d35400;">Q2</strong>
+                            <p style="margin: 6px 0 0 0; color: #444;">Why should we study it?</p>
+                        </div>
+
+                        <div class="fragment"
+                            style="background: #eafaf1; padding: 16px 20px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <strong style="color: #27ae60;">Q3</strong>
+                            <p style="margin: 6px 0 0 0; color: #444;">What is its history and future?</p>
+                        </div>
+
+                        <div class="fragment"
+                            style="background: #f6ecfa; padding: 16px 20px; border-radius: 10px; border-left: 4px solid #9727ae;">
+                            <strong style="color: #9727ae;">Q4</strong>
+                            <p style="margin: 6px 0 0 0; color: #444;">Where does it sit in computer science?</p>
+                        </div>
+
+                    </div>
+                </section>
+
+                <section>
+                    <h2>What is Image Processing?</h2>
+
+                    <div class="question-box fragment" style="font-size: 0.75em; margin-top: 10px;">
+                        <p style="margin: 0;">
+                            <strong style="color: #b15a2b;">Definition:</strong>
+                            Image processing covers the techniques for <span class="keyword">acquiring</span>,
+                            <span class="keyword">representing</span>, <span class="keyword">storing</span>, and
+                            <span class="keyword">manipulating</span> images to produce a desired result.
+                        </p>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 20px; font-size: 0.62em;">
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 12px 16px; border-radius: 8px; border-left: 3px solid #2a7ae2;">
+                            <strong style="color: #2a7ae2;">Acquire</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Camera, scanner, X-ray, satellite, MRI…</p>
+                        </div>
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 12px 16px; border-radius: 8px; border-left: 3px solid #e67e22;">
+                            <strong style="color: #d35400;">Represent</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Grayscale, color, video, size, resolution</p>
+                        </div>
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 12px 16px; border-radius: 8px; border-left: 3px solid #27ae60;">
+                            <strong style="color: #27ae60;">Store</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Matrices, file formats, compression</p>
+                        </div>
+                        <div class="fragment"
+                            style="background: #f8f9fa; padding: 12px 16px; border-radius: 8px; border-left: 3px solid #9727ae;">
+                            <strong style="color: #9727ae;">Manipulate</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Edit, find objects, classify, understand</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Three Levels of Vision</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 16px; font-size: 0.6em;">
+
+                        <div class="fragment"
+                            style="display: flex; gap: 20px; align-items: center; background: #f8f9fa; padding: 12px 24px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <div
+                                style="min-width: 90px; text-align: center; color: #27ae60; font-weight: 700;">LOW</div>
+                            <div style="flex: 1;">
+                                <strong style="color: #2c3e50;">Low-level — Image Processing</strong>
+                                <p style="margin: 4px 0 0 0; color: #555;">Image $\rightarrow$ Image. Modifies pixel
+                                    values (denoise, enhance, filter). <em>Part 2.</em></p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; gap: 20px; align-items: center; background: #f8f9fa; padding: 12px 24px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <div
+                                style="min-width: 90px; text-align: center; color: #2a7ae2; font-weight: 700;">MID</div>
+                            <div style="flex: 1;">
+                                <strong style="color: #2c3e50;">Mid-level — Image Representation</strong>
+                                <p style="margin: 4px 0 0 0; color: #555;">Image $\rightarrow$ Features / regions.
+                                    Extracts edges, keypoints, segments. <em>Part 3.</em></p>
+                            </div>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; gap: 20px; align-items: center; background: #f8f9fa; padding: 12px 24px; border-radius: 10px; border-left: 4px solid #9727ae;">
+                            <div
+                                style="min-width: 90px; text-align: center; color: #9727ae; font-weight: 700;">HIGH</div>
+                            <div style="flex: 1;">
+                                <strong style="color: #2c3e50;">High-level — Image Understanding</strong>
+                                <p style="margin: 4px 0 0 0; color: #555;">Image $\rightarrow$ Description /
+                                    decisions. Recognizes objects and scenes. <em>Part 4.</em></p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="fragment"
+                        style="margin-top: 14px; font-size: 0.6em; padding: 12px 18px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                        <p style="margin: 0;">
+                            <strong style="color: #b8860b;">Key Idea:</strong>
+                            As we move from low to high level, the output becomes more <em>abstract</em> — from raw
+                            pixels toward meaning.
+                        </p>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Image Processing vs. Computer Vision</h2>
+
+                    <table
+                        style="width: 100%; table-layout: fixed; border-collapse: collapse; margin-top: 24px; font-size: 0.72em;">
+                        <thead>
+                            <tr>
+                                <th
+                                    style="background: #b15a2b; color: #fff; padding: 14px 18px; text-align: left; border-radius: 10px 0 0 0;">
+                                    Image Processing</th>
+                                <th
+                                    style="background: #2a7ae2; color: #fff; padding: 14px 18px; text-align: left; border-radius: 0 10px 0 0;">
+                                    Computer Vision</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="fragment">
+                                <td style="padding: 12px 18px; border-bottom: 1px solid #eee; vertical-align: top;">
+                                    Image in $\rightarrow$ image out</td>
+                                <td style="padding: 12px 18px; border-bottom: 1px solid #eee; vertical-align: top;">
+                                    Image in $\rightarrow$ understanding out</td>
+                            </tr>
+                            <tr class="fragment">
+                                <td style="padding: 12px 18px; border-bottom: 1px solid #eee; vertical-align: top;">
+                                    Focus on signal / pixel manipulation</td>
+                                <td style="padding: 12px 18px; border-bottom: 1px solid #eee; vertical-align: top;">
+                                    Focus on interpretation &amp; semantics</td>
+                            </tr>
+                            <tr class="fragment">
+                                <td style="padding: 12px 18px; vertical-align: top;">Mostly low &amp; mid level</td>
+                                <td style="padding: 12px 18px; vertical-align: top;">Spans low, mid &amp; high level</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <p class="fragment" style="font-size: 0.62em; color: #888; margin-top: 16px; text-align: center;">
+                        The boundary is increasingly blurred in the deep learning era.
+                    </p>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">2.</span><br />
+                        Why Study It?
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Course Goals</h2>
+
+                    <ul style="font-size: 0.8em; margin-top: 16px;">
+                        <li class="fragment" style="margin-bottom: 12px;">Understand the <span class="keyword">role</span>
+                            and applicability of core image processing and vision techniques (low &amp; mid level)</li>
+                        <li class="fragment" style="margin-bottom: 12px;">Learn to <span class="keyword">analyze
+                                real-world problems</span> that can be solved with vision tools</li>
+                        <li class="fragment" style="margin-bottom: 12px;">Build practical skills with <span
+                                class="keyword">OpenCV + Python</span></li>
+                        <li class="fragment">Develop intuition to bridge into modern <span class="keyword">deep
+                                learning</span> for vision</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Where Vision Sits in CS</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 16px; font-size: 0.65em;">
+                        <div class="fragment"
+                            style="background: #eef5fc; padding: 12px 18px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <strong style="color: #2a7ae2;">Signal &amp; Image Processing</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">The mathematical foundation — sampling,
+                                filtering, transforms.</p>
+                        </div>
+                        <div class="fragment"
+                            style="background: #eafaf1; padding: 12px 18px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <strong style="color: #27ae60;">Machine Learning &amp; AI</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Learning to recognize patterns, objects, and
+                                scenes from data.</p>
+                        </div>
+                        <div class="fragment"
+                            style="background: #f6ecfa; padding: 12px 18px; border-radius: 10px; border-left: 4px solid #9727ae;">
+                            <strong style="color: #9727ae;">Graphics, HCI, Robotics</strong>
+                            <p style="margin: 4px 0 0 0; color: #555;">Consumers and drivers of vision — rendering,
+                                interaction, and perception for action.</p>
+                        </div>
+                    </div>
+
+                    <div class="placeholder fragment"
+                        style="border:1px dashed #999; padding:14px; border-radius:8px; margin-top: 14px; font-size: 0.6em;">
+                        <em>[Figure placeholder]</em><br />
+                        <strong>Description:</strong> Diagram positioning computer vision at the intersection of
+                        signal processing, machine learning, and the fields that use it (graphics, robotics, HCI).<br />
+                        <strong>Image prompt:</strong> A Venn-style or hub-and-spoke diagram with "Computer Vision"
+                        in the center, connected to Signal Processing, Machine Learning/AI, Graphics, Robotics,
+                        and HCI.
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">3.</span><br />
+                        History & Future
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>A Brief History</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px; font-size: 0.58em;">
+
+                        <div class="fragment"
+                            style="display: flex; gap: 18px; align-items: center; background: #f8f9fa; padding: 8px 20px; border-radius: 10px; border-left: 4px solid #b15a2b;">
+                            <div style="min-width: 70px; font-weight: 700; color: #b15a2b;">1920s</div>
+                            <p style="margin: 0; color: #555;">First digital image application — the <span
+                                    class="keyword">Bartlane system</span> transmits coded newspaper pictures
+                                between London and New York by cable.</p>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; gap: 18px; align-items: center; background: #f8f9fa; padding: 8px 20px; border-radius: 10px; border-left: 4px solid #e67e22;">
+                            <div style="min-width: 70px; font-weight: 700; color: #d35400;">1964</div>
+                            <p style="margin: 0; color: #555;">Computers enhance images of the moon from <span
+                                    class="keyword">Ranger 7</span> — the space race ignites digital image
+                                processing.</p>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; gap: 18px; align-items: center; background: #f8f9fa; padding: 8px 20px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <div style="min-width: 70px; font-weight: 700; color: #27ae60;">1970s</div>
+                            <p style="margin: 0; color: #555;">Medical imaging takes off — <span class="keyword">CT
+                                    (tomography)</span> earns the 1979 Nobel Prize in Medicine.</p>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; gap: 18px; align-items: center; background: #f8f9fa; padding: 8px 20px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <div style="min-width: 70px; font-weight: 700; color: #2a7ae2;">1980s+</div>
+                            <p style="margin: 0; color: #555;">Vision spreads into nearly every field — restoration,
+                                art, medicine, industry, law, human–computer interaction.</p>
+                        </div>
+
+                        <div class="fragment"
+                            style="display: flex; gap: 18px; align-items: center; background: #f8f9fa; padding: 8px 20px; border-radius: 10px; border-left: 4px solid #9727ae;">
+                            <div style="min-width: 70px; font-weight: 700; color: #9727ae;">2010s+</div>
+                            <p style="margin: 0; color: #555;">The <span class="keyword">deep learning</span> era —
+                                CNNs and transformers redefine what machines can see.</p>
+                        </div>
+
+                    </div>
+                </section>
+
+                <section>
+                    <h2>The Future</h2>
+
+                    <div style="display: flex; gap: 14px; margin-top: 20px; font-size: 0.72em;">
+                        <div class="fragment"
+                            style="flex: 1; background: #eef5fc; padding: 16px 20px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <strong style="color: #2a7ae2;">Deeper learning</strong>
+                            <p style="margin: 6px 0 0 0; color: #555;">Vision increasingly powered by deep neural
+                                networks trained on massive data.</p>
+                        </div>
+                        <div class="fragment"
+                            style="flex: 1; background: #eafaf1; padding: 16px 20px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <strong style="color: #27ae60;">Blurred boundaries</strong>
+                            <p style="margin: 6px 0 0 0; color: #555;">The line between image processing and computer
+                                vision continues to fade.</p>
+                        </div>
+                    </div>
+
+                    <div class="fragment"
+                        style="margin-top: 20px; font-size: 0.66em; padding: 14px 20px; border-left: 5px solid #b8860b; background: #fff3c4; border-radius: 4px;">
+                        <p style="margin: 0;">
+                            <strong style="color: #b8860b;">Key Idea:</strong>
+                            Classical techniques still matter — they are the foundation on which modern deep vision
+                            is built.
+                        </p>
+                    </div>
+                </section>
+            </section>
+
+            <section>
+                <section>
+                    <h1>
+                        <span class="text-light">4.</span><br />
+                        Applications & Course Overview
+                    </h1>
+                </section>
+
+                <section>
+                    <h2>Applications Everywhere</h2>
+
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px; font-size: 0.6em;">
+                        <div class="fragment" style="background: #f8f9fa; padding: 12px 14px; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 1.8em;">🩺</div><strong style="color: #2c3e50;">Medical</strong>
+                            <p style="margin: 2px 0 0 0; color: #777;">Diagnosis, CT/MRI analysis</p>
+                        </div>
+                        <div class="fragment" style="background: #f8f9fa; padding: 12px 14px; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 1.8em;">🚗</div><strong style="color: #2c3e50;">Autonomous</strong>
+                            <p style="margin: 2px 0 0 0; color: #777;">Self-driving, detection</p>
+                        </div>
+                        <div class="fragment" style="background: #f8f9fa; padding: 12px 14px; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 1.8em;">🔍</div><strong style="color: #2c3e50;">Recognition</strong>
+                            <p style="margin: 2px 0 0 0; color: #777;">Faces, OCR, search</p>
+                        </div>
+                        <div class="fragment" style="background: #f8f9fa; padding: 12px 14px; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 1.8em;">🏭</div><strong style="color: #2c3e50;">Industry</strong>
+                            <p style="margin: 2px 0 0 0; color: #777;">Inspection, quality control</p>
+                        </div>
+                        <div class="fragment" style="background: #f8f9fa; padding: 12px 14px; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 1.8em;">🛰️</div><strong style="color: #2c3e50;">Remote Sensing</strong>
+                            <p style="margin: 2px 0 0 0; color: #777;">Satellite, mapping</p>
+                        </div>
+                        <div class="fragment" style="background: #f8f9fa; padding: 12px 14px; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 1.8em;">📷</div><strong style="color: #2c3e50;">Photography</strong>
+                            <p style="margin: 2px 0 0 0; color: #777;">Enhancement, effects</p>
+                        </div>
+                    </div>
+
+                    <div class="placeholder fragment"
+                        style="border:1px dashed #999; padding:12px; border-radius:8px; margin-top: 14px; font-size: 0.58em;">
+                        <em>[Figure placeholder]</em><br />
+                        <strong>Description:</strong> A collage of real vision applications — a denoised photo, an
+                        OCR-scanned receipt, face detection boxes, a medical scan.<br />
+                        <strong>Image prompt:</strong> A 2×2 grid of example images: noise reduction before/after,
+                        document OCR, face detection with bounding boxes, and a medical CT/MRI scan.
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Course Roadmap</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px; font-size: 0.62em;">
+                        <div class="fragment"
+                            style="display: flex; gap: 16px; align-items: center; background: #f8f9fa; padding: 10px 20px; border-radius: 10px; border-left: 4px solid #b15a2b;">
+                            <strong style="min-width: 70px; color: #b15a2b;">Part 1</strong>
+                            <span style="color: #555;">Vision Foundations — perception &amp; image formation</span>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; gap: 16px; align-items: center; background: #f8f9fa; padding: 10px 20px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                            <strong style="min-width: 70px; color: #27ae60;">Part 2</strong>
+                            <span style="color: #555;">Low-Level Vision — image processing</span>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; gap: 16px; align-items: center; background: #f8f9fa; padding: 10px 20px; border-radius: 10px; border-left: 4px solid #2a7ae2;">
+                            <strong style="min-width: 70px; color: #2a7ae2;">Part 3</strong>
+                            <span style="color: #555;">Mid-Level Vision — image representation</span>
+                        </div>
+                        <div class="fragment"
+                            style="display: flex; gap: 16px; align-items: center; background: #f8f9fa; padding: 10px 20px; border-radius: 10px; border-left: 4px solid #9727ae;">
+                            <strong style="min-width: 70px; color: #9727ae;">Part 4</strong>
+                            <span style="color: #555;">High-Level Vision — image understanding</span>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Summary</h2>
+
+                    <ul style="font-size: 0.78em; margin-top: 16px;">
+                        <li class="fragment" style="margin-bottom: 10px;">Image processing acquires, represents,
+                            stores, and manipulates images; computer vision aims at <span class="keyword">understanding</span>
+                            them.</li>
+                        <li class="fragment" style="margin-bottom: 10px;">Vision spans three levels: <span
+                                class="keyword">low</span> (pixels), <span class="keyword">mid</span> (features),
+                            and <span class="keyword">high</span> (meaning).</li>
+                        <li class="fragment" style="margin-bottom: 10px;">The field evolved from 1920s image
+                            transmission to today's deep learning era.</li>
+                        <li class="fragment" style="margin-bottom: 10px;">Applications reach medicine, autonomy,
+                            industry, remote sensing, and more.</li>
+                        <li class="fragment">This course builds from foundations up — classical techniques remain
+                            essential.</li>
+                    </ul>
+                </section>
+            </section>
+
+            <div class="footer">
+                Computer Vision: Introduction
+            </div>
+        </div>
+    </div>
+    <script src="revealjs/dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            controlsLayout: "edges",
+            slideNumber: true,
+            hashOneBasedIndex: true,
+            hash: true,
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.KaTeX],
+        });
+    </script>
+</body>
+
+</html>
